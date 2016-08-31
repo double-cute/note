@@ -10,7 +10,7 @@
 * [罗列](#八罗列可嵌套)
 * [复选框](#九复选框)
 * [引起他人注意](#十引起他人注意)
-* [Emoji表情](#十一Emoj表情)
+* [Emoji表情](#十一Emoji表情)
 * [引用](#十二引用)
 * [多行文本](#十三多行文本)
 
@@ -99,10 +99,12 @@ function() { 1 + 1; }
 * URL后可以跟一个""引起来的鼠标悬停说明，**`一定`**要和URL之间**隔一个空格**，否则会被当成URL的一部分
   * 当然鼠标悬停说明是可选的，可以不写
   * 但是对于`标准URL`**`无法`**添加鼠标悬停说明
+* 除此之外还可以设置当前页面的锚点，URL为#标题名
 
 标准URL：A url http://www.google.com<br>
 外部链接：A page [Baidu](http://www.baidu.com "百度链接")<br>
 内部链接（连接仓库的中的内部资源）：A page [test.jsp](assets/test.jsp "assets内的JSP文件")
+当前页面中的锚点：site [图片](#六图片)
 <br>[<](#目录)
 
 <br><br>
@@ -133,6 +135,7 @@ function() { 1 + 1; }
 |:---| :---: | ---: | --- |
 | **`git add`** | add changed&new file | git add a.txt | [谷歌](http://www.google.com "谷歌首页") |
 | Pipe | \| | nothing | nothing|
+
 <br>[<](#目录)
 
 <br><br>
@@ -168,6 +171,7 @@ function() { 1 + 1; }
       2. flwek
         1. sek
         2. soief
+
 <br>[<](#目录)
 
 <br><br>
@@ -176,11 +180,12 @@ function() { 1 + 1; }
 - [ ] Lodon（-和[之间、]和文本第一个字之间必须有空格，后一个位置连续空格被忽略）
 - [x] New York（[]中间如果是**`一个`**空格则表示不选，如果是一个x表示选中）
 - [ ] Beijing
+
 <br>[<](#目录)
 
 <br><br>
 
-### 十、引起其它人注意：
+### 十、引起他人注意：
 语法：@organization-name/team-name @username<br>
 举例：@fouber hello!<br>
 <br>[<](#目录)
@@ -189,7 +194,7 @@ function() { 1 + 1; }
  
 ### 十一、Emoji表情：
 格式：:表情编号:<br>
-示例：sdf :+1: slke
+示例：sdf :+1: slke<br>
 <br>[<](#目录)
 
 <br><br>
@@ -208,6 +213,7 @@ function() { 1 + 1; }
 >
 > - [ ] Lodon
 > - [x] New York:+1:
+
 <br>[<](#目录)
 
 <br><br>
@@ -223,4 +229,5 @@ function() { 1 + 1; }
         嘀嘀嘀:+1:（Emoji表情无效）
         * 啪啪**啪**（罗列语法和加粗语法无效）
             嘿嘿嘿（多一个Tab距离更长）
+            
 <br>[<](#目录)
