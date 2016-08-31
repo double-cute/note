@@ -10,7 +10,7 @@
 * [罗列](#八罗列可嵌套)
 * [复选框](#九复选框)
 * [引起他人注意](#十引起他人注意)
-* [Emoji表情](#十一Emoji表情)
+* [Emoji表情](#十一emoji表情)
 * [引用](#十二引用)
 * [多行文本](#十三多行文本)
 
@@ -103,7 +103,7 @@ function() { 1 + 1; }
 
 标准URL：A url http://www.google.com<br>
 外部链接：A page [Baidu](http://www.baidu.com "百度链接")<br>
-内部链接（连接仓库的中的内部资源）：A page [test.jsp](assets/test.jsp "assets内的JSP文件")
+内部链接（连接仓库的中的内部资源）：A page [test.jsp](assets/test.jsp "assets内的JSP文件")<br>
 当前页面中的锚点：site [图片](#六图片)
 <br>[<](#目录)
 
