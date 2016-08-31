@@ -1,0 +1,35 @@
+1.Action的配置都在包中进行：
+
+  a.struts.xml中用<package>标签管理action：
+<package name="" extends="" namespace="" abstract="">
+    <action>
+        ...
+    </action>
+    <action>
+        ...
+    </action>
+    ...
+</package>
+
+  b.可以看到一个包下可以包含多个action，这就是action的模块化管理：
+    i.应该将类型相似的action都放在同一个包下
+    ii.之前介绍过，包就是action的模块，可以为每个包编写一个struts标准配置文件
+    iii.最后将这些包配置include到struts.xml中，这样分层管理更加清晰，同时也不会使struts.xml过于臃肿
+
+  c.四个属性：
+    i.name：包名，是自定义的，名字要尽量取的有意义，能高度概括包中action的作用
+    ii.extends：表示继承另一个包，一旦继承，那么子包可以继承到父包的拦截器、action等配置，是一种典型的分层模块化管理的思想
+！！Struts2框架提供了一个默认的包struts-default，该包中已经定义了很多拦截器、拦截器栈等基础配置，里面考虑到了很多细节
+！！因此一般项目中最最基础的包应该继承该包，然后其它包再继承这些基础包
+    iii.namespace：命名空间，考虑到项目如果庞大，难免遇到包也重名的问题，因此再为包规定一个命名空间，同一个空间下的包不能重名，不同空间可以重名
+    iv.abstract：值只能是true或false，表示该包是否是一个抽象包，抽象包高度抽象，不能定义action，struts-default就是抽象包
+**.以上4个属性只有name是必选属性，其它几个默认值分别是"struts-defualt"、"/"、"false"
+
+  d.namespace：
+    i.命名空间的第一个字符必须是/，表示一个根路径
+    ii.有了命名空间，那么调用action的URL就必须包含命名空间：/Web根路径/namespace/xxx.action
+    iii.例如，应用Test的login.action位于"/books"命名空间下，那么调用该action的URL应该为：http://localhost:8888/Test/books/login.action
+    iv.默认值：namespace的默认值是"/"，即WebContent根目录
+    v.Struts搜索action的规则，例如：/barspace/bar.action，会先找/barspace命名空间中是否有bar.action，如果有就用，否则就到默认的/中去查找
+    vi.namespace中不要包含二级路径，例如"/service/search"
+**.因为Struts规定命名空间只有一个级别，如果URL为/service/search/get.action，则会先在/search空间下找，如果没有就直接跳到默认的/下找，而不会到/service下找！！

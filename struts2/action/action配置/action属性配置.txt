@@ -1,0 +1,12 @@
+1.<action>标签的几个重要属性：
+
+  a.name：
+    i.非常重要，必须的，不仅仅是Struts中Action的唯一标识（Struts只能通过该名称来记住一个action）
+    ii.同时也决定了请求到action的映射：
+*.GET请求的URL包含xxx.action，那么就交给name为xxx的action处理
+*.POST请求的action如果为xxx，那么就交给name为xxx的action处理
+    iii.name命名的时候不要包含/  .  -  这三个特殊字符，会引发一些异常1
+
+  b.class：也非常重要，决定了action所对应的Java处理类，但此属性可以省略，默认为ActionSupport
+
+  c.

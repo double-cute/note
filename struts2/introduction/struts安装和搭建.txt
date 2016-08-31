@@ -1,0 +1,66 @@
+1.下载：
+   
+  a.地址：http://www-us.apache.org/dist/struts/2.3.30/struts-2.3.30-all.zip
+
+  b.我们使用的版本是2.3.30
+
+  c.我们下载的是完整版即-all，内容包括核心类库、插件、应用示例、源码、文档等
+
+  d.lib目录下的是核心类库以及第三方插件
+
+  e.app目录下是此版本struts下的应用实例，其中的struts-blank是一个最简单的struts项目，非常值得学习，里面的很多文件都可以当做模板使用
+
+
+2.构建Struts2工程：
+
+  a.配置Eclipse全局Tomcat依赖以及Struts2依赖：向Eclipse注册Tomcat以及Struts2
+    i.menu--window--preferences下
+    ii.Tomcat:server--runtime environments--add...--Apache Tomcat v7.0--next--browse（选择Tomcat安装目录，7.0版本的）--finish
+    iii.Struts2:java--build path--user libraries--new...--输入库名"Struts-2.3.30"--ok--选中刚添加的库后add external jars...
+！！按需添加，以struts-blank的WEB-INF/lib下的类库为参考，一般只需要添加一下几个类库即可（Struts的lib目录中）：完成后ok即可
+commons-fileupload
+commons-io
+freemarker
+javaassist
+ognl
+struts2-core
+xwork-core
+
+  b.新建工程Alt+Shift+N--Dynamic Web Project--工程名"StrutsTest"--next--next--勾选自动配置web.xml--finish
+
+  c.将Tomcat和Struts类库添加到build path中：
+    i.右击项目工程"StrutsTest"结点--properties下
+    ii.Tomcat:java build path--library--add library--server runtime--next--选中Apache Tomcat v7.0--finish
+    iii.Struts:java build path--library--add library--user library--next--选中Struts-2.3.30--finish
+！！由于Eclipse在运行时并不会自动将user library加载到WEB-INF/lib中，还需要手动设置一下
+#选中deployment assembly--add--java build path entries--选中user library中的Struts-2.3.30--finish回到deployment assembly对话框
+#可以看到该库已被添加到自动部署到WEB-INF/lib中了，然后点击apply--OK
+
+  d.在web.xml中设置struts2：web.xml中配置的是struts2的拦截器（过滤器），而struts.xml中配置的struts2的控制器（action）
+
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_9" version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <display-name>Struts Test</display-name>
+
+    <filter>
+        <filter-name>struts2</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <!--让struts2拦截所有请求-->
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <welcome-file-list>
+        <welcome-file>index.html</welcome-file>
+    </welcome-file-list>
+
+</web-app>
+
+
+！！至此Struts框架已经搭建完毕，接着再开发action组件并配置struts.xml后就正式可以运行了！！

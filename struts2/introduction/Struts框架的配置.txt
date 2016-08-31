@@ -1,0 +1,49 @@
+1.Struts框架的配置：Struts属性常量
+ 
+  a.这里所说的配置和之前讲的struts.xml不一样，前面讲的struts.xml里主要是为了配置action，而现在要配置的是整个Struts框架
+！即接下来要配置的内容会决定整个Struts框架的行为
+
+  b.配置Struts框架的配置文件（按照Struts加载顺序）：struts.properties也应该放在WEB-INF/classes下
+struts.xml
+struts.properties
+web.xml
+    i.上面的也是Struts框架加载配置文件的顺序，如果这些配置文件中包含相同的属性，那么后者会覆盖前者
+    ii.既然会覆盖，那要那么多配置文件有什么用？
+       *1.web.xml中配置少量事关整个应用特性的全局性的属性，如中文应用需要用到的过滤编码属性struts.i18n.encoding以及struts.custom.i18n.resources
+       *2.struts.properties中配置大量基础的、全局的、公共的属性，一般各种应用都基本相同的一些基础属性
+       *3.struts.xml和web.xml作用差不多，一般两者二选一即可，通常更推荐使用struts.xml，因为可以向后兼容
+！！struts.properties一般不常用，因为struts-core类库中包含文件org/apache/struts2/default.properties文件，该文件给Struts框架的所有（注意是所有）属性都给出了默认值
+！！因此struts.properties的作用基本和default.properties重复
+！！可以通过default.properties查看Struts框架都有哪些合法的配置属性
+
+  c.struts.properties配置：典型的properties文件
+
+  d.web.xml：<init-param>
+<filter>
+    <filter-name>...
+    <filter-class>...
+    <init-param>
+        <param-name>struts.custon.i18n.resources</param-name>
+        <param-value>mess</param-value>
+
+  e.struts.xml：<constant>，其实属性就是一个个常量，name是属性名，value自然是属性值了
+<struts>
+    <constant name="struts.custom.i18n.resources" value="mess"/>
+
+
+2.struts.xml模块化配置：Action按模块（包）进行划分
+
+  a.上面讲的是Struts框架属性（常量属性）的配置，现在介绍的是struts.xml配置action的一种策略
+
+  b.设想如果action非常多，并全部都在sturts.xml中配置会导致struts.xml非常臃肿，但实际上Struts2对action的部署只认struts.xml这一个文件，那该怎么办呢？
+
+  c.使用<include>标签即可：
+<struts>
+    <include file="struts-part1.xml"/>
+    <include file="struts-part2.xml"/>
+    ...
+</struts>
+
+    i.由于Struts的action本身就是用包进行管理的（一个包中包含相同类型的action），包本身就是一种模块化管理action的单元
+    ii.每个包包含一组action，那么干脆为每个包做一个配置文件.xml（必须是标准的struts配置文件格式，具有DTD信息、struts根元素等，完全和struts.xml格式一样）
+    iii.最后将各个配置文件include进struts.xml中即可，这样模块化管理更加科学和方便

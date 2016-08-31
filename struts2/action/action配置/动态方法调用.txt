@@ -1,0 +1,106 @@
+1.根据提交按钮的不同调用一个action的不同方法处理：
+
+  a.原来只是默认使用action的excute方法执行逻辑控制，而实际上Struts允许多方法动态调用action的不同方法进行逻辑控制
+
+  b.共有三种方法可以实现action的动态方法调用：
+    i.HTML DMI:是HTML的一种语法，即Dyanmic Method Invocation，即动态方法调用的意思
+    ii.method逻辑action：在struts.xml中配置action时，在<action>标签中添加method属性，使之成为一个逻辑action
+    iii.在ii.中使用通配符减少逻辑action的数量，使struts.xml更加简洁
+
+  c.逻辑控制方法的方法签名必须要跟excute一样，即返回String但是无参（就是一组和excute平行的一组方法，作用都是执行逻辑控制）
+
+
+2.HTML DMI：
+  
+  a.语法是：action="actionName!methodName"
+！例如：action="login!regist"就表示调用的是login.action的regist方法
+
+  b.要使HTML DMI生效就必须开启配置Struts常量struts.enable.DynamicMethodInvocation为true才行
+
+
+3.逻辑action：
+
+  a.在struts.xml中配置action时添加method属性：
+<action name="regist" class="org.lirx.app.action.LoginRegistAction" method="regist">
+！其实还是跟普通action一样，还是会把URL或者POST中regist.action、regist映射给名为regist的action处理，只不过调用的方法是regist()了
+
+  b.也就是说，加了method以后，action name对应的不再是XxxAction类了，而是XxxAction的method方法，也就是说action name对应一个具体的方法了
+！其实，一直以来配置的action都是逻辑action，只不过我们没有发现，因为缺省method时默认将action name映射到excute方法而已！
+
+  c.为了实现多方法动态调用，就需要为Action的每一个逻辑控制方法配置一个action，因此这样的action name不再真正意义上代表这个action了，而是代表action的某个方法了
+！因此这样的action称为逻辑action
+！！而excute方法是通用方法，在逻辑意义上大家更倾向于让它代表Action
+
+  d.多方法动态调用的逻辑action示例：
+<action name="regist" class="org.lirx.app.action.LoginRegistAction" method="regist">
+<action name="login" class="org.lirx.app.action.LoginRegistAction" method="login">
+！可以看到，有几个方法就配置几个action，action name的含义直指方法的含义
+！这种方法会导致逻辑action的数量等于action的配置数量，会导致配置文件非常臃肿
+
+
+4.通配符逻辑action：
+
+  a.该方法基于上一个方法，只不过加上了通配符技术而已，Struts2允许struts配置中使用通配符
+
+  b.通配符规则：*代表任意的由一个或多个字符组成的字符串，{N}代表前面第N个*所匹配（代表）的字符串
+
+  c.那么上面的配置就可以这样编写：<action name="*" class="org.lirx.app.action.LoginRegistAction" method="{1}">
+！如果请求的action为xxx.action或者xxx，那么匹配上的action name就是xxx，即*=xxx，而{1}匹配第一个*，所以method也是xxx
+！因此，regist.action匹配之后action name为regist，method为regist
+！就是一个小小的技巧，文本替换而已
+
+  d.通配符可以在struts配置文件的任何标签的属性中使用，上面action的name、class和method都可以使用，因此非常灵活
+
+
+5.HTML页面中应该如何提交表单：
+
+  a.因为从上面的3种方法看，提交表单的action必须要直指具体的method，不同的method提交表单的action也不同
+！但是一个form标签只能有一个action属性，那该如何做到不同按钮提交不同action呢？
+
+  b.只能使用JavaScript了：
+    i.在form标签中不要指定action属性
+    ii.为每个提交按钮指定一个onclick属性，它指向一个JavaScript函数
+    iii.即：
+<input type="submit" value="按钮名称" onclick="方法();"/>
+function 方法()
+{
+    targetForm = document.forms[要提交的表单的索引号（页面中第几个表单-1）]
+    targetForm.action = "xxx";
+}
+
+  c.例如：逻辑action
+<input type="submit" value="regist" onclick="regist();"/>
+function regist()
+{
+    targetForm = document.forms[0]   #假设该按钮所在的表单是当前页面中的第一个
+    targetForm.action = "regist";
+}
+
+<input type="submit" value="login in" onclick="login_in();"/>
+function login_in()
+{
+    targetForm = document.forms[0]   #假设该按钮所在的表单是当前页面中的第一个
+    targetForm.action = "login";
+}
+
+  d.例如：HTML DMI
+<input type="submit" value="regist" onclick="regist();"/>
+function regist()
+{
+    targetForm = document.forms[0]   #假设该按钮所在的表单是当前页面中的第一个
+    targetForm.action = "login!regist";  #调用LoginAction的regist()方法
+}
+
+
+6.歧义匹配：
+
+  a.如果使用通配符逻辑action，则可能会发生一个URL可以匹配多个action的冲突，但实际上Struts只会调用一个action来处理
+
+  b.歧义发生是的匹配规则：
+    i.有限查找全匹配：例如URL为abc.action，那就先找有没name刚好为全名abc的action，有就匹配
+    ii.如果全匹配不存在，接下来再所有符合要求的通配符action中按照配置的先后顺序匹配第一个action
+如果上面name刚好为abc的action不存在，而能匹配上abc的action还有以下几个，并且定义的先后顺序为：
+name="*"
+name="a*c"
+name="*c"
+！那就会按照配置的先后顺序选择第一个name="*"作为服务的action
