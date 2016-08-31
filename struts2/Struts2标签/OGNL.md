@@ -86,6 +86,9 @@
 | action1.id |
 | action1.name |
 
+* 可以在JSP页面中加**`<s:debug/>`**标签，然后在页面中点击**debug**按钮转入一个新的调试页面，查看Stack Context<br>
+和ValueStack中的内容
+
 <br><br>
 
 ### 三、OGNL基本语法：根对象和数据访问（接上例）[·](#目录)
@@ -100,7 +103,8 @@
     
 > 即#前缀表示非根对象
 
-* OGNL Context中各种对象的访问：常用的<br>
+* OGNL Context中各种对象的访问：值罗列一些常用的
+
 | 访问语法 | 对象 |
 | --- | --- |
 | 直接访问 | ValueStack中的对象 |
