@@ -41,9 +41,9 @@
   Action中的一个数据域，而value="..."的值就是一个OGNL表达式，即<s:property value="OGNL_expr"/>
   2. 各种Servlet API对象：reqeust、session、application等，因为这些毕竟太常用了
 
-> 一般在Struts2标签中访问上游数据最好只用Strut2自己提供的标签和语法，毕竟兼容性好<br>
-> 虽然其它标签库也有提供访问上游数据的功能（EL表达式等），但是Struts2提供的更好更安全<br>
-> 因此建议如果使用Strut2框架，那么在JSP中访问上游数据就是用Strut2提供的标签以及语法
+> - 一般在Struts2标签中访问上游数据最好只用Strut2自己提供的标签和语法，毕竟兼容性好.
+> - 虽然其它标签库也有提供访问上游数据的功能（EL表达式等），但是Struts2提供的更好更安全.
+> - 因此建议如果使用Strut2框架，那么在JSP中访问上游数据就是用Strut2提供的标签以及语法.
 
 <br>
 
