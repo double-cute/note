@@ -22,7 +22,7 @@
       * address
         * number
         * mail
-        
+
 > 如果用Java获取最终的mail数据域就是：person.getGroup().getAddress().getMail();<br>
 > 但是如果使用OGNL则是：person.group.adress.mail<br>
 > 可以看到OGNL更加简洁
@@ -40,7 +40,7 @@
   1. 上游Action中的数据：其实这个早就已经用过了，例如<s:property value="name"/>，其中name就是上游<br>
   Action中的一个数据域，而value="..."的值就是一个OGNL表达式，即<s:property value="OGNL_expr"/>
   2. 各种Servlet API对象：reqeust、session、application等，因为这些毕竟太常用了
-  
+
 > 一般在Struts2标签中访问上游数据最好只用Strut2自己提供的标签和语法，毕竟兼容性好<br>
 > 虽然其它标签库也有提供访问上游数据的功能（EL表达式等），但是Struts2提供的更好更安全<br>
 > 因此建议如果使用Strut2框架，那么在JSP中访问上游数据就是用Strut2提供的标签以及语法
@@ -70,7 +70,7 @@
   * 可以看出来ValueStack对象也是一个stack结构，很显然，上游Action链也是按照FILO顺序进入ValueStack的.
   * 只不过所有Action的Context中的数据（对象）都不是以Action为单位组织的，而是一拨儿（按照纯加载顺序）<br>
   进栈.
-  
+
 > 例如：action1中包含数据域name、id，action2中包含数据域passwd，action3的excute中额外往ActionContext中<br>
 > put了一个group对象，那么ValueStack对象中数据的入栈顺序就是name -> id -> action -> passwd -> group，<br>
 > 其中group处于ValueStack的栈顶.
@@ -92,7 +92,7 @@
 | action1.id |
 | action1.name |
 
-* 可以在JSP页面中加**`<s:debug/>`**标签，然后在页面中点击**debug**按钮转入一个新的调试页面，查看Stack Context<br>
+* 可以在JSP页面中加**`<s:debug/>`** 标签，然后在页面中点击**debug**按钮转入一个新的调试页面，查看Stack Context<br>
 和ValueStack中的内容
 
 <br><br>
@@ -106,7 +106,7 @@
   一个request会被解释成ValueStack.request的，而这显然是错误的.
     * 因此对于非根对象必须使用#作为前缀访问，例如#request.foo，这就表示request不是根对象，<br>
     即不是ValueStack，必须到栈顶之下的其它对象中寻找，而foo则是request的数据域
-    
+
 > 即#前缀表示非根对象
 
 * OGNL Context中各种对象的访问：值罗列一些常用的
@@ -133,15 +133,28 @@
   * ?：取出符合条件的所有元素
   * ^：只取出符合条件的第一个元素
   * $：只取出符合条件的最后一个元素
- 
+
 > 使用以上三种操作OGNL表达式示例：person.friends.{? #this.gender == 'male'}
 > * 整个{? #this.gender == 'male'}表达式是对前面的集合friends取子集操作.
 > * { }中起始的?表示是何种类型取自己操作.
 > * \#this就代表集合里的元素，是一个迭代对象（对集合中每个元素进行迭代）.
 > * \#this.gender == 'male'表示元素的gender是否等于'male'.
-> 
+>
 > **因此上面表达式的意思就是取出friends中所有性别为男的元素作为子集.**
 
 <br><br>
 
 ### 五、访问静态成员：[·](#目录)
+
+- OGNL允许访问Java类的静态成员，包括静态数据成员和静态方法.
+- **前提** 是开启访问静态成员的功能，需要配置Struts2常量：
+  - struts.ognl.allowStaticMethodAccess=true
+- 访问语法：
+  1. 访问数据域：@className@staticData
+  2. 访问静态方法：@className@staticMethod(var1, var2, ...)
+
+示例：
+```JSP
+<s:property value="@java.lang.System@getenv('JAVA_HOME')"/><br>
+<s:property value="@java.lang.Math@PI"/>
+```
