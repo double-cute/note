@@ -2,8 +2,8 @@
 
 ## 目录
 1. [什么是OGNL](#一什么是ognl)
-2. [Stack Context和ValueStack](二stack-context和valuestack)
-3. [OGNL基本语法](三ognl基本语法)
+2. [Stack Context和ValueStack](#二stack-context和valuestack)
+3. [OGNL基本语法](#三ognl基本语法根对象和数据访问接上例)
 
 <br><br>
 
