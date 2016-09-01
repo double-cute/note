@@ -4,6 +4,8 @@
 1. [什么是OGNL](#一什么是ognl)
 2. [Stack Context和ValueStack](#二stack-context和valuestack)
 3. [OGNL基本语法](#三ognl基本语法根对象和数据访问接上例)
+4. [集合操作](#四集合操作)
+5. [访问静态成员](#五访问静态成员)
 
 <br><br>
 
@@ -119,3 +121,26 @@
 | \#attr | pageContext，可以访问所有scope对象 |
 
 <br><br>
+
+### 四、集合操作：[·](#目录)
+
+1. 创建List集合：{ e1, e2, e3, ... }
+2. 创建Map集合：#{ key1:val1, key2:val2, key3:val3, ... }
+3. OGNL只为集合提供了两个运算符：in、not in
+  * 示例："foo" in { "foo", "bar" }
+  * 当然写在JSP标签中就是：<s:if test="'foo' in { 'foo', 'bar' }">
+4. 除了运算符之外还提供了取子集的操作：
+  * ?：取出符合条件的所有元素
+  * ^：只取出符合条件的第一个元素
+  * $：只取出符合条件的最后一个元素
+ 
+> 使用以上三种操作OGNL表达式示例：person.friends.{? #this.gender == 'male'}
+>> 整个{? #this.gender == 'male'}表达式是对前面的集合friends取子集操作.<br>
+>> { }中起始的?表示是何种类型取自己操作.<br>
+>> \#this就代表集合里的元素，是一个迭代对象（对集合中每个元素进行迭代）.<br>
+>> \#this.gender == 'male'表示元素的gender是否等于'male'.<br>
+>> 因此上面表达式的意思就是取出friends中所有性别为男的元素作为子集.
+
+<br><br>
+
+### 五、访问静态成员：[·](#目录)
