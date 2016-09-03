@@ -104,6 +104,8 @@ public class News
 	}
 }
 ```
+[-](#三使用hibernate)
+<br>
 
 **步骤二：** PO到表的映射 [·](#目录)
 
@@ -128,7 +130,9 @@ public class News
 		</id>
 	</class>
 </hibernate-mapping>
-``` [+](#三使用hibernate)
+``` 
+[-](#三使用hibernate)
+<br>
 
 **步骤三：** 将映射信息记录到Hibernate配置文件中 [·](#目录)
 
@@ -187,7 +191,9 @@ public class News
 
 	</session-factory>
 </hibernate-configuration>
-``` [+](#三使用hibernate)
+```
+[-](#三使用hibernate)
+<br>
 
 **步骤四：** 在应用中使用PO进行持久化操作 [·](#目录)
 
@@ -248,4 +254,6 @@ public class NewsManager
 }
 ```
 
-- 可以看到Hibernate程序**无需编写SQL语句！** [+](#三使用hibernate)
+- 可以看到Hibernate程序**无需编写SQL语句！**
+
+[-](#三使用hibernate)
