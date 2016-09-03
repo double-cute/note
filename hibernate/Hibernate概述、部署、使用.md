@@ -182,3 +182,62 @@ public class News
 	</session-factory>
 </hibernate-configuration>
 ```
+
+**步骤四：** 在应用中使用PO进行持久化操作
+操作步骤：
+1. 加载hibernate.cfg.xml配置.
+2. 获取SessionFactory标签.
+3. 创建Session.
+4. 利用Session打开一个事务.
+5. 在事务中使用PO进行持久化操作（但这些操作都是逻辑操作）.
+6. 保存操作（其实就是将操作编译成数据库可执行的代码）.
+7. 提交事务（将所有操作，都保存在缓存中，一次性提交给数据库执行）.
+8. 先关闭事务，再关闭Session，最后关闭SessionFactory.
+
+- 回顾hibernate.cfg.xml配置，所有的配置信息都放在session-factor标签下，可以看出来Hibernate的运行靠的是**"session"** .
+- session：就是一次会话，会话和Web应用的session不同，这里session的会话双方是应用程序和数据库，session就表示一次和数据库之间的连接.
+  - 连接是需要大量信息的，比如数据库登陆信息、连接池配置信息、此次连接包含哪些PO等.
+  - session-factory就是生产session的工厂，工厂生产产品是要有详细的制造配方，而session-factory标签中的配置信息就是制造session的配方.
+- 所以第1到3步的含义就是，1.（加载获得配方表），2.（将配方表交给工厂），3.（工厂根据配方表生产session）.
+
+```java
+package lee;
+
+import org.crazyit.app.domain.News;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
+
+public class NewsManager
+{
+	public static void main(String[] args)
+		throws Exception
+	{
+		// 加载获取配方
+		Configuration conf = new Configuration().configure();
+		// 把配方交给工厂
+		SessionFactory sf = conf.buildSessionFactory();
+		// 工厂根据配方生产出一个session
+		Session sess = sf.openSession();
+
+		// 开始事务
+		Transaction tx = sess.beginTransaction();
+		// 创建PO
+		News n = new News();
+		// 操作PO
+		n.setTitle("疯狂Java联盟成立了");
+		n.setContent("疯狂Java联盟成立了，" + "网站地址http://www.crazyit.org");
+		// 保存（编译操作）
+		sess.save(n);
+		// 提交事务
+		tx.commit();
+
+		// session和工厂
+		sess.close();
+		sf.close();
+	}
+}
+```
+
+- 可以看到Hibernate程序**无需编写SQL语句！**
