@@ -24,6 +24,7 @@
 ### 二、部署Hibernate：
 1. 下载[Hibernate-3.6.0-Final](https://sourceforge.net/projects/hibernate/files/hibernate3/3.6.0.Final/hibernate-distribution-3.6.0.Final-dist.zip/download).
 2. 解压得到项目文件hibernate-distribution-3.6.0.Final：只列出需要用到的条目
+
         - hibernate-distribution-3.6.0.Final
           - hibernate3.jar # hibernate核心类库
           - [dir]project # 项目源码
@@ -32,15 +33,15 @@
             - [dir]required # hibernate运行时环境
             - [dir]jpa # jpa规范接口
             - [dir]optional # 可选插件（数据源c3p0库就包含在其中）
-3. Hibernate应用需要用到的库：
-        * 核心类库：hibernate3.jar
-        * 运行时依赖库：[dir]lib/required/和[dir]lib/jpa/
-        * c3p0数据源：[dir]lib/optional/c3p0/
-        * jdbc连接器（在MySql项目中找，connector目录下）：mysql-connector-java-x.x.xx-bin.jar
-        * Hibernate默认的日志工具SLF4J：slf4j-nop-1.6.1.jar
-> - [dir]required目录中只提供了SLF4J的标准接口：slf4j-api-1.6.1.jar
-> - 但是Hibernate项目本身并**没有**提供实现，实现下载：[SLF4J-1.6.1](http://www.slf4j.org/dist/slf4j-1.6.1.zip).
-> - 解压后直接在根目录中找到slf4j-nop-1.6.1.jar的实现文件.
+            
+- Hibernate应用需要用到的库：
+  1. 核心类库：hibernate3.jar
+  2. 运行时依赖库：[dir]lib/required/和[dir]lib/jpa/
+  3. c3p0数据源：[dir]lib/optional/c3p0/
+  4. jdbc连接器（在MySql项目中找，connector目录下）：mysql-connector-java-x.x.xx-bin.jar
+  5. Hibernate默认的日志工具SLF4J：slf4j-nop-1.6.1.jar
+        
+> [dir]required目录中只提供了SLF4J的标准接口slf4j-api-1.6.1.jar，但是Hibernate项目本身并**没有**提供实现，实现下载[SLF4J-1.6.1](http://www.slf4j.org/dist/slf4j-1.6.1.zip)，解压后直接在根目录中找到slf4j-nop-1.6.1.jar的实现文件.
 
 - 所有类库都应该包含在应用程序的lib/目录中.
 - 对于Eclipse工程，则可以创建一个全局的User Library，名称就是"hibernate-3.6.0-Final".
