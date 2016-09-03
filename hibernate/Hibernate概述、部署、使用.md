@@ -3,11 +3,14 @@
 <br><br>
 
 ## 目录：
+1. [Hibernate概述](#一hibernate概述)
+2. [部署Hibernate](#二部署hibernate)
+3. [使用Hibernate](#三使用hibernate)
 
 
 <br><br>
 
-### 一、Hibernate概述：
+### 一、Hibernate概述：[·](#目录)
 1. Hibernate目标：减去持久化编程任务的95%，让开发者专注于商务逻辑.
   - 尽量避免直接使用SQL语句，完全使用面向对象的方式操作数据库.
 2. Hibernate的功能：
@@ -21,7 +24,7 @@
 
 <br><br>
 
-### 二、部署Hibernate：
+### 二、部署Hibernate：[·](#目录)
 1. 下载[Hibernate-3.6.0-Final](https://sourceforge.net/projects/hibernate/files/hibernate3/3.6.0.Final/hibernate-distribution-3.6.0.Final-dist.zip/download).
 2. 解压得到项目文件hibernate-distribution-3.6.0.Final：只列出需要用到的条目
 
@@ -52,14 +55,14 @@
 
 <br><br>
 
-### 三、使用Hibernate：
+### 三、使用Hibernate：[·](#目录)
 - Hibernate编程步骤：
   1. 设计持久化对象PO.
   2. 将PO对象映射到一张数据表（映射之后，一个PO对象就代表表中的一行数据了）.
   3. 将映射信息记录到Hibernate配置文件中（所有映射都需要记录才能被Hibernate识别）.
   4. 在应用中使用PO进行数据库操作（持久化操作）.
 
-**步骤一：** 设计PO
+**步骤一：** 设计PO[·](#目录) [-](#三使用hibernate)
 1. PO在Hibernate中是一种超级低侵设计，完全允许是一个POJO，无需继承或实现任何Hibernate类和接口.
 2. 但它至少是一个类JavaBean，表中记录的各个列在PO中体现为数据域.
   - 即每一列属性都必须要有一个PO的数据成员相对应.
@@ -101,7 +104,7 @@ public class News
 }
 ```
 
-**步骤二：** PO到表的映射
+**步骤二：** PO到表的映射[·](#目录) [-](#三使用hibernate)
 1. 还要指定PO映射到哪张数据表，否则PO没有任何用处.
   - 所以：**PO = POJO + 映射**
 2. PO -> 表的的映射由Hibernate映射文件指定，是标准XML文件，后缀约定为.hbm.xml
@@ -125,7 +128,7 @@ public class News
 </hibernate-mapping>
 ```
 
-**步骤三：** 将映射信息记录到Hibernate配置文件中
+**步骤三：** 将映射信息记录到Hibernate配置文件中[·](#目录) [-](#三使用hibernate)
 1. 虽然PO有了，映射也有了，但是Hibernate还是不知道谁是PO，必须要在Hibernate的配置文件中告诉它哪些是PO，在哪里能找到他们.
 2. 方便的是hbm映射文件中不仅指明了PO的类（Java包路径和类名）也指明了映射关系，所以只需要把所有的hbm文件罗列在Hibernate配置文件中即可.
   - 例如：\<mapping resource="org/crazyit/app/domain/News.hbm.xml"/>
@@ -183,7 +186,7 @@ public class News
 </hibernate-configuration>
 ```
 
-**步骤四：** 在应用中使用PO进行持久化操作
+**步骤四：** 在应用中使用PO进行持久化操作[·](#目录) [-](#三使用hibernate)
 操作步骤：
 1. 加载hibernate.cfg.xml配置.
 2. 获取SessionFactory标签.
