@@ -62,7 +62,7 @@
   3. 将映射信息记录到Hibernate配置文件中（所有映射都需要记录才能被Hibernate识别）.
   4. 在应用中使用PO进行数据库操作（持久化操作）.
 
-**步骤一：** 设计PO [·](#目录) [+](#三使用hibernate)
+**步骤一：** 设计PO [·](#目录)
 
 1. PO在Hibernate中是一种超级低侵设计，完全允许是一个POJO，无需继承或实现任何Hibernate类和接口.
 2. 但它至少是一个类JavaBean，表中记录的各个列在PO中体现为数据域.
@@ -105,7 +105,7 @@ public class News
 }
 ```
 
-**步骤二：** PO到表的映射 [·](#目录) [+](#三使用hibernate)
+**步骤二：** PO到表的映射 [·](#目录)
 
 1. 还要指定PO映射到哪张数据表，否则PO没有任何用处.
   - 所以：**PO = POJO + 映射**
@@ -128,9 +128,9 @@ public class News
 		</id>
 	</class>
 </hibernate-mapping>
-```
+``` [+](#三使用hibernate)
 
-**步骤三：** 将映射信息记录到Hibernate配置文件中 [·](#目录) [+](#三使用hibernate)
+**步骤三：** 将映射信息记录到Hibernate配置文件中 [·](#目录)
 
 1. 虽然PO有了，映射也有了，但是Hibernate还是不知道谁是PO，必须要在Hibernate的配置文件中告诉它哪些是PO，在哪里能找到他们.
 2. 方便的是hbm映射文件中不仅指明了PO的类（Java包路径和类名）也指明了映射关系，所以只需要把所有的hbm文件罗列在Hibernate配置文件中即可.
@@ -187,9 +187,9 @@ public class News
 
 	</session-factory>
 </hibernate-configuration>
-```
+``` [+](#三使用hibernate)
 
-**步骤四：** 在应用中使用PO进行持久化操作 [·](#目录) [+](#三使用hibernate)
+**步骤四：** 在应用中使用PO进行持久化操作 [·](#目录)
 
 操作步骤：
 
@@ -248,4 +248,4 @@ public class NewsManager
 }
 ```
 
-- 可以看到Hibernate程序**无需编写SQL语句！**
+- 可以看到Hibernate程序**无需编写SQL语句！** [+](#三使用hibernate)
