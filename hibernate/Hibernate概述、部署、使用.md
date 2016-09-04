@@ -104,7 +104,7 @@ public class News
 	}
 }
 ```
-[-](#三使用hibernate)
+
 <br>
 
 **步骤二：** PO到表的映射 [·](#目录)
@@ -130,8 +130,8 @@ public class News
 		</id>
 	</class>
 </hibernate-mapping>
-``` 
-[-](#三使用hibernate)
+```
+
 <br>
 
 **步骤三：** 将映射信息记录到Hibernate配置文件中 [·](#目录)
@@ -192,7 +192,7 @@ public class News
 	</session-factory>
 </hibernate-configuration>
 ```
-[-](#三使用hibernate)
+
 <br>
 
 **步骤四：** 在应用中使用PO进行持久化操作 [·](#目录)
@@ -256,4 +256,9 @@ public class NewsManager
 
 - 可以看到Hibernate程序**无需编写SQL语句！**
 
-[-](#三使用hibernate)
+<br><br>
+
+### 四、Eclipse的Hibernate Tools插件：[·](#目录)
+- 下载安装：Menu --> Help --> Eclipse Marketplace... --> 选中Red Hat图标 --> 搜索Hibernate Tools --> 看到JBoss Developer Studio --> Install.
+  - Hibernate目前属于JBoss，而JBoss归入了Red Hat组织.
+- 功能：New File里面选择Others...，可以看到多了一个Hibernate目录，可以通过UI界面快速创建Hibernate的各种配置文件，cfg、hbm等.
