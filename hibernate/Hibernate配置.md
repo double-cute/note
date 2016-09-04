@@ -5,7 +5,7 @@
 ## 目录
 
 1. [Configuration对象](#一configuration对象就是hibernate配置本身-)
-2. [常用配置属性](二常用配置属性)
+2. [常用配置属性](#二常用配置属性)
 
 <br><br>
 
