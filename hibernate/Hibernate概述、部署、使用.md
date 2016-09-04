@@ -6,6 +6,7 @@
 1. [Hibernate概述](#一hibernate概述)
 2. [部署Hibernate](#二部署hibernate)
 3. [使用Hibernate](#三使用hibernate)
+4. [Eclipse的Hibernate Tools插件](#四eclipse的hibernate-tools插件)
 
 
 <br><br>
