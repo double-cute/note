@@ -4,6 +4,9 @@
 
 ## 目录
 
+1. [Configuration对象](#一configuration对象就是hibernate配置本身-)
+2. [常用配置属性](二常用配置属性)
+
 <br><br>
 
 ### 一、Configuration对象：就是Hibernate配置本身 [·](#目录)
