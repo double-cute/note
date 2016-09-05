@@ -64,6 +64,7 @@
   2. 但如果hbm中定义了PO的标识属性是assigned类型的（即必须手动赋值不能由generator自动赋值）或者是复合主键类型的，那么在转入持久化态之前必须自己手动为标识属性赋值.
 
 **瞬态到持久化态的方法**：由Session提供（都是Session的对象方法）
+
 1. Serializable save(Object po[, Object pk]);
 2. void persist(Object po[, Object pk]);
 
@@ -126,6 +127,7 @@
 
 
 **三方法说明**：
+
 1. update：
   - public void update(Object detachedPO) throws HibernateException;
   - 调用该方法前提是PO必须是唯一托管状态
