@@ -106,14 +106,14 @@
 
 <br><br>
 
-### 五、持久化态下修改PO：
+### 五、持久化态下修改PO：update
 - 对持久化态下的PO作的任何操作（修改）都会被转换成update语句并保存起来，最后在Session flush之后统一交给数据库执行.
 - 底层的SQL语句：update ... where pk=PO标识属性的值
   - 典型的就是调用setter修改PO属性.
 
 <br><br>
 
-### 六、脱管状态下修改PO：
+### 六、脱管状态下修改PO：也是update
 - 将托管对象重新持久化调用的是Session的update、updateOrSave或者merge三个方法.
 - 在托管期间可以调用PO的各种对PO进行修改，但其处于托管状态，操作无法写入数据库，但是全都会被Hibernate记录下来，待重新回到持久化态后再将托管状态下的修改写入数据库.
 
@@ -146,10 +146,10 @@ Session another_sess = ...; // 重新开一个Session
 another_sess.update(n); // 重新持久化并保存修改记录到数据路中
 ```
 
-### 七、删除PO：
+### 七、删除PO：delete
 - 调用Session的delete方法将PO删去：void delete(Object po);
 - 因为是Session的对象方法，很显然是要在PO处于持久化状态下才能调用delete，否则会抛出异常.
-- **该方法会直接将数据库中的数据记录删除！**
+- **该方法会直接将数据库中的数据记录删除！**，底层执行的SQL语句就是delete.
 
 示例：
 ```java
