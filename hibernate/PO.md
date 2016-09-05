@@ -81,8 +81,12 @@
 
 
 - **加载方法**：调用Session的load或者get方法
-  1. Object load(Class poClazz, Serializable pk);
-  2. Object get(Class poClazz, Serializable pk);
+  1. Object load(Class poClazz, Serializable pk[, LockOptions lockOptions]);
+  2. Object get(Class poClazz, Serializable pk[, LockOptions lockOptions]);
+
+
+  - 加载的时候还可以加上锁选项lockOptions，有些记录加载后只是观察（只读），有些加载之后就是为了修改，考虑到线程安全可以加锁.
+    - lockOptions都是LockOptions中定义的静态对象有：NONE（不加锁，默认就是这种）、READ（只读）、UPGRADE（修改）.
 
 
 - 说明：
@@ -110,3 +114,45 @@
 <br><br>
 
 ### 六、脱管状态下修改PO：
+- 将托管对象重新持久化调用的是Session的update、updateOrSave或者merge三个方法.
+- 在托管期间可以调用PO的各种对PO进行修改，但其处于托管状态，操作无法写入数据库，但是全都会被Hibernate记录下来，待重新回到持久化态后再将托管状态下的修改写入数据库.
+
+
+**三方法说明**：
+1. update：
+  - public void update(Object detachedPO) throws HibernateException;
+  - 调用该方法前提是PO必须是唯一托管状态
+    1. 托管状态：如果update一个本身就是持久化态的PO会直接抛出异常.
+    2. 唯一：如果此时还有其它处于持久化状态的PO和该PO的identifier相同（即主键相同）也会抛出异常.
+  - 该方法底层执行的SQL语句是update.
+2. updateOrSave：
+  - public void saveOrUpdate(Object detachedOrNewPO) throws HibernateException;
+  - 如果你update的时候不能确定（如果你在开发别人的代码）该PO之前到底是托管的PO还是瞬态的PO的话就调用该方法：
+    - 因为update一个非托管PO会抛出异常.
+    - 该方法会自动检测该PO的状态，如果是瞬态就调用save，否则调用update.
+3. merge：
+  - public Object merge(Object object) throws HibernateException;
+  - 该方法是将object的数据复制（update）到相同identifier的PO中以完成对数据库中记录的更新.
+  - 如果该identifier的记录还没有关联的PO就待更新记录后从数据库中load出来一个关联PO作为merge的返回值.
+  - 也就是说该方法并不改变object的状态，object完全可以不是PO，只是一个保存数据的Bean而已.
+
+
+示例：
+```java
+News n = sess.load(...); // 加载持久化一个PO
+sess.close(); // 关闭Session使n处于托管状态
+n.setMessage(newMessage); // 托管期间进行修改
+Session another_sess = ...; // 重新开一个Session
+another_sess.update(n); // 重新持久化并保存修改记录到数据路中
+```
+
+### 七、删除PO：
+- 调用Session的delete方法将PO删去：void delete(Object po);
+- 因为是Session的对象方法，很显然是要在PO处于持久化状态下才能调用delete，否则会抛出异常.
+- **该方法会直接将数据库中的数据记录删除！**
+
+示例：
+```java
+News n = Session.load(News.class, new Integer(pk));
+sess.delete(n);
+```
