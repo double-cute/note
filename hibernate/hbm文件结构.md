@@ -13,9 +13,11 @@
 1. 根元素<hibernate-mapping>
 2. 子元素中每个<class>对应一个PO映射.
 3. <hibernate-mapping>可以包含多个<class>映射，**但最好的做法是一个hbm就只有一个<class>映射**，并且在很多情况下是**必须的**.
+4. 一个<class>中可以定义主键映射（<id>）、普通列映射（<property>）等.
+5. hbm文件其实就是SQL的create table的缩影，相当于定义了表、表中的数据列.
 
 示例：
-```java
+```html
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Hibernate DTD信息，模板，所有都一样，包括Hibernate5.0也和这个一样 -->
 <!DOCTYPE hibernate-mapping PUBLIC
@@ -23,11 +25,24 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping package="org.crazyit.app.domain"> <!-- 指定PO所在的Java包路径 -->
     <class name="News" table="news_table"> <!-- 最重要的就是这句，指明了PO到表的映射 -->
-        <id name="id">
+        <id name="id" column="table_id" type="integer">
             <generator class="identity"/>
         </id>
+        <property name="name" column="student_name" type="string"/>
+        <property name="age" cloumn="age" type="integer"/>
     </class>
 </hibernate-mapping>
+```
+
+上面的代码相当于：
+
+```sql
+create table news_table   --->  PO:org.crazyit.app.domain.News
+(
+    table_id int primary key,   --->   PO.id
+    student_name varchar,   --->   PO.name
+    age int   --->   PO.age
+);
 ```
 
 <br><br>
