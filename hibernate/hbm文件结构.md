@@ -3,6 +3,9 @@
 <br><br>
 
 ## 目录
+1. [基本结构](#一基本结构)
+2. [hibernate-mapping的属性](#二hibernate-mapping的属性只列举一些基础的属性-)
+3. [class的属性](#三class的属性只列举一些基础的属性-)
 
 <br><br>
 
