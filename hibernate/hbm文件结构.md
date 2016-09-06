@@ -6,7 +6,7 @@
 
 <br><br>
 
-### 一、基本结构：
+### 一、基本结构：[·](#目录)
 1. 根元素<hibernate-mapping>
 2. 子元素中每个<class>对应一个PO映射.
 3. <hibernate-mapping>可以包含多个<class>映射，**但最好的做法是一个hbm就只有一个<class>映射**，并且在很多情况下是**必须的**.
@@ -29,7 +29,7 @@
 
 <br><br>
 
-### 二、hibernate-mapping的属性：只列举一些基础的属性
+### 二、hibernate-mapping的属性：只列举一些基础的属性 [·](#目录)
 - 先介绍那些<hibernate-mapping>和<class>共有的属性，只不过局部覆盖全局下<class>的同名属性覆盖<hibernate-mapping>的.
 
 **罗列共同属性：**
@@ -48,7 +48,7 @@
 
 <br><br>
 
-### 三、class的属性：只列举一些基础的属性
+### 三、class的属性：只列举一些基础的属性 [·](#目录)
 | 属性 | 说明 |
 | --- | --- |
 | name | **必选**，指定PO的Java类名，如果hibernate-mapping中指定了package，则这里就无需指定全限定类名 |
