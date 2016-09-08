@@ -35,6 +35,23 @@
 3. 开发时需要将dist中的jar和依赖包中的所有jar包含在lib/中（Web应用则是在WEB-INF/lib/中），对于Eclipse工程，可以创建一个spring-framework-3.0.5-RELEASE的User Library（包含上述的jar库）.
 4. 以上就已经完成整个Spring框架的部署了，可以尽情地在代码中使用Spring框架了.
 
+- 由于Spring使用的是log4j来管理日志，因此还额外需要一个log4j的配置文件**log4j.properties**，该配置文件放在**classes/** 目录下即可**（Eclipse中直接放在src/下）** ，内容如下：**必须配置，否则部分功能不能使用**
+
+```java
+# Configure logging for testing: optionally with log file
+log4j.rootLogger=WARN, stdout
+# log4j.rootLogger=WARN, stdout, logfile
+
+log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+log4j.appender.stdout.layout.ConversionPattern=%d %p [%c] - %m%n
+
+log4j.appender.logfile=org.apache.log4j.FileAppender
+log4j.appender.logfile.File=target/spring.log
+log4j.appender.logfile.layout=org.apache.log4j.PatternLayout
+log4j.appender.logfile.layout.ConversionPattern=%d %p [%c] - %m%n
+```
+
 <br><br>
 
 ### 三、Spring编程步骤：[·](#目录)
