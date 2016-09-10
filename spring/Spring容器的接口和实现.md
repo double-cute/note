@@ -51,7 +51,7 @@ ApplicationContext actx = new FileSystemXMLApplicationContext(new String[] {"bea
 
 1. 获取bean：根据id和type获取，name就是id，requiredType就是type
   1. Object getBean(String name); // 根据id获取bean
-  2. <T> T getBean(Class<T> requiredType); // 获取指定type的唯一的那个bean
-  3. <T> T getBean(String name, Class requiredType); // 双条件精确获取
+  2. \<T\> T getBean(Class<T> requiredType); // 获取指定type的唯一的那个bean
+  3. \<T\> T getBean(String name, Class requiredType); // 双条件精确获取
 2. boolean containsBean(String name); // 是否包含id为name的bean
-3. Class<?> getType(String name); // 获取id为name的bean的类型
+3. Class\<?\> getType(String name); // 获取id为name的bean的类型
