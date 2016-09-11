@@ -6,7 +6,7 @@
 ## 目录
 1. [国际化支持]()
 2. [事件机制]()
-3.
+3. [使用IoC方式使bean获取Spring容器]()
 
 <br><br>
 
@@ -167,4 +167,76 @@ public class EmailNotifier implements ApplicationListener { // 一定要实现Ap
 // 这里事件源简单地用一个字符串来表示
 EmailEvent evt = new EmailEvent("hello", "example@hot.mail", "this is a example");
 ctx.publishEvent(evt);
+```
+
+<br><br>
+
+### 三、使用IoC方式使bean获取Spring容器：[·](#目录)
+- Spring容器只能初始化一次，在之前就是在主程序中new ClassPathXmlApplicationContext("bean.xml")创建并初始化.
+- 但通常bean中也经常需要使用Spring容器帮助注入一些依赖，一个bean依赖另一个bean是非常常见的.
+- 但Spring并没有提供一些框架性的全局方法让bean获取容器（MFC框架就提供了很多Afx函数用以在程序的任意位置获取框架组件的句柄），因为这种方式会严重增加bean与Spring框架的耦合（业务逻辑代码中直接出现框架API的调用，增加了代码的污染.
+- 但考虑到bean使用Spring容器注入依赖的需求太常见了，Spring还是提供了捷径，但是这种方式非常低侵，可以最大程度地解耦，并且就是利用Spring容器本身的原理——IoC.
+
+
+**实现步骤：**
+
+1. 想要利用Spring容器提供依赖注入的bean的类型必须实现**ApplicationContextAware**接口或者**BeanFactoryAware**接口.
+2. 这两个都是函数式接口，要实现的方法是**setApplicationContext(ApplicationContext)**和 **setBeanFactory(BeanFactory)**.
+  - 由此可见，Bean类型中必须定义相应的数据域，即**private ApplicationContext actx**和**private BeanFactory bf**.
+3. bean.xml中配置这种bean时**无需用property标签指定两个指向容器的引用的数据域**，Spring容器检测到它们的类型实现了这两个接口，就会在初始化它们时自动**回调setter方法将Spring容器的引用传入**！！
+  - **即Spring容器引用本身通过依赖注入的方式传给了bean实例！**
+
+```java
+package org.lirx.app.user;
+
+import org.springframework.beans.BeansException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+public class Person implements ApplicationContextAware {
+	private String name;
+	private ApplicationContext actx;
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	@Override
+	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+		this.actx = applicationContext;
+	}
+
+	public ApplicationContext getApplicationContext() {
+		return actx;
+	}
+
+	public void info() {
+		System.out.println("hello " + name);
+	}
+}
+```
+
+```html
+<bean id="person" class="org.lirx.app.user.Person">
+	<property name="name" value="Peter"/>
+    <!-- 无需配置ApplicationContext数据域 -->
+</bean>
+```
+
+```java
+package org.lirx.app;
+
+import org.lirx.app.user.Person;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+public class SpringTest {
+
+	public static void main(String[] args) {
+		ApplicationContext ctx = new ClassPathXmlApplicationContext("bean.xml");
+		Person person = ctx.getBean("person", Person.class);
+		System.out.println(ctx == person.getApplicationContext()); // true
+	}
+
+}
 ```
