@@ -221,6 +221,6 @@
 ```
 
 - 这就是给person bean的name属性（也是个bean）的first属性设置.
-- 它底层对应的Java语句是先调用getter最后调用setter：beanId.getPerson().getName().setFirst("Peter");
+- 它底层对应的Java语句是先调用getter最后调用setter：beanId.**getPerson()**.**getName()**.setFirst("Peter");
   - 这就要求，链上只有最后的那个节点可以为null，前面的结点都不能为null，即person、name都不能为null，否则会引发NullPointerException异常！
 - 因此一定要先配置链条前端的bean，再配置链条后端的bean，因为后端依赖前端！！
