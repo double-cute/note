@@ -7,6 +7,7 @@
 2. [bean标签的基本用法](#二bean标签的基本用法)
 3. [为bean取别名](#三为bean取别名)
 4. [bean的作用域](#四bean的作用域)
+5. [抽象bean](#五抽象bean)
 
 
 <br><br>
@@ -83,3 +84,25 @@
     <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
 </listener>
 ```
+
+<br><br>
+
+### 五、抽象bean：[·](#目录)
+- 大量bean可能含有很多**完全相同的配置信息**即重复信息，则可以将这些重复配置定义成一个抽象bean，即模板bean.
+  - 所有继承该模板的bean都将获得模板中的配置信息.
+- 由于抽象bean无法被容器实例化，因此抽象bean的定义完全可以“不完整”，比如没有class属性（留给子bean定义）等，抽象bean的作用仅仅是一个模板.
+- 因此，不要试图通过getBean获取抽象bean，也不要将抽象bean注入到其它bean中，都会抛出异常.
+
+
+- 抽象bean的使用：
+  1. bean标签中设置abstract="true"便可以将该bean定义成抽象bean.
+  2. 抽象bean无法被容器实例化，只能由子bean“继承”该抽象bean.
+  3. 子bean通过bean标签的parent="抽象bean的id"来继承抽象bean.
+    - 子bean当然也可以在“继承”的同时继续定义成abstract的抽象bean，即一个新的更加具体的模板bean.
+    - 子bean将获得父bean的全部配置信息.
+    - 注意和Java类继承概念的区别，前者仅仅是参数的延续，后者还包含多态等特性，bean继承仅仅就是一种模板的实例化而已！
+
+
+- bean继承的特点：
+  1. 子bean不仅可以获得父bean的所有配置，也可以覆盖父bean中的配置（只要属性同名就可以覆盖）.
+  2. 子bean无法从父bean中继承一下5个配置：depends-on、autowire、singleton、scope、lazy-init，子bean需要自己手动重新指定.
