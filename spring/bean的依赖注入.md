@@ -13,6 +13,7 @@
 5. [注入集合：list、set、map、props](#五注入集合listsetmapprops-)
 6. [父子bean的集合合并](#六父子bean的集合合并)
 7. [注入组合属性](#七注入组合属性)
+8. [往singleton bean中注入prototype bean](#八往singleton-bean中注入prototype-bean实现注入-)
 
 <br><br>
 
