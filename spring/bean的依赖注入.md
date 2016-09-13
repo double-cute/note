@@ -224,3 +224,148 @@
 - 它底层对应的Java语句是先调用getter最后调用setter：beanId.**getPerson()**.**getName()**.setFirst("Peter");
   - 这就要求，链上只有最后的那个节点可以为null，前面的结点都不能为null，即person、name都不能为null，否则会引发NullPointerException异常！
 - 因此一定要先配置链条前端的bean，再配置链条后端的bean，因为后端依赖前端！！
+
+<br><br>
+
+### 八、往singleton bean中注入prototype bean：实现注入 [·](#目录)
+- 如果singleton依赖singleton或者prototype依赖singleton那是没有问题，因为singleton是重复利用的，一般无需改变.
+- 但如果singleton依赖prototype就会出现问题：
+  - prototype就是每次获取时得到的都是新new出来的bean，每次都不一样.
+  - 而singleton只会初始化一次，如果singleton依赖prototype的话，那么被依赖的prototype就永远是注入时的那个，因为之后singleton不会再改变，所以通过依赖关系获得的那个prototype bean也永远是注入时的那个，不会是新的了.
+  - 这就违背了prototype的初衷了.
+
+
+- 其实这个问题很好解决，只要**对prototype的getter动一下手脚**即可：
+
+```html
+<bean id="steelAxe" class="org.lirx.app.util.axe.SteelAxe" scope="prototype"/>
+<bean id="person" class="org.lirx.app.user.Person">
+    <property name="axeBeanId" value="steelAxe"/>
+</bean>
+```
+
+```java
+public class Person implements ApplicationContextAware {
+    private ApplicationContext actx;
+    private String axeBeanId;
+    private Axe axe;
+
+    public setApplicationContext(ApplicationContext applicationContext) {
+        this.actx = applicationContext;
+    }
+
+    public String setAxeBeanId(String id) {
+        this.axeBeanId = id;
+    }
+
+    public String getAxeBeanId() {
+        return this.axeBeanId;
+    }
+
+    public Axe getAxe() { // 对于prototype依赖只能实现getter，不能提供setter
+    // 因为setter只能一次性设值，不能保证每次getter获得的bean是新new出来的bean
+
+        this.axe = actx.getBean(getAxeBeanId(), Axe.class);
+        return this.axe;
+    }
+}
+```
+
+**可以看到bean类不仅需要实现ApplicationContextAware接口已获取容器引用，还需要额外添加一个prototype依赖的bean id属性，这不仅与Spring框架耦合，也和配置文件中的依赖关系相耦合，代码污染度太高.**
+
+
+- Spring提供的解决方法：**实现注入**
+
+```html
+<bean id="steelAxe" class="org.lirx.app.util.axe.SteelAxe" scope="prototype"/>
+<bean id="person" class="org.lirx.app.user.Person">
+    <!-- 意思是steelAxe这个bean直接通过person bean的getAxe()方法注入给person bean -->
+        <!-- 底层的含义是，指定person bean的getAxe()方法的返回值为steelAxe bean -->
+            <!-- 这里的bean属性就是上面的axeBeanId了 -->
+    <lookup-method name="getAxe" bean="steelAxe"/>
+</bean>
+```
+
+```java
+public abstract class Person { // 无需和Spring框架有任何耦合
+    public abstract Axe getAxe(); // 注入依赖关系的方法设为抽象方法，由Spring框架实现！！
+// 具体是如何实现的呢？前面已将讲的很清楚了，就是<!-- 底层的含义是，指定person bean的getAxe()方法的返回值为steelAxe bean -->
+// 实现内容很明确，就是让getAxe()方法的返回值为steelAxe bean
+// 具体怎么返回，就是上面自己手工实现的return actx.getBean(getAxeBeanId(), Axe.class);
+    // 这样就可以保证每次获取的steelAxe都是新new出来的了！
+// 因此，该方法也可以用于singleton依赖singleton，但不过这样大费周折就没意思了，因此还是只应用于singleton依赖prototype比较好
+}
+```
+
+- 可以看到Spring框架如此之逆天，回调什么的太弱了，现在可以直接帮你注入方法实现了！！
+- 总结就是lookup-method通过name给出要实现的getter，bean则负责注入prototype bean，而getter一定要定义成抽象的，由Spring框架来实现.
+- **该方法需要用到CGLIB库，Spring就是利用该库实现客户端二进制代码的注入，jar文件是com.springsource.net.sf.cglib-x.x.x.jar**
+- 这里使用的是com.springsource.net.sf.cglib-2.2.0.jar
+
+
+**示例：**
+
+- 细节注意：实现注入的bean类由于是抽象类，因此业务逻辑中不能直接使用该类型的引用，因此还是需要面向接口编程.
+
+```java
+package org.lirx.app.util;
+
+public interface Axe {
+	public void chop();
+}
+
+package org.lirx.app.util.axe;
+
+import org.lirx.app.util.Axe;
+
+public class SteelAxe implements Axe {
+
+	@Override
+	public void chop() {
+		System.out.println("Steel Axe");
+	}
+
+}
+
+package org.lirx.app.user;
+
+import org.lirx.app.util.Axe;
+
+public interface Man { // 需要增加一层接口
+	public Axe getOne();
+}
+
+package org.lirx.app.user;
+
+import org.lirx.app.util.Axe;
+
+public abstract class Peter implements Man {
+	public abstract Axe getAxe();
+
+	@Override
+	public Axe getOne() {
+		return getAxe();
+	}
+
+}
+```
+
+```html
+<bean id="steelAxe" class="org.lirx.app.util.axe.SteelAxe" scope="prototype"/>
+<bean id="peter" class="org.lirx.app.user.Peter">
+	<lookup-method name="getAxe" bean="steelAxe"/>
+</bean>
+```
+
+```java
+public class SpringTest {
+
+	public static void main(String[] args) {
+		ApplicationContext ctx = new ClassPathXmlApplicationContext("bean.xml");
+
+		Man man = ctx.getBean("peter", Man.class); // 抽象类不能定义引用
+		System.out.println(man.getOne() == man.getOne()); // false
+	}
+
+}
+```
