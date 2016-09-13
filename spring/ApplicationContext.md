@@ -7,6 +7,7 @@
 1. [国际化支持](#一国际化支持)
 2. [事件机制](#二事件机制)
 3. [使用IoC方式使bean获取Spring容器](#三使用ioc方式使bean获取spring容器)
+4. [使用IoC方式使bean获取本身的id](#使用ioc方式使bean获取本身的id)
 
 <br><br>
 
@@ -240,3 +241,9 @@ public class SpringTest {
 
 }
 ```
+
+<br><br>
+
+### 四、使用IoC方式使bean获取本身的id：[·](#目录)
+- ApplicationContext同样提供了让bean获取自己id的方式，和获取容器引用方法完全相同，IoC方式.
+- BeanNameAware接口，其中的方式是public void setBeanName(String name);
