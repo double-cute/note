@@ -6,7 +6,7 @@
 <br><br>
 
 ## 目录
-1. [注入依赖所使用的各种标签（包含强制依赖）](#一注入依赖所使用的各种标签)
+1. [注入依赖所使用的各种标签（包含强制依赖）](#一注入依赖所使用的各种标签包含强制依赖)
 2. [注入普通值：value](#二注入普通值value-)
 3. [注入其它bean：ref](#三注入其它beanref-)
 4. [注入嵌套bean：bean](#四注入嵌套beanbean-)
@@ -40,7 +40,7 @@
 
 - Spring容器通常是智能的，在初始一个bean的时候会自动检测其依赖的bean是否已经创建，只有在被依赖bean创建后才会继续初始化当前bean.
   - 但有时候Spring也会“忘记”先自动初始化被依赖的bean，那就是被依赖bean是在初始化块中使用的，那Spring就无法检测了，这会导致NullPointerException异常.
-  - 这时可以在bean标签中使用depends-on属性强行指定当前bean依赖另一个bean，这样Spring就会在初始化当前bean之前强制初始化depends-on的bean了！！
+  - 这时可以在bean标签中使用**depends-on**属性强行指定当前bean依赖另一个bean，这样Spring就会在初始化当前bean之前强制初始化depends-on的bean了！！
   - 示例：\<bean id="..." class="..." depends-on="依赖的bean的id"\>
 
 <br><br>
