@@ -35,7 +35,7 @@
     2. 如果是Web应用，则Web容器提供了优雅的方法保证可以在程序退出之前关闭Spring容器.
     3. 但普通Java Application则没有提供这样的功能，只能让Spring容器向JVM注册一个关闭钩显式关闭才行：
 
-```Java
+```java
 actx.registerShutdownHook();
 ```
 
