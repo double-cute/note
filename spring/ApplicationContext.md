@@ -7,7 +7,7 @@
 1. [国际化支持](#一国际化支持)
 2. [事件机制](#二事件机制)
 3. [使用IoC方式使bean获取Spring容器](#三使用ioc方式使bean获取spring容器)
-4. [使用IoC方式使bean获取本身的id](#使用ioc方式使bean获取本身的id)
+4. [使用IoC方式使bean获取本身的id](#四使用ioc方式使bean获取本身的id)
 
 <br><br>
 
