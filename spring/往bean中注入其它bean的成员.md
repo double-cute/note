@@ -4,11 +4,12 @@
 <br><br>
 
 ## 目录
-1.
+1. [Spring提供的注入其它bean的成员的工厂类]()
+2. [功能以及语法]()
 
 <br><br>
 
-### 一、Spring提供的注入其它bean的成员的工厂类：
+### 一、Spring提供的注入其它bean的成员的工厂类：[·](#目录)
 - 都是实现了FactoryBean工厂类的：
   1. PropertyPathFactoryBean：注入getter值.
     - 由于getter都是通过一串路径调用的，比如person.son.age（最后调用的是getAge()）.
@@ -19,7 +20,7 @@
 
 <br><br>
 
-### 二、功能以及语法：
+### 二、功能以及语法：[·](#目录)
 - 上述三种工厂类可以完成两种任务：
   1. 把目标作为一个值注入到其它bean中，称为“导出为值”.
   2. 直接把目标导出为一个独立的bean，称为“导出为bean”.
@@ -85,6 +86,14 @@
 <bean id="aMethodBean" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
     <property name="targetObject" ref="anOtherBean"/>
     <property name="targetMethod" value="getInt"/>
+    <!-- 使用property name="arguments"标签还可以为方法传参 -->
+        <property name="arguments">
+            <value>15</value>
+            <list>
+                <value>lala</value>
+                <value>jiji</value>
+            </list>
+        </property>
 </bean>
 <!-- anOtherBean = anOtherBean.getInt(); -->
 ```
@@ -101,3 +110,16 @@
 ```
 
 - **注意：** 这里的id不能理解成“导出bean的id”，这几个工厂类的处理逻辑是，如果没有传入property，就会把id解析成property！
+
+
+```html
+<!-- 属性域 -->
+<property name="age">
+    <bean id="person.son.age" class="org.springframework.beans.factory.config.PropertyPathFactoryBean"/>
+</property>
+
+<!-- 静态数据域 -->
+<property name="age">
+    <bean id="java.sql.Connection.TRANSACTION_SERIALIZABLE" class="org.springframework.beans.factory.config.FieldRetrievingFactoryBean"/>
+</property>
+```
