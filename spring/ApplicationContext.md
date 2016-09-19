@@ -22,7 +22,7 @@
 <!-- 类型必须是如下，Spring容器已经为你实现好了 -->
 <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
     <!-- ResourceBundleMessageSource有一个名为basenames的列表属性 -->
-        <!-- 用来存放资源文件列表 -->
+        <!-- 用来qw存放资源文件列表 -->
     <property name="basenames">
         <!-- 用list标签列出所有要用到的资源文件（的basename） -->
         <list>
