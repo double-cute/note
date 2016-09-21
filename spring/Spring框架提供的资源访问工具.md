@@ -78,7 +78,7 @@
 
 - **ApplicationContext就实现了该接口**，因此Spring容器本身就是一个资源加载器：
   - 因此完全不需要自己new出来Resource对象来加载资源，而是直接通过ApplicationContext的getResource来加载资源.
-- **getResource的实现逻辑：**
+  - **getResource的实现逻辑：**
 
 | 参数String location的形式 | 加载规则 |
 | --- | --- |
@@ -136,12 +136,12 @@ ApplicationContext actx = new FileSystemXMLApplicationContext("file:/bean.xml");
 ### 五、ResourceLoaderAware：使bean通过IoC方式自动持有一个ResourceLoader  [·](#目录)
 - 实现了ResourceLoaderAware接口的bean被Spring检测到时，会自动将一个实现了ResourceLoader的资源加载器引用传给该bean，使其持有.
   - 只不过Spring容器传给bean的是**Spring容器本身**，因为Spring容器本身实现了ResourceLoader接口.
-- 实现了aware接口，就必须在Bean类中维护一个ResourceLoader对象引用，并提供setter和getter对象.
-  - Spring容器通过setter将自身传给该bean.
+- 实现了aware接口，就必须在Bean类中**维护一个ResourceLoader对象引用**，并**提供setter和getter**.
+  - Spring容器通过setter将**自身**传给该bean.
 
 <br><br>
 
-### 六、往bean中注入Resource：
+### 六、往bean中注入Resource：[·](#目录)
 - 不管是通过new XxxResource的方式还是直接通过ApplicationContext.getResource的方式都会使资源的location硬编码到业务逻辑代码中，非常不合理.
   - 最好的方式是将Resource作为以来注入到bean中，将资源的location放在配置文件中管理.
 
