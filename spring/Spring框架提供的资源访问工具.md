@@ -5,12 +5,12 @@
 <br><br>
 
 ## 目录
-1. [Resource接口]()
-2. [创建Resource对象]()
-3. [ResourceLoader接口：资源加载器]()
-4. [Spring容器加载bean.xml配置的5种location写法]()
-5. [ResourceLoaderAware：使bean通过IoC方式自动持有一个ResourceLoader]()
-6. [往bean中注入Resource]()
+1. [Resource接口](#一resource接口)
+2. [创建Resource对象](#二创建resource对象)
+3. [ResourceLoader接口：资源加载器](#三resourceloader接口资源加载器--)
+4. [Spring容器加载bean.xml配置的5种location写法](#四spring容器加载beanxml配置的5种location写法)
+5. [ResourceLoaderAware：使bean通过IoC方式自动持有一个ResourceLoader](#五resourceloaderaware使bean通过ioc方式自动持有一个resourceloader--)
+6. [往bean中注入Resource](#六往bean中注入resource)
 
 <br><br>
 
