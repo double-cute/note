@@ -5,11 +5,16 @@
 <br><br>
 
 ## 目录
-1.
+1. [Resource接口]()
+2. [创建Resource对象]()
+3. [ResourceLoader接口：资源加载器]()
+4. [Spring容器加载bean.xml配置的5种location写法]()
+5. [ResourceLoaderAware：使bean通过IoC方式自动持有一个ResourceLoader]()
+6. [往bean中注入Resource]()
 
 <br><br>
 
-### 一、Resource接口：
+### 一、Resource接口：[·](#目录)
 - 是Spring提供的一种比JRE更强大的访问资源的工具，但它只是一个抽象接口，抽象除了访问资源的各种通用的接口方法.
 - 而Spring也提供了若干Resource的实现类，以完成对不同类型资源的访问：
 
@@ -44,15 +49,15 @@
 
 <br><br>
 
-### 二、创建Resource对象：
+### 二、创建Resource对象：[·](#目录)
 
 | 实现类 | 创建 | 说明 |
 | --- | --- | --- |
-| UrlResource | Resource r = new UrlResource("file:data.xml"); | URL必须制定协议前缀（http:、ftp:、file:(本地文件系统)） |
+| UrlResource | Resource r = new UrlResource("http://xxx/data.xml"); | URL必须制定协议前缀（http:、ftp:、file:(本地文件系统)） |
 | ClassPathResource | Resource r = new ClassPathResource("bean.xml"); | 自动搜索CLASSPATH（如果是Web应用的话，自动搜索WEB-INF/classes） |
 | FileSystemResource | Resource r = new FileSystemResource("bean.xml"); | OS本地文件系统内的路径 |
-| ServletcContextResource | Resource r = new ServletContextResource(application, "WEB-INF/xxx.xml"); | 第一个参数是ServletContext对象，路径必须是相对WebContent根目录，通过该方法可以让JSP访问到WEB-INF中的内容 |
-| ByteArrayResource | ByteArrayResource(byte[] ba); | 直接利用一个字节数组建立，由于访问的资源是内存中的数组，因此getFilename方法无效 |
+| ServletcContextResource | Resource r = new ServletContextResource(**application**, "WEB-INF/xxx.xml"); | 第一个参数是ServletContext对象，路径必须是相对WebContent根目录，通过该方法可以让JSP访问到WEB-INF中的内容 |
+| ByteArrayResource | ByteArrayResource(**byte[] ba**); | 直接利用一个字节数组建立，由于访问的资源是内存中的数组，因此getFilename方法无效 |
 
 
 - **关于InputStreamResource和ByteArrayResource的讨论：**
@@ -67,4 +72,98 @@
 
 <br><br>
 
-### 三、
+### 三、ResourceLoader接口：资源加载器  [·](#目录)
+- 实现了ResourceLoader的类都可以作为**资源加载器**，因为接口中规定了必须实现：Resource getResource(String location);
+  - 即通过getResource来加载资源.
+
+- **ApplicationContext就实现了该接口**，因此Spring容器本身就是一个资源加载器：
+  - 因此完全不需要自己new出来Resource对象来加载资源，而是直接通过ApplicationContext的getResource来加载资源.
+- **getResource的实现逻辑：**
+
+| 参数String location的形式 | 加载规则 |
+| --- | --- |
+| 以"classpath:"作为前缀 | 用ClassPathResource加载资源 |
+| 以"file:"作为前缀 | 以UrlResource访问本地文件系统资源（注意**不是**FileSystemResource） |
+| 没有任何前缀 | 以ApplicationContext的实现类为依据决定使用哪种Resource实现类 |
+
+- 在没有任何前缀的情况下：
+
+| ApplicationContext的实现类 | 采用的Resource的实现类 |
+| --- | --- |
+| FileSystemXMLApplicationContext | FileSystemResource |
+| ClassPathXmlApplicationContext | ClassPathResource |
+| XmlWebApplicationContext | ServletContextResource |
+
+**因此，在初始化ApplicationContext本身时也可以利用上述规则，即，用ApplicationContext的实现类new出Spring容器时，构造器的参数（bean.xml）本身就是资源的location.**
+
+<br><br>
+
+### 四、Spring容器加载bean.xml配置的5种location写法：[·](#目录)
+
+1. [三、]所介绍的普通规则.
+2. "classpath*:"前缀：
+  - **只能用于ApplicationContext加载bean.xml，不能用于普通的Resource加载资源.**
+  - 使用ClassPathResourc加载bean.xml
+  - 会递归搜索classes/中全部符合条件的配置文件，也就是说可以同时加载**多个**配置文件.
+  - "classpath:"前缀默认只会搜索classes/下的第一个符合要求的配置文件.
+  - 例如：
+    1. classpath:po.xml  --  只会搜索classes/下第一个po.xml
+    2. classpath*:bean.xml  --  会递归搜索classes/中所有名为bean.xml的文件，包括其子目录classes/aa/下也会.
+3. 使用通配符*：
+  - 例如bean*.xml
+  - 则会在相应目录下寻找所有以"bean"作为前缀的配置文件.
+4. "classpath*:"前缀和*通配符相结合.
+5. "file:前缀"
+  - FileSystemXMLApplicationContext并不区分相对路径和绝对路径，**全部都当成相对路径处理**.
+  - 也就是说：
+
+```java
+// 两者都是相对路径bean.xml
+ApplicationContext actx = new FileSystemXMLApplicationContext("bean.xml");
+ApplicationContext actx = new FileSystemXMLApplicationContext("/bean.xml");
+```
+- 如果硬要在FileSystemXMLApplicationContext下加载bean.xml指定绝对路径，必须使用file:前缀
+
+```java
+// 还是相对路径
+ApplicationContext actx = new FileSystemXMLApplicationContext("file:bean.xml");
+// 这回是绝对路径了
+ApplicationContext actx = new FileSystemXMLApplicationContext("file:/bean.xml");
+```
+
+<br><br>
+
+### 五、ResourceLoaderAware：使bean通过IoC方式自动持有一个ResourceLoader  [·](#目录)
+- 实现了ResourceLoaderAware接口的bean被Spring检测到时，会自动将一个实现了ResourceLoader的资源加载器引用传给该bean，使其持有.
+  - 只不过Spring容器传给bean的是**Spring容器本身**，因为Spring容器本身实现了ResourceLoader接口.
+- 实现了aware接口，就必须在Bean类中维护一个ResourceLoader对象引用，并提供setter和getter对象.
+  - Spring容器通过setter将自身传给该bean.
+
+<br><br>
+
+### 六、往bean中注入Resource：
+- 不管是通过new XxxResource的方式还是直接通过ApplicationContext.getResource的方式都会使资源的location硬编码到业务逻辑代码中，非常不合理.
+  - 最好的方式是将Resource作为以来注入到bean中，将资源的location放在配置文件中管理.
+
+- Spring对Resource注入bean的支持：
+  - Bean类中维护一个Resource属性（面向接口）
+
+```java
+public class XxxBean {
+    private Resource res;
+    // res's setter & getter
+    ...
+}
+```
+
+- bean.xml中直接给出资源location即可，**无须交代Resource**：
+
+```html
+<bean id="xxx" class="org.lirx.app.xxxBean">
+    <!-- 因为一旦Spring容器检测到res域的类型是Resource，就会自动将Spring容器本身set给该bean -->
+    <!-- 因此无须再ref到一个Resource实现类bean上了，直接给出locatin即可 -->
+        <!-- location的书写规则同ApplicationContext这个ResourceLoader（由容器本身实现类决定） -->
+    <property name="res" value="classpath:test.xml"/>
+    ...
+</bean>
+```
