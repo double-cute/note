@@ -41,3 +41,30 @@
 | File getFile(); | 如果资源师文件则返回文件句柄 |
 
 - **Resource不仅可以在Spring项目中使用，也单独使用，只不过单独使用会使代码于Spring框架相耦合.**
+
+<br><br>
+
+### 二、创建Resource对象：
+
+| 实现类 | 创建 | 说明 |
+| --- | --- | --- |
+| UrlResource | Resource r = new UrlResource("file:data.xml"); | URL必须制定协议前缀（http:、ftp:、file:(本地文件系统)） |
+| ClassPathResource | Resource r = new ClassPathResource("bean.xml"); | 自动搜索CLASSPATH（如果是Web应用的话，自动搜索WEB-INF/classes） |
+| FileSystemResource | Resource r = new FileSystemResource("bean.xml"); | OS本地文件系统内的路径 |
+| ServletcContextResource | Resource r = new ServletContextResource(application, "WEB-INF/xxx.xml"); | 第一个参数是ServletContext对象，路径必须是相对WebContent根目录，通过该方法可以让JSP访问到WEB-INF中的内容 |
+| ByteArrayResource | ByteArrayResource(byte[] ba); | 直接利用一个字节数组建立，由于访问的资源是内存中的数组，因此getFilename方法无效 |
+
+
+- **关于InputStreamResource和ByteArrayResource的讨论：**
+  1. InputStreamResource直接从输入流中读取，限制非常多，并且Spring对其的实现**效率不高**.
+  2. 还是因为InputStreamResource利用的是输入流，因此**无法多次读取**（isOpen一直为true）.
+    1. 但ByteArrayResource由于是数组因此**效率非常高**.
+    2. 同时也不存在多次读取的问题，**可以随意读**.
+    3. 字节数组是非常**通用且常用**的数据传输方法，Socket通信、线程通信基本都使用字节数组交换信息.
+- 因此通常的做法是：
+  1. 尽量**少用InputStreamResource**.
+  2. 如果刚好碰到使用InputStreamResource的情况，那么也应该将其**转换为ByteArrayResource后再进行处理**.
+
+<br><br>
+
+### 三、
