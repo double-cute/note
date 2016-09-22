@@ -10,10 +10,10 @@
 <br><br>
 
 ### 一、基本结构：[·](#目录)
-1. 根元素<hibernate-mapping>
-2. 子元素中每个<class>对应一个PO映射.
-3. <hibernate-mapping>可以包含多个<class>映射，**但最好的做法是一个hbm就只有一个<class>映射**，并且在很多情况下是**必须的**.
-4. 一个<class>中可以定义主键映射（<id>）、普通列映射（<property>）等.
+1. 根元素hibernate-mapping
+2. 子元素中每个class对应一个PO映射.
+3. <hibernate-mapping>可以包含多个class映射，**但最好的做法是一个hbm就只有一个class映射**，并且在很多情况下是**必须的**.
+4. 一个class中可以定义主键映射（id）、普通列映射（property）等.
 5. hbm文件其实就是SQL的create table的缩影，相当于定义了表、表中的数据列.
 
 示例：
@@ -48,7 +48,7 @@ create table news_table   --->  PO:org.crazyit.app.domain.News
 <br><br>
 
 ### 二、hibernate-mapping的属性：只列举一些基础的属性 [·](#目录)
-- 先介绍那些<hibernate-mapping>和<class>共有的属性，只不过局部覆盖全局下<class>的同名属性覆盖<hibernate-mapping>的.
+- 先介绍那些hibernate-mapping和class共有的属性，只不过局部覆盖全局下class的同名属性覆盖hibernate-mapping的.
 
 **罗列共同属性：**
 
