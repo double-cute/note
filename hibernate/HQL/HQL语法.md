@@ -1,0 +1,124 @@
+# HQL语法
+
+<br><br>
+
+## 目录
+1.
+
+<br><br>
+
+### 一、from和select：
+- **from**
+  1. 是最基本最简单的HQL语句，所有HQL语句都必须包含from，用于**确定查找目标**.
+  2. 目标就是指数据表，但不过在Hibernate中对应的是PO类，因此from紧跟PO类名.
+  3. 不加任何限定就表示查找该表的所有记录（即该PO类的所有PO对象）.
+
+```sql
+from Person   // 查询Person的所有PO
+
+// 为查询得到的每个PO起一个临时的变量名p
+    // 可以在HQL语句的其它部分通过该变量名来访问该PO对象
+from Person as p   // as可以省略，但是as能增加可读性
+```
+
+- 注意：上面的语句相当于以下Java代码中的"Person p"
+
+```java
+for (Iterator it = result.iterator; it.hasNext(); ) {
+    Person p = it.next();
+}
+```
+
+！Person是Java类，就不用说了，p就是一个Java变量，因此这些命名都**要符合Java命名规范**，大小写就更不用说了（必须是大小写敏感的）.
+
+- **select**
+  1. 单独的from只能查询PO对象，而加了select限定后就可以查询PO的属性及其各种组合了.
+  2. 例如：select p.name, p.content from Person as p
+  3. select的选择非常灵活，不仅可以查询属性组合，也可以查询PO对象（和from一样），也能改变返回结果的类型：
+
+```sql
+// HQL返回结果永远是List，默认情况下List中元素的类型都是无类型的Object
+
+// List元素类型：Object
+select p.name from Person as p   // 正常
+select p.name.firstName from Person as p   // 属性链
+
+// List元素类型：Object[]，专门存放组合数据
+select p.name, p, p.name.firstName from Person as p
+
+// 为查询项取别名以简化HQL语句：
+select p.name as personName from Person as p
+
+// List元素类型：其它类型，使用new关键字
+select new list(p.name, p.address) as li from Person as p   // 每个元素的类型为List
+select new map(p.name as personName) from Person as p   // 每个元素类型为Map，其中以personName为key，以Person对象为value
+select new MyClass(p.name, p.age) from Person as p   // 每个元素类型为自己构造的MyClass
+```
+
+<br><br>
+
+### 二、关键字和聚集函数：
+- HQL同样支持distinct、all、descend等SQL常用的关键字，用法也和SQL一模一样.
+- SQL支持的所有聚集函数HQL同样也支持：count、max、min、sum、avg等
+
+```sql
+select count(*) from Person
+select max(p.age) from Person as p
+...
+```
+
+<br><br>
+
+### 三、多态查询：
+- HQL不仅会查from指定的PO类，还会查所有该PO类的子类.
+- 因此from后可以制定任意Java类或者接口，查询会返回该类或者其所有子类或实现类.
+
+```sql
+from java.lang.Object o
+from Comparable as p
+```
+
+<br><br>
+
+
+
+inner/left/right/full join在hibernate中本身就是等值连接：
+只不过这里的等值连接的含义是：外键关联下的等值，即默认在参考列和被参考列之间做等值连接.
+
+因此以下的奇怪现象：from p1 inner join p2 where p1.name = p2.parentName
+这种情况下，等值的含义是外键参照（比如p2.parent_id参照了p1.id，那么在有这种外键关联的情况下，默认等值连接的内容是p1.id = p2.parent_id）
+那么where子句中也是一个等值判断，因此只能叫等值连接中的等值连接了！
+
+ - 这里有一个“连接”的概念上的强调：连接是指，where条件中逻辑符号两边必须是两张表的属性，比如where p1.name = p2.content，那么name和content分别来自两张表，因此才能称得上链接，如果p1.name = p1.content那就不叫链接了，都在一张表中，链接必定是两张表之间的.
+
+因此hibernate的所有各种join都是默认建立在外键关联的等值连接上的，因此重新对hibernate的链接查询进行分类的话应该这样分：只基于where子句分，where子句是等值链接就是等值链接，where子句是费等职链接就是费等职链接.
+- 因为默认的外键链接分到等值连接的类目中没有意义，因为所有hql链接都默认包含该链接.
+
+- 但是，又有一个新的问题，那就是where中进行等值连接的情况真心很少发生，实际中几乎不存在，因为等值连接的需求基本上就只有外键的等值连接.
+  - 仔细想想，什么时候会用到等值连接，学生的负责老师的id参考了老师表的id，那么在查询的时候就链接一下这两列咯，其他根本没有什么需要等值连接的地方了，能想到的奇葩例子也就是比如学生喜欢的颜色和老师喜欢的颜色相同，但这很扯淡，现实中几乎没有这样的案例.
+
+- 因此根据实际需求出发，最后还是这样分：
+  1. 等值连接：没有where条件的默认外键等值连接，比如from p1 join p2
+  2. 非等值链接：where中是非等值链接，比如from p1 join p2 where p1.age > p2.age
+  - 也就是说费等职链接其实是基于等值连接的，因为默认还是先做了外键的等值连接
+
+- 但这样分还是有问题，即使是等值连接有时也是需要使用where条件的，只不过where条件里不是多表，而就只有一张表，那不就是非连接性条件了吗？比如from p1 join p2 where p1.name like 'abc*'
+ - where中只包含跟p1有关的内容，不涉及连接问题，那么就不影响分类了.
+ - 因此升级后的分类思路就是根据where中涉及“连接”条件的类型进行分类，如果出现了非等值连接就分为费等职链接.
+
+- 但hibernate更加贴心，还提供了关键字with（相当于SQL99的on关键字）
+ - with专门用来写非等值连接，那么这样就可以只把非连接性的条件写在where中了（当然where中也可以写连接性条件，只不过这样会使where比较混乱）
+
+SQL的正规写法
+
+select
+    p1.name as name,
+    p2.age as age
+from
+    Person as p1
+inner join
+    Teacher as p2   // 包含了外键等值连接
+with
+    p1.age > p2.age   // with专门负责费等职链接
+where
+    p1.age > :argAge   // where专门负责非连接性的条件判断
