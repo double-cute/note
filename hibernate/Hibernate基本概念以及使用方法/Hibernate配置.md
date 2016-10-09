@@ -40,7 +40,7 @@
 <br><br>
 
 ### 二、常用配置属性：[·](#目录)
-- **JDBC连接属性**：见上一章范例：[\[步骤三： 将映射信息记录到Hibernate配置文件中\]](https://github.com/double-cute/note/blob/master/hibernate/Hibernate概述、部署、使用.md#三使用hibernate)
+- **JDBC连接属性**：见上一章范例：[\[步骤三： 将映射信息记录到Hibernate配置文件中\]](Hibernate概述、部署、使用.md#三使用hibernate)
   - 这里需要特别强调的就是hibernate.dialect属性，即数据库方言.
     - 各大商业数据库都对标准SQL进行了不同程度的富有特色的扩展，扩展功能各不相同，使得在操作上具有一定差异.
     - Hibernate底层对这些数据库之间的差异的细节进行了隐藏，使得你在使用Hibernate的时候根本感觉不到数据库之间的差异，但前提是你必须先告诉Hibernate你使用的是哪个数据库.
