@@ -7,6 +7,7 @@
 ## 目录
 1. [HQL的使用流程](#一hql的使用流程)
 2. [额外补充](#二额外补充)
+3. [命名查询]()
 
 <br><br>
 
@@ -70,3 +71,20 @@ public class Test {
 2. 大小写问题：
   1. HQL语句本身大小写不敏感：关键字、函数等.
   2. 但语句中的Java类名、包名、属性名等都是符合Java命名规范的，是区分大小写的.
+
+<br><br>
+
+### 三、命名查询：[·](#目录)
+- 为了最大程度的解耦，Hibernate允许将HQL语句写在配置文件中，并为其命名.
+- 然后在代码中根据这个命名加载HQL语句并进行查询（session的getNamedQuery方法），这使得HQL语句无需和业务逻辑代码相耦合了.
+
+```xml
+<!-- 用query标签定义一个HQL查询，用name属性对其命名 -->
+<query name="myQuery">
+    from Person as p where p.age > 18
+</query>
+```
+
+```java
+session的方法：Query getNamedQuery(String queryName);  // queryName就是query的命名
+```
