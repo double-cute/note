@@ -55,7 +55,7 @@
 
 - **数据库连接池属性**：
   - Hibernate自带有连接池，并且提供了一个属性hibernate.connection.pool_size来设置连接池最大并发数，但该连接池仅有测试价值，实际中还是要使用一些成熟的连接池，如c3p0，因此hibernate.connection.pool_size该属性设置通常会被替换为c3p0连接池配置.
-  - 配置示例键上一章：[\[步骤三： 将映射信息记录到Hibernate配置文件中\]](https://github.com/double-cute/note/blob/master/hibernate/Hibernate概述、部署、使用.md#三使用hibernate)
+  - 配置示例键上一章：[\[步骤三： 将映射信息记录到Hibernate配置文件中\]](Hibernate概述、部署、使用.md#三使用hibernate)
 
 - **其它非常实用的配置**：
   1. hibernate.show_sql：[true/false]，是否在控制台输出Hibernate生成的SQL语句.
