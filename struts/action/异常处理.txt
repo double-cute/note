@@ -1,0 +1,49 @@
+1.Struts2的异常处理机制：
+
+  a.Struts2采用声明式方法管理异常处理：
+    i.最大的特点是异常处理和action的控制逻辑相分离
+    ii.即，如果异常处理的代码发生改动完全不需管action控制逻辑的代码，因为两者是分离的
+    iii.和普通的异常处理的区别是：普通异常处理是在action中加入大量的try-catch块，但这样做异常处理直接出现在action代码中
+！这就导致异常处理和逻辑控制代码相耦合，非常不利于后期代码的维护
+
+  b.Struts2如何处理异常：
+    i.首先Struts2规范下，excute方法可以抛出异常: throws Exception
+    ii.这也就是说如果action中有什么异常发生就直接在代码中抛出即可，无需自己catch自己处理
+    iii.抛出之后Struts2框架会接受该异常，并且在action外面单独处理，这样就做到了异常处理和action相分离的目的了
+
+
+2.异常处理的部署：
+
+  a.在struts.xml中部署异常处理：<exception-mapping>标签
+<exception-mapping exception="抛出的异常的Java类" result="异常处理页面的逻辑视图"/>
+
+  b.因此异常处理部署的本质是"异常类型"到"异常处理页面"的映射
+例如：<exception-mapping exception="java.sql.SQLException" result="sqlerr"/>
+如果该action中抛出一个java.sql.SQLException类型的异常，那么就会交给逻辑视图名为sqlerr的页面处理
+而逻辑视图"sqlerr"到底代表哪个视图还是通过<result>标签定义
+例如：<result name="sqlerr">/sqlerr.jsp</result>
+
+  c.Struts2异常处理的流程：
+    i.在action中随意抛出异常
+    ii.Struts2框架在action之外接受这些异常
+    iii.然后根据struts.xml中所指示的，将这些异常调度给相对应的异常处理页面（JSP）进行处理
+
+
+3.局部异常映射和全局异常映射：
+ 
+  a.和<result>标签一样，<exception-mapping>也有局部和全局
+
+  b.原则还是相同的，在<action>下定义的就是局部异常，它只能映射该action抛出的异常，而在<global-exception-mappings>下定义的映射就是全局的
+
+  c.同样，如果exception类型冲突，局部隐藏全局
+
+
+4.输出异常信息：
+
+  a.可以在异常处理页面（接受Struts框架转发的异常的那个页面）可以使用struts标签显示异常
+
+  b.<s:property value="exception"/>输出异常对象本身
+  
+  c.<s:property value="exception.message"/>  输出异常信息
+
+  d.<s:property value="exceptionStack"/> 输出异常发生时的堆栈信息

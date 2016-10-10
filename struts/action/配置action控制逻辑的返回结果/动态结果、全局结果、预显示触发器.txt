@@ -1,0 +1,55 @@
+1.动态结果：
+
+  a.说白了还是在struts配置文件中使用通配符，因此就可以在<result>标签（属性、值）中使用通配符
+
+  b.例如：
+<action name="crud_*" ...
+    <result>/{1}.jsp</result>
+
+  c.同时，Struts也允许在struts配置文件的任何地方使用OGNL表达式，使配置更加灵活
+
+
+2.全局结果：
+
+  a.<result>标签除了可以定义在<action>中还可以定义在<global-results>中，前者是局部结果（只对某个action有效）
+！后者则是全局结果，对整个Web应用中的所有action都有效
+
+  b.<global-results>标签也要定义在一个包里（package）：
+<package name="lirx" extends="struts-default">
+    <global-results>
+        <result name="sucess">/xx.jsp</result>
+    </global-results>
+</package>
+
+  c.有了全局定义，局部定义甚至可以不加任何结果：
+<action ...>
+    <result>.</result>   #如果局部找不到结果就会自动去全局范围内找结果
+
+
+3.预显示触发器：
+
+  a.即PreResultListener监听器，顾名思义，就是在action返回之后，物理视图被调用之前触发（回调），可以在这个时机完成一些特殊任务
+
+  b.使用方法：
+    i.该监听器是被action回调，因此它应该属于action
+    ii.监听器部署的方式还是老样子，注册给所属的组件，也就是说将监听器注册给相应的action
+    iii.由于Struts框架隐藏了action（即无法在其它地方获取action句柄），因此唯一能完成注册的地方就是在action之内
+    iv.同时，也必须在可执行体（方法体）内完成注册，因此就只能在action的控制逻辑中注册，即excute或者其它控制逻辑中
+
+@Override
+public String execute() throws Exception {
+	// 先获取当前所在Action的回调句柄
+	ActionInvocation invocation = ActionContext.getContext().getActionInvocation();
+		
+	invocation.addPreResultListener(new PreResultListener() { // 然后往当前Action的回调句柄中添加监听器
+	// 该接口是一个函数式接口
+		@Override
+		public void beforeResult(ActionInvocation invocation, String resultCode) { // 顾名思义就是在正式显示物理视图之前要执行的任务
+		// invocation还是当前Action的回调句柄
+		// resultCode就是物理视图"success"、"input"等字符串
+				
+			// invocationContext实际上就是ActionContext
+			// 之后可以通过Struts标签访问加入的新属性：<s:property value="extra"/>
+			invocation.getInvocationContext().put("extra", resultCode);
+		}
+	});

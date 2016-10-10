@@ -1,0 +1,44 @@
+1.I18N步骤：
+
+  a.准备I18N资源文件：资源文件的baseName这里假设是mess
+    i.编写资源文件：mess.properites
+loginPage=登陆
+errorPage=异常
+    ii.接着用native2ascii将含有非西欧字符的资源文件彻底转化为统一的Unicode形式（Java可以识别）
+native2ascii mess.properties mess_zh_CN.properties
+    iii.将资源文件放到类加载路径下：WEB-INF/classes
+    iv.配置Struts2的常量：struts.custom.i18n.resource=mess
+！！至此，I18N部署完毕，可以在JSP和Java程序中使用国际化输出了
+
+！！资源文件命名规则：名称（小写）_语言（小写）_地区（大写）.properties
+
+  b.JSP输出I18N：
+    i.<s:text name="keyname"/>
+    ii.<s:textfield name="编辑框的名称" key="keyname"/>
+    iii.<s:submit key="keyname"/>
+！上面这些标签中后两个代表表单中的组件元素，其中keyname就是指资源文件中的key字符串，组件的文本提示内容将会用key所代表的value所代替
+
+  c.Action中输出I18N：使用ActionSupport提供的getText方法：String getText(String keyname);  // 返回资源文件中key对应的value值
+
+
+2.输出带占位符的I18N：
+
+  a.资源文件中允许使用占位符：{N}，从0开始计
+loginPage={0} and {1}, welcome!
+
+  b.占位符所代表的字符串可以在程序中动态给出
+
+  c.JSP填补占位符：<s:param>
+<s:text name="loginPage">
+    <s:param>Peter</s:param>
+    <s:param>Tom</s:param>
+</s:text>
+！从上带下依次填补{0}、{1}
+
+  d.Action中填补占位符：String getText(String keyname, String[] args);
+    i.可以看到是getText的一个重载版本，args为参数列表
+    ii.例如：getText("loginPage", new String[] { "Peter", "Tom" });
+
+  e.Struts2还允许直接在I18N资源文件中使用表达式来避免在JSP和Action中为占位符传参：
+successTip=${username}，欢迎！
+！如果JSP上游Action或者Action本身的还有username的getter和setter就可以直接调用，避免自己手动传参！
