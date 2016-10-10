@@ -39,7 +39,7 @@
 - 小结：Eclipse管理Web应用程序的开发，其中[root]代表发布时的应用程序根目录名称
 
 | 源码 | 发布时对应到 | 说明 |
-| --- | --- |
+| --- | --- | --- |
 | WebContent/ | 应用程序根目录 | 如果工程名为StrutsTest，那么发布时就会变成StrutsTest，**应该包含web.xml** |
 | src/ | [root]/WEB-INF/classes/ | 存放应用程序运行时组件，**应该包含struts.xml** |
 | [User Library] | [root]/WEB-INF/lib/ | 存放程序运行时依赖库（**非载体库**）|
