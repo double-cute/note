@@ -1,0 +1,51 @@
+1.struts.xml中配置结果的语法：
+
+  a.实际上就是定义逻辑视图到物理视图的映射：
+<action...
+    <result name="" type="">物理视图名</result>
+</action>
+
+  b.name就是逻辑视图的名称，如果采用ActionSupport规范，那么视图名就是"success"、"error"、"input"等
+
+  c.type是结果类型（即Struts2所支持的视图层技术，不止JSP一种），支持的结果类型有dispatcher、plainText、velocity等等，各种各样
+
+  d.name和type都可以省略，其默认值分别是"success"和"dispatcher"，其中dispatcher表示物理视图是JSP页面
+
+  e.<result>标签实际上是带参数的，只不过type属性不同所带的参数不同，因此接下来介绍不同的结果类型
+！但是所有结果类型肯定都具有一个共同的参数location，即定位到哪个具体的物理视图
+！！上面不带参数的是简写形式，因为只带一个location参数可以直接将location参数值放在result标签中间
+
+
+2.plainText类型：
+
+  a.显而易见就是纯文本类型，会直接将物理视图的纯代码（文本）显示给用户
+
+  b.考虑到纯文本中可能包含非西欧字符，由于不像JSP那种脚本页面，可以直接在页面中设置编码，然后运行脚本时自动修改编码
+！纯文本没有动态特性，因此需要在配置时指明编码，所有有一个charSet参数
+<result type="plainText">
+    <param name="location">/welcome.jsp</param>
+    <param name="charSet">GBK</param>
+</result>
+
+
+3.redirect类型：
+
+  a.其实和dispatcher一样，都是JSP类型，唯一的区别就是dispatcher采用forward转发，而redirect就是重定向
+
+  b.重定向会丢失所有的请求参数、请求属性、Action示例和Action中封装的属性，同时浏览器地址栏中的URL也会发生改变
+！即重新生成一个全新的请求
+
+
+4.redirectAction类型：
+
+  a.和redirect一样，只不过redirect重定向到JSP页面，redirectAction重定向到新的action
+
+  b.同样是重定向，同样丢失各种，并且浏览器地址栏URL发生改变
+
+  c.需要的参数是actionName（指定新的action的名称）和namespace（新action所在的命名空间）
+<result name="success" type="redirectAction">
+    <param name="actionName">login</param>
+    <param name="namespace">/welcome</param>
+</result>
+！其中namespace可以省略，默认为所在package的命名空间，即如果该result所对应的action处在某package里，那么namespace就等于该package的命名空间
+

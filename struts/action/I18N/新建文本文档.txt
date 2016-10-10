@@ -1,0 +1,59 @@
+1.I18N资源文件有4中作用域：全局、包、Action、临时
+
+2.全局：
+ 
+  a.就是之前讲过的，直接配置Struts2常量struts.custom.i18n.resource=baseName
+
+  b.这种配置方式全局有效，Web应用的所有JSP和Action都能访问到
+
+  c.特点是资源文件放在类加载路径的根目录下：WEB-INF/classes
+
+  d.就只有全局作用域才需要配置Struts常量，其余都无需进行任何配置，直接就是Struts2的内部约定，可以直接生效，搜索资源文件
+
+
+2.包：
+
+  a.作用域是Java包，即某个包下的所有Java类都可以使用（包括子包中的）
+
+  b.特点：
+    i.资源文件必须放在某个Java包中（当然是WEB-INF/classes下咯，必须是类加载目录中）
+    ii.资源文件名必须是:package_语言_地区.properties，baseName就是="package"
+！例如：将package_zh_CN.properties放在org.lirx.app下，那么app包中所有的Java类（包括子包中的）都可以使用该资源
+
+
+3.Action：
+
+  a.作用域就只有某个具体的Action，即只有某“一”个特定的Action才能使用它，即独享
+
+  b.特点：
+    i.资源文件必须和独享它的Action位置相同，比如都位于org.lirx.app.actions包下（即同目录）
+    ii.命名必须是：Action的Java类名_语言_地区.properties
+！例如：LoginAction_zh_CN.properties和LoginAction.class都必须在org.lirx.app.actions包下
+
+
+4.临时：
+
+  a.之中方式只适用于JSP，即在JSP页面中要输出I18N信息时临时指定所使用的资源文件
+
+  b.核心标签：<s:i18n name="baseName">
+    i.baseName直接指定了目标资源文件的基名
+    ii.该标签作为要输出I18N信息的父标签，其所有子标签都会加载它指定的资源文件
+    iii.示例：
+<s:i18n name="mess">
+    <title><s:text name="loginPage"/></title>
+</s:i18n>
+
+<s:i18n name="mess">
+    <s:form action="login">
+        <s:textfield name="username" key="user"/>
+    </s:form>
+</s:i18n>
+
+  c.临时资源文件放在classes下
+
+
+5.资源文件搜索顺序：
+
+  a.肯定是局部覆盖全局，小作用域覆盖大作用域咯
+
+  b.如果在最近作用域的资源文件中找不多对应的key就跑到更大一级的资源文件中去中，还没有再跑到上层，直到跑到全局资源文件中去找
