@@ -4,10 +4,6 @@
 	"http://struts.apache.org/dtds/struts-2.3.dtd">
 
 <struts>
-<!-- 
-    <constant name="struts.custom.i18n.resources" value="mess"/>
-    <constant name="struts.i18n.encoding" value="UTF-8"/>
--->
 
     <package name="default" extends="struts-default">
 		<action name="login" class="org.lirx.app.action.LoginAction">
