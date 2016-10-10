@@ -3,13 +3,13 @@
 <br><br>
 
 ## 目录
-1. [struts Web应用的基本组成]()
-2. [Eclipse是如何管理Web应用程序的：源码到发布]()
-3. [一个简单struts程序：struts程序的基本开发流程]()
+1. [struts Web应用的基本组成](#一struts-web应用的基本组成)
+2. [Eclipse是如何管理Web应用程序的：源码到发布](#二eclipse是如何管理web应用程序的源码到发布--)
+3. [一个简单struts程序：struts程序的基本开发流程](#三一个简单struts程序struts程序的基本开发流程--)
 
 <br><br>
 
-### 一、struts Web应用的基本组成：
+### 一、struts Web应用的基本组成：[·](#目录)
 
         -WebContent
           -jsp, html（表现层）
@@ -55,4 +55,4 @@
   3. 在struts.xml中配置添加的action，并指定action到物理视图的映射.
   4. 设计并添加相应的物理试图（jsp等）.
 
-- 完整的程序在外面的[StrutsTest]()中，文件结构就是Eclipse中的开发结构.
+- 完整的程序在外面的[StrutsTest](StrutsTest)中，文件结构就是Eclipse中的开发结构.
