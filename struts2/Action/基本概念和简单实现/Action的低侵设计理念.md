@@ -1,42 +1,63 @@
-1.Action的作用：
+# Action的低侵设计理念
 
-  a.作用：
-    i.Struts核心filter将请求发给Action
-    ii.那么Action首先需要接受请求参数
-    iii.接着应该是解析请求参数
-    iv.根据解析的结果调用相应的model进行处理
-    v.最后将逻辑视图返回给核心filter
-！！逻辑视图不是真正的jsp页面，而是一个字符串代码，比如"success"
-！！而核心filter根据struts.xml中action的逻辑视图和物理视图的对应关系决定调用哪个物理视图
-！！物理视图就是真正的jsp页面，struts.xml中指明了这种对应关系<result name="success">welcome.jsp</result>
+<br><br>
 
-  b.那么从整个Action的作用来看它在实现上应该和Struts框架以及Web容器没有什么直接的关系，即无需调用Struts以及Web容器的API来实现Action
-！！通常情况下还是需要调用这些API，比如Servlet的session、request可能还是需要经常用到的，但这里引出了一个设计思想，那就是低侵设计
+## 目录
+1. [Action在struts流程中扮演的角色]()
+2. [Aciton的低侵入式设计]()
+3. [Action的设计规范]()
 
+<br><br>
 
-2.低侵入式设计：
+### 一、Action在struts流程中扮演的角色：[·](#目录)
+- 回顾整个处理流程：
+  1. struts核心filter将请求转发给Action.
+  2. Action接受请求参数并解析（在excute方法中进行）.
+  3. 根据解析的结果调用相应的model进行业务处理.
+  4. 最后根据业务处理的结果决定将指定的逻辑视图返回给核心filter.
 
-  a.从上面的作用可以看出Action可以完全是一个彻彻底底的POJO（Plain Ordinary Java Object），即普通Java类，它完全可以不使用任何Struts或者Web容器API来实现
-！！如果实际中完全不需要用到request、session等
+- **注意**：
+  1. 逻辑视图不是真正的jsp页面，而是一个**字符串代码**，比如"success".
+  2. 而核心filter根据struts.xml中action的逻辑视图和物理视图的对应关系决定调用哪个物理视图.
+  3. 物理视图就是真正的jsp页面，struts.xml中指明了这种映射关系：
 
-  b.实际上Struts框架API确实不包含Action，Action允许是POJO，但如果需要用到Struts提供的一些方便的功能的话（比如继承ActionSupport、调用Servlet API等），这些功能就属于Struts框架的范畴了
-！也就是说Action只是Struts规范中的一个必须的组件，但它并不包含在Struts类库（API）中，因为ACTION完全可以是一个普通Java类
+```xml
+<result name="success">welcome.jsp</result>
+```
 
-  c.这就是低侵设计，它的好处是可以完全和框架解耦，提高开发安全性和高效性，同时测试的时候可以完全脱离框架测试（因为完全可以是一个POJO），这是一个非常优秀的设计
+- 可以看到Action实际上就是请求、处理、显示结果三者之间的调度员和协调员.
+  - 而struts的核心就是Action.
+  - 而"struts"这个英文单词的释义就是“支架”，非常形象，即MVC支架.
 
-  d.但是即使可以是POJO，Action还是有一定要求的：
-    i.必须为请求参数设定数据域以及getter和setter
-    ii.老版本Struts还要求必须至少有一个excute方法，但现在也不需要了，可以在struts.xml配置action的method方法，根据method调用Action中的特定方法来处理请求
+<br><br>
 
+### 二、Aciton的低侵入式设计：[·](#目录)
+> 从Action所扮演的角色来看，它在实现上应该和struts框架以及Web容器没有什么直接的关系，即**无须**调用struts以及Web容器的API来实现Action.
+>
+> - 但在很多情况下还是需要调用这些API，特别是Servlet的session、request等，但这里引出了一个设计思想，那就是低侵设计.
 
-3.物理视图可以访问Action中任何有getter和setter的属性：
+- 首先，Action完全可以是一个彻彻底底的POJO（Plain Ordinary Java Object），即普通Java类.
+  - 完全可以不依赖任何struts或者Web容器的API来实现.
+  - 但如果实际中需要用到request、session等那就没办法了.
+- 也就是说Action只是struts规范中的一个必须的组件，但它完全可以是一个普通Java类，不依赖框架和Web容器来实现.
+- 这就是**低侵设计理念**，它的好处是：
+  1. **完全和框架解耦**.
+  2. 方便扩展和维护.
+  3. 可以脱离框架进行测试（毕竟是POJO）.
 
-  a.action返回后会继续交由具体的JSP物理视图完成剩下的响应，而物理视图可以访问上游action中的任何具有getter和setter的数据域
+<br><br>
 
-  b.因此action里还可以包含数据处理结果，然后供物理视图显示：例如private String tip; //保存model处理的结果
-！但必须提供getter和setter
+### 三、Action的设计规范：[·](#目录)
+> 即使可以是POJO，但还是有一定要求的.
 
-  c.在物理视图中访问：<s:property value="tip"/>
-    i.通过property标签访问，property代表的是上游action的属性，属性名由value给出
-    ii.然后通过Java的类反射机制调用相应名称的getter和setter，所以名字和数据域的名称无关，之和setter和getter名称有关
-    iii.同样可以访问请求参数，请求参数同样也保留在action中：<s:property value="name"/>  #加入请求参数中包含?name=Peter的话
+1. 必须为请求参数设定数据域以及getter和setter（用以接受和访问请求参数）：
+  - 核心filter会回调Action的getter来使Action捕获请求参数.
+  - 物理视图（jsp）可以访问Action中任何有getter和setter的属性.
+    1. action返回后会继续交由具体的JSP物理视图完成剩下的响应，而物理视图可以访问上游action中的任何具有getter和setter的数据域.
+    2. 因此action里还可以包含数据处理结果，然后供物理视图显示：例如private String tip; //保存model处理的结果
+    3. 在物理视图中的访问方法：\<s:property value="tip"/\>
+      - Java会通过反射机制调用getTip()得到上游Action中的属性.
+      - property中不仅包含上游Action的内容也包含请求参数，例如：<br>
+      \<s:property value="name"/\>  #假设请求参数中包含?name=Peter，这里的结果就是Peter这个字符串
+2. 老版本struts还要求必须至少有一个excute方法，但现在也不需要了.
+  - 可以在struts.xml配置action的method方法，根据method调用Action中的特定方法来处理请求.
