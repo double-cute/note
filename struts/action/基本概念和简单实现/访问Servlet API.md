@@ -1,50 +1,69 @@
-1.Action访问Servlet API的两种方式：
+# 访问Servlet API
+> 说到底action还是要经常用到Servlet API的，特别是request、application、reponse、session等对象.<br>
+> 访问方式分为两种，分别是**直接访问（ServletActionContext）**和**间接访问（ActionContext）**.
 
-  a.说到底Action还是要经常用到Servlet API的，特别是request、application、reponse、session等
+<br><br>
 
-  b.两种访问方式：ActionContext和ServletActionContext都是Struts API
-    i.间接访问：通过ActionContext工具类
-！得到的request、application等都不是真正的Servlet中的对象，而是他们保存在Action上下文中的副本，但底层会和真正的Servlet对象交互
-    ii.直接访问：通过ServletActionContext工具类
-！得到的是真正的Servlet对象
-    iii.间接访问解耦性更强，但不能获取response对象，直接访问会导致action和Servlet耦合性更强，但可以访问reponse
-！！因此，抉择是不需要response时间接访问，需要response时采用直接访问
+## 目录
+1. []()
+
+<br><br>
+
+### 一、直接访问和间接访问的区别：
+1. 直接访问：
+  - 直接获得Servlet对象（ServletContext、PageContext、HttpServletRequest、HttpServletResponse等）.
+  - 获取后就跟普通的Servlet编程没任何区别了.
+  - struts提供的API，静态类**ServletActionContext**就可以实现直接访问.
+2. 间接访问：
+  - action在内存中有自己的一片**缓存空间**，叫做**ActionContext**.
+  - 在该缓存中保存了**大量资源的链接**（比如各种Servlet对象）以便其迅速访问和利用.
+  - 只不过这些资源并**非“裸”** 的（即原封不动的PageContext、HttpServletRequest等），而是对其进行了进一步包装，使其更加方便易用.
+  - ActionContext将这些Servlet API以及其它资源包装成更加简易高效的数据结构（如Map等）.
+  - 通过它们可以间接地访问Servlet API.
 
 
-2.ActionContext间接访问：
+- **两者的优缺点比较：**
+  - 直接访问：简单暴力，但会使代码和框架耦合，不方便扩展，可以访问response.
+  - 间接访问：解耦，方便扩展，但无法访问response.
 
-  a.第一步是通过静态方法getContext获取当前Action的上下文环境：static ActionContext ActionContext.getContext();
+<br><br>
 
-  b.得到的ActionContext对象类似于Servlet中的ServletContext、PageContext、HttpSession等，都是上下文环境
-！只不过它属于当前Action的上下文环境
-！！本质还是一个类似于Map的结构，存放Action的各种属性值
+### 二、直接访问：ServletActionContext
+> 是一个struts提供的静态工具类，直接暴力获取Servlet对象.
 
-  c.接着利用得到的ActionContext对象获取各种Servlet间接对象：
-    i.Map getApplication();  //获取application对象
-    ii.Map getSession();    //获取session对象
-    iii.而ActionContext对象本身也是一种Map对象，它直接代表request对象！！
-    iv.Map getParameters();  //获取请求参数Map
+| 静态方法 | 返回类型 | 对应的内置对象 |
+| --- | --- | --- |
+| getServletContext(); | ServletContext | application |
+| getPageCotnext(); | PageContext | pageContext |
+| getRequest(); | HttpServletRequest | request |
+| getResponse(); | HttpServletResponse | response |
 
-  d.注意！以上三者得到的并不是ServletContext、HttpSession等对象，而是Map！！
-    i.这说明得到的并不是Servlet对象的直接句柄
-    ii.而是经过包装的Servlet对象的副本，而且被包装成了Map对象（比原来的ServletContext、HttpSession等更加容易操作）
-    iii.只不过对这些副本的操作最终会在底层对Servlet的真正对象进行更新（两者之间有交互）
+- 获取之后就是普通的Servlet编程了.
 
-  e.示例：
+<br><br>
+
+### 三、间接访问：ActionContext
+1. 第一步是通过ActionContext的静态方法getContext获取**当前**的action的专有缓存：<br>
+static ActionContext ActionContext.getContext();
+2. 然后通过ActionContext对象的各种getXxx方法获取Servlet的包装器对象：
+
+| 方法 | 返回类型 | 对应的内置对象 |
+| --- | --- | --- |
+| getApplication(); | Map | application |
+| getSession(); | Map | session |
+| this本身 | 内部是一个Map结构 | 保存了request |
+| getParameters(); | Map | 请求参数 |
+
+- 示例：
+
+```java
 ActionContext ac = ActionContext.getContext();
 ActionContext request = ac;
 Map session = ac.getSession();
 Map application = ac.getApplication();
 Map params = ac.getParameters();  // put、get直接操作请求参数
-！以上的Map都是Map<String, Object>泛型的，添加键值使用put，获取使用get，例如：
-session.put("name", "Peter"); application("count", count); session.get("name");
-
-
-3.ServletActionContext直接访问：
-
-  a.它是一个静态工具类，直接暴力获取Servlet中的直接对象：
-getServletContext();  // application
-getPageCotnext();    // pageContext
-getRequest();     // request
-getResponse();    // response
-！！获取相应对象后，操作就和Servlet编程完全一样了，类型也是对应一致的（ServletContext、PageContext、HttpServletRequest、HttpServletResponse）
+// 以上的Map都是Map<String, Object>泛型的，添加键值使用put，获取使用get，例如：
+session.put("name", "Peter");
+application.put("count", count);
+session.get("name");
+```
