@@ -5,11 +5,13 @@
 <br><br>
 
 ## 目录
-1. []()
+1. [直接访问和间接访问的区别](#一直接访问和间接访问的区别)
+2. [直接访问：ServletActionContext](#二直接访问servletactioncontext)
+3. [间接访问：ActionContext](#三间接访问actioncontext)
 
 <br><br>
 
-### 一、直接访问和间接访问的区别：
+### 一、直接访问和间接访问的区别：[·](#目录)
 1. 直接访问：
   - 直接获得Servlet对象（ServletContext、PageContext、HttpServletRequest、HttpServletResponse等）.
   - 获取后就跟普通的Servlet编程没任何区别了.
@@ -28,7 +30,7 @@
 
 <br><br>
 
-### 二、直接访问：ServletActionContext
+### 二、直接访问：ServletActionContext[·](#目录)
 > 是一个struts提供的静态工具类，直接暴力获取Servlet对象.
 
 | 静态方法 | 返回类型 | 对应的内置对象 |
@@ -42,7 +44,7 @@
 
 <br><br>
 
-### 三、间接访问：ActionContext
+### 三、间接访问：ActionContext[·](#目录)
 1. 第一步是通过ActionContext的静态方法getContext获取**当前**的action的专有缓存：<br>
 static ActionContext ActionContext.getContext();
 2. 然后通过ActionContext对象的各种getXxx方法获取Servlet的包装器对象：
