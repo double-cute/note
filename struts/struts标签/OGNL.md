@@ -1,4 +1,7 @@
 # OGNL
+> 是struts标签库运行的基础.
+
+<br><br>
 
 ## 目录
 1. [什么是OGNL](#一什么是ognl)
