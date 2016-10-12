@@ -1,0 +1,9 @@
+1.config-browser部署：
+
+  a.这是一个Struts2开发工具
+
+  b.部署：将Struts2的strtus2-config-browser-plugin.jar部署到WEB-INF/lib中重启服务器即可
+
+  c.URL：localhost.../WebContent/config-browser
+
+  d.打开后可以看到页面中有很多选项，可以查看当前Struts的各种配置，也可以查看Action的所有命名空间，包括各个Action的配置等
