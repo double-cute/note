@@ -60,7 +60,7 @@
 | --- | --- |
 | user.name<br>user.email | 1. 是push者（推送/提交代码的人）的**身份标识**.<br>2. 远程版本库（例如Github）上显示某次**提交的作者信息**就是这俩. |
 | color.ui | 是否开启git命令行的颜色高亮显示功能（true是开启）|
-| [alias]() | 设置命令别名以简化git命令 |
+| [alias](#六配置git命令别名git-config-alias--) | 设置命令别名以简化git命令 |
 
 <br><br>
 
