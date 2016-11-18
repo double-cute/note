@@ -4,12 +4,12 @@
 <br><br>
 
 ## 目录
-1. [git配置文件介绍：INI格式]()
-2. [git的合法配置信息]()
-3. [配置信息的查看和修改命令：git config]()
-4. [使用命令编辑模式快速操作git配置文件：git config **-e**]()
-5. [git配置文件的作用域：git config **--[scope]**]()
-6. [配置git命令别名：git config alias.]()
+1. [git配置文件介绍：INI格式](#一git配置文件介绍ini格式--)
+2. [git的合法配置信息](#二git的合法配置信息)
+3. [配置信息的查看和修改命令：git config](#三配置信息的查看和修改git-config--)
+4. [使用命令编辑模式快速操作git配置文件：git config **-e**](#四使用命令编辑模式快速操作git配置文件git-config--e--)
+5. [git配置文件的作用域：git config **--[scope]**](#五git配置文件的作用域git-config---scope--)
+6. [配置git命令别名：git config **alias.**](#六配置git命令别名git-config-alias--)
 
 <br><br>
 
@@ -101,7 +101,7 @@
 
 <br>
 
-### 六、配置git命令别名：git config alias.  [·](#目录)
+### 六、配置git命令别名：git config **alias.**  [·](#目录)
 > git配置中有一个特殊的节[alias]，专门用于设置git命令的别名以简化命令.
 
 - 是一种纯粹的宏替换（纯字符替换，小心bug漏洞哟！）：git config alias.别名 被替换的字符串
