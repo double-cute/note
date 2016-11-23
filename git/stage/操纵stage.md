@@ -4,10 +4,10 @@
 <br><br>
 
 ## 目录
-1. [git add]()
-2. [git rm]()
-3. [git mv]()
-4. [操纵stage的规范]()
+1. [git add](#一git-add)
+2. [git rm](#二git-rm)
+3. [git mv](#三git-mv)
+4. [操纵stage的规范](#四操纵stage的规范)
 
 <br><br>
 
