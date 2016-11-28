@@ -13,8 +13,8 @@
 
 | 命令 | 说明 | 对应的HEAD操作 |
 | --- | --- | --- |
-| git checkout 分支名 | 切换分支 | \*HEAD = &branch |
-| git reset --soft\|mixed/空\|hard 节点引用 | 重设位置（无/覆盖stage/覆盖stage和工作区） | \*\*HEAD = node_ref  或<br>\*HEAD =  node_ref（断头）|
+| git checkout 分支名 | 切换分支（全覆盖，必须干净） | \*HEAD = &branch |
+| git reset --soft\|mixed/空\|hard 节点引用 | 重设位置<br>（无/只覆盖stage/全覆盖，无提示） | \*\*HEAD = node_ref  或<br>\*HEAD =  node_ref（断头）|
 | git checkout 分支名 | 强行断头重设位置 | 无条件执行\*HEAD = node_ref |
 
 <br><br>
