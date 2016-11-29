@@ -4,9 +4,9 @@
 <br><br>
 
 ## 目录：
-1. [git log和git reflog的区别]()
-2. [git log的选项]()
-3. [订制格式：--pretty=format:'...']()
+1. [git log和git reflog的区别](#一git-log和git-reflog的区别)
+2. [git log的选项](#二git-log的选项)
+3. [订制格式：--pretty=format:'...'](#三订制格式--prettyformat--)
 
 
 <br><br>
