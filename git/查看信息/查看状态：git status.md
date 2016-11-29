@@ -8,10 +8,10 @@
 <br><br>
 
 ## 目录
-1. [详细信息：git status]()
-2. [简化信息：git status -s]()
-3. [当前处于哪个分支：git status -b]()
-4. [跟踪信息：git status --ignored]()
+1. [详细信息：git status](#一详细信息git-status--)
+2. [简化信息：git status -s](#二简化信息git-status--s--)
+3. [当前处于哪个分支：git status -b](#三当前处于哪个分支git-status--b--)
+4. [跟踪信息：git status --ignored](#四跟踪信息git-status---ignored--)
 
 | 命令 | 说明（不加-s都是显示详细信息）|
 | --- | --- |
