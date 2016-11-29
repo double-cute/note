@@ -8,8 +8,8 @@
 <br><br>
 
 ## 目录
-1. [git diff的输出信息详解]()
-2. [git diff的各种用法]()
+1. [git diff的输出信息详解](#一git-diff的输出信息详解)
+2. [git diff的各种用法](#二git-diff的各种用法)
 
 | 命令 | 说明 |
 | --- | --- |
