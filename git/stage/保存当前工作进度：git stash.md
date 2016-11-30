@@ -3,12 +3,12 @@
 <br><br>
 
 ## 目录
-1. [问题背景]()
-2. [保存进度的git stash命令]()
-3. [保存进度：git stash]()
-4. [查看进度栈中的进度：git stash list]()
-5. [还原进度：git stash pop/apply]()
-6. [删除进度栈中的进度]()
+1. [问题背景](#一问题背景)
+2. [保存进度的git stash命令](#二保存进度的git-stash命令)
+3. [保存进度：git stash](#三保存进度git-stash--)
+4. [查看进度栈中的进度：git stash list](#四查看进度栈中的进度git-stash-list--)
+5. [还原进度：git stash pop/apply](#五还原进度git-stash-popapply--)
+6. [删除进度栈中的进度](#六删除进度栈中的进度)
 
 | 命令 | 说明 |
 | --- | --- |
