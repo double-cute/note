@@ -3,14 +3,15 @@
 >
 >   1. 将stage作为节点插入到当前HEAD之后.
 >   2. 将HEAD后移一位到刚插入的节点处.
+>
 >> git commit对工作区不产生任何影响，仅仅是stage -> 版本库的**一次性**买卖.
 
 <br><br>
 
 ## 目录
-1. [git commit强制要求提交说明]()
-2. [一条龙提交：git commit -a]()
-3. [空提交：git commit --allow-empty]()
+1. [git commit强制要求提交说明](#一git-commit强制要求提交说明)
+2. [一条龙提交：git commit -a](#二一条龙提交git-commit--a--)
+3. [空提交：git commit --allow-empty](#三空提交git-commit---allow-empty--)
 
 | 命令 | 说明 |
 | --- | --- |
