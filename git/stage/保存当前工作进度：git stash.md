@@ -10,6 +10,18 @@
 5. [还原进度：git stash pop/apply]()
 6. [删除进度栈中的进度]()
 
+| 命令 | 说明 |
+| --- | --- |
+| git stash | 保存进度 |
+| git stash save comments | 保存进度同时附上说明 |
+| git stash list | 查看进度栈 |
+| git stash pop\|apply | 只还原工作区（删除/不删除进度栈中的相应进度）|
+| 加 --index | 同时还原stage |
+| 加 stage@{n} | 指定要还原的进度 |
+| git stash drop | 删除栈顶进度 |
+| git stash drop stash@{n} | 删除指定进度 |
+| git stash clear | 清空进度栈 |
+
 <br><br>
 
 ### 一、问题背景：[·](#目录)
