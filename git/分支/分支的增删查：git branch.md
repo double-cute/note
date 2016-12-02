@@ -1,13 +1,13 @@
-# 分支的增删查：git branch.md
+# 分支的增删查：git branch
 > 都是git branch系列的命令.
 
 <br><br>
 
 ## 目录
-1. [查看分支]()
-2. [创建分支]()
-3. [删除分支：git branch -d|D branch_name]()
-4. [分支重命名：git branch -m|M old_branch new_branch]()
+1. [查看分支](#一查看分支)
+2. [创建分支](#二创建分支)
+3. [删除分支：git branch -d|D branch_name](#三删除分支git-branch--dd-branch_name--)
+4. [分支重命名：git branch -m|M old_branch new_branch](#四分支重命名git-branch--mm-old_branch-new_branch--)
 
 | 命令 | 说明 |
 | --- | --- |
@@ -17,6 +17,8 @@
 | git **checkout -b** new_branch [startpoint] | 建立的同时切换到新分支上 |
 | git branch -d\|D branch_name | 删除分支（-D强制删除）｜
 | git branch -m\|M old_branch new_branch | 分支重命名（-M强制重命名）|
+
+<br><br>
 
 ### 一、查看分支：[·](#目录)
 
