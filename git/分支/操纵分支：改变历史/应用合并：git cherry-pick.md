@@ -1,5 +1,5 @@
 # 应用合并：git cherry-pick
-> 和git merge完全一样！！不同时的是没有连线
+> 和git merge完全一样！！不同时的是没有连线.
 
 <br><br>
 
@@ -9,7 +9,7 @@
 
 <br><br>
 
-### 一、用法和原理：
+### 一、用法和原理：[·](#目录)
 
 - 用法和git merge完全一样：git cherry-pick 节点引用
 - 效果：假设是git cherry-pick NODE
@@ -26,7 +26,7 @@
 
 <br><br>
 
-### 二、cherry-pick的含义：
+### 二、cherry-pick的含义：[·](#目录)
 > 译为分拣.
 
 - merge强调的是合并前后的关联关系：
