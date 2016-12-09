@@ -4,8 +4,8 @@
 <br><br>
 
 ## 目录
-1. [用法和原理]()
-2. [cherry-pick的含义]()
+1. [用法和原理](#一用法和原理)
+2. [cherry-pick的含义](#二cherry-pick的含义)
 
 <br><br>
 
