@@ -42,8 +42,8 @@
     3. git rebase d
       1. 嫁接点是d，基点是a（d和HEAD的最近公共祖先）.
       2. 嫁接结果是：
-        - ~~branch(b1):~~                  **a** -> b -> c -> d **-> x -> y -> z(HEAD)**
-        - branch(b2): ... -> 1 -> 2 -> **a** ~~-> x -> y -> z(HEAD)~~
+        - ~~branch(b1):~~ &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; **a** -> b -> c -> d **-> x -> y -> z(HEAD)**
+        - branch(b2): ···· -> 1 -> 2 -> **a** ~~-> x -> y -> z(HEAD)~~
         - 等价于：... -> 1 -> 2 -> **a** -> b -> c -> d **-> x -> y -> z(HEAD)**
 
   c.最简单的嫁接：git rebase 嫁接点ID或引用
