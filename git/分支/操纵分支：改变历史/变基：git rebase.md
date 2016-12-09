@@ -38,7 +38,7 @@
     3. 嫁接完成后两分支融合，并且融合成HEAD的分支.
   - 举例：
     1. branch(b1): &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; **a** -> b(b1的起始) -> c -> d
-    2. branch(b2): ···&nbsp; -> 1 -> 2 -> **a** -> x -> y -> z(HEAD)
+    2. branch(b2): ···· -> 1 -> 2 -> **a** -> x -> y -> z(HEAD)
     3. git rebase d
       1. 嫁接点是d，基点是a（d和HEAD的最近公共祖先）.
       2. 嫁接结果是：
