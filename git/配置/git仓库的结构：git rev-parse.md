@@ -1,12 +1,12 @@
-# git仓库的结构：git rev-parse.md
+# git仓库的结构：git rev-parse
 > git用.git/目录来确定工作区.
 
 <br><br>
 
 ## 目录
 
-1. [git对仓库的定义]()
-2. [确定工作区根目录的位置：git rev-parse]()
+1. [git对仓库的定义](#一git对仓库的定义)
+2. [确定工作区根目录的位置：git rev-parse](#二确定工作区根目录的位置git-rev-parse--)
 
 - 假设仓库的目录结构是：/user/Peter/work/repo/proj1/demo/.git/
   - 当前位于demo/a/b/c/下.
@@ -17,7 +17,7 @@
 | git rev-parse **--show-toplevel** | 确定工作区根目录（仓库根目录）的绝对路径 | /user/Peter/work/repo/proj1/demo |
 | git rev-parse **--show-prefix** | 确定当前位置和工作区根目录的相对路径差值 | a/b/c/ |
 
-<br><br
+<br><br>
 
 ### 一、git对仓库的定义：[·](#目录)
 
