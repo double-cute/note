@@ -3,6 +3,11 @@
 
 <br><br>
 
+## 目录
+
+1. [git对仓库的定义]()
+2. [确定工作区根目录的位置：git rev-parse]()
+
 - 假设仓库的目录结构是：/user/Peter/work/repo/proj1/demo/.git/
   - 当前位于demo/a/b/c/下.
 
@@ -14,7 +19,7 @@
 
 <br><br
 
-### 一、git对仓库的定义：
+### 一、git对仓库的定义：[·](#目录)
 
 - 定义规则：
   1. 一个.git/目录确定一个仓库.
@@ -32,7 +37,7 @@
 
 <br><br>
 
-### 二、确定工作区根目录的位置：git rev-parse
+### 二、确定工作区根目录的位置：git rev-parse  [·](#目录)
 > 该命令同样也只能在工作区中使用.
 
 - 假设仓库的目录结构是：/user/Peter/work/repo/proj1/demo/.git/
