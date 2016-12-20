@@ -11,6 +11,21 @@
 2. [不同OS平台对HTTPS验证的支持]()
 3. [HTTPS URL验证的完整步骤]()
 4. [git HTTPS URL]()
+5. [git客户端管理HTTPS-push验证：git-credential-helper]()
+  1. [当前验证账号]()
+  2. [免密模式]()
+  3. [Mac的keychain终身免密机制]()
+6. [综合评价]()
+
+| 内容/命令 | 说明 |
+| --- | --- |
+| https://[账号[:密码]@]git服务器主机域名/远仓路径 | git HTTPS URL书写格式 |
+| git config --global credential.helper **cache** | 设置成限时免密模式，默认为15分钟 |
+| git config --global credential.helper **'cache --timeout=XXX'** | 指定限时时长，单位是秒 |
+| git **credential-cache exit** | 关闭限时模式的cache管理后台进程（短时间离开电脑时使用最佳）|
+| git config --global credential.helper **store** | 设置成终身免密模式 |
+
+- 设置模式后需要退出重启git-bash才会生效！
 
 <br><br>
 
@@ -191,6 +206,10 @@
   3. 两种模式在push的时候都是根据current_push_account到相应的文件中去找对应的密码提交到服务器，只不过：
     1. 限时免密的“那个文件”是内存中的限时动态清理的cache文件.
     2. 终身免密的“那个文件”是磁盘中永久保存的~/.git-credentials文件.
+    3. 两种文件的格式都是一样的：
+      1. 一行一个账号-密码对.
+      2. 格式是：https://账号:密码@git服务器主机域名
+        - 例如：https://spider-man:12356@github.com
 
 <br>
 
@@ -200,10 +219,36 @@
 <br>
 
 - 设置免密模式：
+  - 两种模式相互排斥的，要么限时、要么终身，不能两个都开启也不能两个都关闭.
+  - 默认情况下是限时免密-15分钟.
+  - 调成限时模式：切换后账号密码保存在内存中的限时cache文件中
+    1. git config --global credential.helper cache    # 默认为15分钟
+    2. git config --global credential.helper 'cache --timeout=XXX'  # 设定限时，XXX以秒为单位，比如3600就表示1小时
+  - 调成终身模式：切换后账号密码保存在磁盘中的~/.git-credentials
+    - git config --global credential.helper store
+  - 上面的命令仅仅就是修改了~/.gitconfig配置文件而已，分别多了一句话罢了：要想生效必须**退出git-bash后重新打开**才行
+    1. [credential] helper = cache
+    2. [credential] helper = cache --timeout=XXX
+    3. [credential] helper = store
 
 <br>
 
-#### 5.3 &nbsp;&nbsp;Mac的keychain终身免密：
+- 别忘了，current_push_account在两种模式下都是存在的！
+  - 要玩儿多账号一定要用**账号切换-URL**哟！小心出现**令人费解的问题**.
+
+<br>
+
+- 限时免密模式下的后台进程：git-credential-cache.ps
+  - 限时模式下会启用一个特殊的后台进程git-credential-cache.ps来管理限时存放密表的cache.
+  - 该进程会清理cache中超时的账号-密码.
+  - 如果你临时有事想离开电脑一会儿，但又不想锁屏、关控制台，你就可以先关掉该进程防止图谋不轨者.
+    1. 关闭该进程会自动清除cache，之后想要再push必须要输入密码.
+    2. 关闭后第一次输入密码push后会重新开启该线程.
+    3. 关闭命令：git credential-cache exit
+
+<br>
+
+#### 5.3 &nbsp;&nbsp;Mac的keychain终身免密机制：
 
 > Mac采用keychain-HTTPS免密验证机制，是终身免密的.
 
@@ -213,82 +258,19 @@
   - keychain是终身免密的，因此Mac的HTTPS验证是终身免密的.
     - 当然你也可以关闭keychain功能，强行使用credential-helper，但没有必要，那不是傻吗？
 
+<br><br>
 
+### 六、综合评价：
 
-Unix：
-4. HTTPS登陆方式：credential helper cache
-  1. 首次验证：第一次push的时候需要你输入远程仓库所在的GitHub账户的密码.
-    1. 密码输入后credential helper的cache会默认帮你保留登陆信息（账户、密码）15分钟.
-    2. 当然你可以修改这个缓存时间：git config --global credential.helper 'cache --timeout=5'   # 只缓存5秒
-      - 超过设定的时间再push就要重新输入密码了.
+1. 虽然keychain安全性比credential-helper高很多，但由于HTTPS协议本身的加密机制（对称式加密）安全性不如SSH验证（RSA加密）.
+    - 虽然keychain对密码进行了加密再保存，但由于HTTPS验证密码的方式是对称式的，如果不法分子获取了你加密后的密码也是有很大可能破解的.
+    - 但SSH的RSA加密机制验证密码的方式是非对称式的，拿到公钥也无法破解.
+2. 因此，出于完全性考虑，要坚持以下原则：
+  1. clone用HTTPS（很多项目的代码对于clone也只给出HTTPS URL），毕竟通用.
+  2. 其余操所有操作：
+    1. Unix/Linux、Windows使用SSH验证.
+    2. Mac使用HTTPS无妨，最好还是使用SSH验证.
 
-多账户管理：就是git HTTPS验证的底层机制（隐藏着账户域来表示登陆的GitHub账户）
-不写[账户名]域push时，在缓存限时之外，必然会让你同时填写账户名和密码.
-也就是说HTTPS验证的两个核心：1.GitHub账户名和密码  2.仓库定位
+<br>
 
-仓库想定位很容易，一个正常的HTTPS URL就可以定位到https://github.com/path/repo.git
-但不是什么人都可以随意push的，必须是仓库的所有者才能push，仓库所有者的完整信息包括 ID+passwd
-  - 可为什么不直接用repo_path来推断出用户ID呢？
-   - 答案：GitHub确实是repo_path == 用户ID，但其他git托管服务不一定是这样！还有gist等很多git托管服务呢！
-
-5. 切换账户验证：其实HTTPS URL中隐藏着一个登陆账户的信息
-  1. https://[账户名[:密码]]@github.com/path/repo.git
-    - 表示用[账户名]的GitHub账户的身份登录repo.git仓库
-    - 当然切换新用户后肯定是需要输入新的密码才行的.
-    - 也可以直接在URL中给出密码，这种是万能的方式，可以随意多GitHub账号切换，但风险是非常大的，密码明文直接见光！！！
-      - 同事也暴露在.git/config中.
-  2. 如果[账户名[:密码]]不写，就默认用“上一次登陆的账户作为此次登陆的账户”
-    1. 假如上一次是git push https://github.com/double-cute/note.git master的话（假设是本地的第一次push）.
-    2. 那么下次git push https://github.com/qq-test1/test.git master时会报错，告诉你Permission to qq-test1/test.git denied to double-cute
-      - 就是qq-test1/test.git仓库拒绝double-cute的登陆，可见这次登陆的账户是上一次的double-cute，提交的密码无疑也是上一次double-cute的密码.
-        - 但这显然是不对的，git还没有那么聪明，不能直接看出qq-test1/test.git这个仓库属于qq-test1这个GitHub账户的.
-          - 为什么这么笨看不出来呢？这个规律很明显啊，GitHub上的仓库path就等于GitHub的账户名啊！
-           - 那是因为大型的git托管服务并不是只有GitHub一家在做，还有Gist等等好多家做，其他产品并不一定要符合这个规矩啊！
-           - 因此git并不会直接将仓库的path作为默认的登陆账号进行登陆的！！
-    3. 因此完整的HTTPS验证URL应该是https://[user-id[:passwd]]@git托管服务器主机域名（不一定是Github，也可以是gist）/path/repo.git
-      - 表示用名为user-id的账户身份来验证登陆.
-      - 新身份必然要输入新的密码咯！
-
-    - 也就是说git bash总有一个“当前验证账户”，加上[账户名]域就相当于切换了”当前验证账户”，不加还是以上一次的登陆账户作为“当前验证账户”。
-
-
-6. 如果GitHub（或者Gist）账户多了，管理起来就麻烦了，还好有credential-cache机制，可以在15分钟（或其他时长）之内多个账户免密登陆，但是过了这个时间就麻烦了，push又需要重新输入密码.
-  - 设想，如果账户非常多，那重新输入密码就是一件工作量很大的事了.
-  - 如果能像SSH验证那样永远终身免密该多好啊！
-  - git credential有两种模式：一种是限时cache（就是上面所说的那样），另一种就是终身机制（和SSH的效果一样了）.
-    - 调成限时cache模式：git config --global credential.helper cache   或者  'cache --timeout=XXX'    # 前者默认15分钟
-    - 调成终身免密模式：git config --global credential.helper store
-      1. 一听这名字就应该知道终身是怎么实现的了，必然是用一张表记录所有的账户信息（账户名和密码）.
-      2. 开启该功能后开始，第一次push一个仓库会让你输入账户信息（账户、密码），如果没有[账户名]域的话则同时输入两者（展示QQ图片）.
-        - 然后会将用户信息保存在（**store**）在~/.git-credentials文件中.
-        - 形式是，每行一条账户信息：https://账户名:密码明文@github.com
-        - 可以看到是明文的密码，相当危险.
-  - 之后每次push都会拿当前登录中账户到.git-credentials文件中去找相应的密码登陆，如果找不到就用上一次的登陆信息去登陆.
-    - 可是找不到是什么鬼，怎么可能会找不到呢？不是都会记录在.git-credentials中吗？
-      - Unix中，如果不给出[账户名]域的话不会弹出对话框让你同事输入账户名和密码的.
-      - 会用上一次登陆信息去登陆，比如上次是double-cute@github.com/double-cute/test.git，这次直接是github.com/qq-test1/test.git的话，会拿上一次的double-cute的信息去登陆.
-        - 由于本次没有指出登陆使用GitHub账号名，自然在.git-credentials文件中找不到信息，也就只能拿上一次double-cute的信息去登陆这次test.git仓库，但服务器检查显然不通过，因为test.git仓库不属于double-cute这个GitHub账户！！从而发生denied报错.
-
-
-第一次（比较特殊）：无用户信息不写[账户名]域push时，GitHub服务器根据仓库URL返回所属者的ID，因此本地能确定登陆账号是什么，因此会将当前登陆账号设为该登陆账号.
-之后想push其它用户的仓库就不得不加[账户名]域了，否则当前登陆账号指向上一次的账号必定会发生denied错误！
-
-
-Windows：有问题，当前登陆账户不能及时切换更新，有一定bug
-
-
-Mac：自己有一个Keychain管理器，就像Safari的钥匙串一样，
-
-keychain机制：只匹配仓库的URL，不保存GitHub账号信息，
- - 例如：https://qq-test1@github.com/qq-test1/test.git和https://github.com/qq-test1/test.git，完全一样，只提取出其中的仓库URL，也就是https://github.com/qq-test1/test.git部分
- - 然后直接录URL-PASSWD对儿到keychain中，而不保存在.git-credentials中，毕竟明文太可怕，因此keychain的目的就是升级git credential的安全性而已.
- - 因此在keychain机制下就没有切换登陆账号一说了，只有URL-PASSWD对儿.
- - 只有你不管用那种方式（上面的左或者右）都是根据URL到keychain中找相应的PASSWD送去远程验证。
-
-
- ！！！这个理论是完全正确的，我简直太聪明了！！！！！
-
-
-
-
- 7. 总的原则是：Unix下和Windows下最好只用SSH验证（因为.git-credentials都有效），想要HTTPS免密终身就只能用Mac.
+- 总结：SSH验证虽然配置麻烦，但使用的时候即方便又安全，因此还是要**以SSH验证为主**.
