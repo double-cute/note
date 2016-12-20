@@ -139,7 +139,7 @@
 
 <br><br>
 
-### 五、git客户端管理HTTPS-push验证：git-credential-helper
+### 五、git客户端管理HTTPS-push验证：git-credential-helper  [·](#目录)
 
 - 客户端还需要管理HTTPS-push验证？
   - HTTPS-push验证不是服务器该管的事吗？客户端只要写好git HTTPS URL不就完了吗？这关客户端什么事呢？
@@ -163,7 +163,7 @@
 
 <br><br>
 
-#### 5.1 &nbsp;&nbsp;当前验证账号：
+#### 5.1 &nbsp;&nbsp;当前验证账号：[·](#目录)
 
 - credential-helper有一个环境变量，叫做**当前验证账号**，这里我们用current_push_account来表示，**最终提交的URL中的账号由current_push_account决定**！
   1. 如果用**[1.2.]** 的git HTTPS URL来push，就会把current_push_account赋成URL中给出的账号名.
@@ -194,7 +194,7 @@
 
 <br><br>
 
-#### 5.2 &nbsp;&nbsp;免密模式：
+#### 5.2 &nbsp;&nbsp;免密模式：[·](#目录)
 
 - 免密模式就两种，一种是限时免密另一种是终身免密：
   1. 限时免密：将账号-密码临时保存在缓存（名叫git-credential-cache）中.
@@ -248,7 +248,7 @@
 
 <br>
 
-#### 5.3 &nbsp;&nbsp;Mac的keychain终身免密机制：
+#### 5.3 &nbsp;&nbsp;Mac的keychain终身免密机制：[·](#目录)
 
 > Mac采用keychain-HTTPS免密验证机制，是终身免密的.
 
@@ -260,7 +260,7 @@
 
 <br><br>
 
-### 六、综合评价：
+### 六、综合评价：[·](#目录)
 
 1. 虽然keychain安全性比credential-helper高很多，但由于HTTPS协议本身的加密机制（对称式加密）安全性不如SSH验证（RSA加密）.
     - 虽然keychain对密码进行了加密再保存，但由于HTTPS验证密码的方式是对称式的，如果不法分子获取了你加密后的密码也是有很大可能破解的.
