@@ -26,7 +26,18 @@
 | git@GitHub账号名作为主机别名:GitHub账号名/xxx.git | 使用git客户端和GitHub进行通信时使用的SSH URL |
 | git@double-cute:double-cute/test.git | 示例 |
 
+- GitHub通信SSH密钥配置步骤：多账号管理
+  1. 本地使用ssh-keygen生成多对密钥：**ssh-keygen -t rsa -b 2048 -C 密钥说明**
+    - 为每个GitHub账户都生成一对密钥.
+  2. 将各个公钥上传到对应的各个GitHub账号中.
+  3. 本地配置私钥和GitHub账号的关联：**vim ~/.ssh/config**
 
+```
+Host 主机别名
+    HostName github.com
+    User git
+    IdentityFile 私钥在本地的路径
+```
 
 <br><br>
 
