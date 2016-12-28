@@ -12,15 +12,15 @@
 
 ## 目录
 
-1. [SSH URL]()
-2. [HTTPS URL]()
-3. [FTPS URL]()
-4. [跨平台的本地文件系统]()
-5. [本地文件系统]()
+1. [SSH URL](#一ssh-url)
+2. [HTTPS URL](#二https-url)
+3. [FTPS URL](#三ftps-url)
+4. [跨平台的本地文件系统](#四跨平台的本地文件系统)
+5. [本地文件系统](#五本地文件系统)
 
 <br><br>
 
-### 一、SSH URL:[·](#目录)
+### 一、SSH URL：[·](#目录)
 
 - 一般情况下：通信发起方使用的SSH软件名称@对方主机在本地起的别名[:端口号]:资源路径/资源
 - 和GitHub通信的情况下定位托管的远仓：git@主机别名[:端口号]:GitHub账号/xxx.git
@@ -29,7 +29,7 @@
 
 <br><br>
 
-### 二、HTTPS URL:[·](#目录)
+### 二、HTTPS URL：[·](#目录)
 
 - 一般情况下：https://对方主机域名/资源路径/资源
 - 和GitHub通信的情况下定位托管的远仓：https://**[GitHub账号[:登录密码]@]** github.com[:端口号]/GitHub账号/xxx.git
