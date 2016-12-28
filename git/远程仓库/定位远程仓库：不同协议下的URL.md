@@ -2,16 +2,25 @@
 > 用统一资源定位器（URL）来定位（描述）远程仓库再合适不过了.
 >
 >> 首推SSH和HTTPS，应用最广泛，如果从GitHub上clone仓库就只支持SSH和HTTPS两种方式.
+>>   - git目前支持的通信协议有：
+>>     1. HTTPS
+>>     2. SSH
+>>     3. FTPS
+>>     4. 本地文件系统
 
 <br><br>
 
 ## 目录
 
-1. []()
+1. [SSH URL]()
+2. [HTTPS URL]()
+3. [FTPS URL]()
+4. [跨平台的本地文件系统]()
+5. [本地文件系统]()
 
 <br><br>
 
-### 一、SSH URL:
+### 一、SSH URL:[·](#目录)
 
 - 一般情况下：通信发起方使用的SSH软件名称@对方主机在本地起的别名[:端口号]:资源路径/资源
 - 和GitHub通信的情况下定位托管的远仓：git@主机别名[:端口号]:GitHub账号/xxx.git
@@ -20,7 +29,7 @@
 
 <br><br>
 
-### 二、HTTPS URL:
+### 二、HTTPS URL:[·](#目录)
 
 - 一般情况下：https://对方主机域名/资源路径/资源
 - 和GitHub通信的情况下定位托管的远仓：https://**[GitHub账号[:登录密码]@]** github.com[:端口号]/GitHub账号/xxx.git
@@ -29,7 +38,7 @@
 
 <br><br>
 
-### 三、FTPS URL：
+### 三、FTPS URL：[·](#目录)
 
 - 一般情况下：ftps://主机域名[:端口号]/资源路径/资源
 - 但GitHub**不使用**该协议，该协议是文件服务器协议，从GitHub克隆仓库只开放了HTTPS和SSH方式.
@@ -37,7 +46,7 @@
 
 <br><br>
 
-### 四、跨平台的本地文件系统：
+### 四、跨平台的本地文件系统：[·](#目录)
 > 使用本地文件系统就是指将本地的仓库作为远仓.
 
 - URL：file://仓库的绝对路径/仓库
@@ -59,9 +68,9 @@
 
 <br><br>
 
-本地文件系统：
+### 五、本地文件系统：[·](#目录)
+> 直接以本地文件系统的路径来定位远仓，可以使用绝对路径也可以使用相对路径，**不能跨平台**，所以要考虑分隔符不同的问题.
 
-直接以本地文件系统的路径来定位远仓，可以使用绝对路径也可以使用相对路径，只不过要注意分隔符的不同
-
-git clone a\\test.git test  # Windows下
-git clone /user/code/proj/.git /document/repo/cp_proj  # 类Unix下
+- 示例：
+  1. git clone a\\test.git test  # Windows下
+  2. git clone /user/code/proj/.git /document/repo/cp_proj  # 类Unix下
