@@ -17,9 +17,10 @@
 | git remote add 远仓标识符（远仓别名） 远仓URL地址 | 向本地仓库注册一个远仓<br>特别是git init出来的本地仓库，必须要用该命令来注册第一个远仓 |
 | git clone命令 | 会自动为clone的地址注册一个名为origin的远仓 |
 | git remote | 简化版查看本地版本库中所有的远仓 |
-| git remote -v | 详细版查看本地版本库中所有的远仓 |
-| git remote set-url 已存在的远仓的别名 新的URL地址 | 修改远仓的URL地址 |
-| git remote rename 就的远仓名 新的远仓名 | 远仓重命名 |
+| git remote **-v** | 详细版查看本地版本库中所有的远仓 |
+| git remote **set-url** 已存在的远仓的别名 新的URL地址 | 修改远仓的URL地址 |
+| git remote **rename** 就的远仓名 新的远仓名 | 远仓重命名 |
+| git remote **rm** 远仓别名 | 删除指定远仓（.git/config中删除相应的节而已）|
 
 <br><br>
 
@@ -115,3 +116,10 @@
     - 将远仓origin的别名改为repo_test
   - 异常处理：
     - 新别名不能和已有的远仓别名冲突，否则报错，拒绝更改.
+
+<br>
+
+- 删除注册的远仓：git remote **rm** 远仓别名
+  - 直接从.git/config中删除相应的远仓节.
+  - 异常处理：如果指定的远仓不存在会报错.
+    - 但这通常无关紧要.
