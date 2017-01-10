@@ -16,6 +16,7 @@
 | --- | --- |
 | git remote add 远仓标识符（远仓别名） 远仓URL地址 | 向本地仓库注册一个远仓<br>特别是git init出来的本地仓库，必须要用该命令来注册第一个远仓 |
 | git clone命令 | 会自动为clone的地址注册一个名为origin的远仓 |
+| git clone **-o 自己指定的远仓别名** 远仓URL地址 | 自己重新指定git clone注册的远仓别名 |
 | git remote | 简化版查看本地版本库中所有的远仓 |
 | git remote **-v** | 详细版查看本地版本库中所有的远仓 |
 | git remote **set-url** 已存在的远仓的别名 新的URL地址 | 修改远仓的URL地址 |
@@ -87,6 +88,12 @@
 [remote "origin"]
     url = git@github.com:double-cute/test.git
 ```
+
+- 但如果想自己指定git clone的远仓别名，则可以使用-o选项指定：
+  - git clone -o 自己重新指定的远仓别名 远仓URL地址
+  - 示例：git clone -o test git@github.com:double-cute/test.git
+
+<br>
 
 - 对于不是git clone下来的仓库，必须自己手动git remote add来注册远仓了.
   - 特别是git init出来的本地仓库，由于没有注册过远仓，因此必须自己手动git remote add了.
