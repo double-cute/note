@@ -70,3 +70,61 @@
           - 如果curv分支在远仓origin中不存在，则会自动在远仓中创建一个名为curv的远程分支.
       - 如果存在，则正常推送.
     2. 如果命令中指定的本地分支不存在，则会直接报错拒绝推送.
+
+<br><br>
+
+### 二、简化远仓URL地址-注册远仓：git remote add
+> 对远程仓库的所有配置最终都会写入**.git/config**文件中.
+>
+>> 所有的远仓配置命令实际上都是在修改.git/config文件，因此最直接的配置方式就是编辑.git/config文件.
+
+- 首当其冲的是**远仓地址**部分.
+  - 毕竟远仓URL比较长，字符特别多，因此最应该得到简化.
+
+<br>
+
+- 最容易想到的解决方案就是**用一个符号**来代替远仓地址.
+  - 这个符号就是**远仓标识符**，俗称**远仓别名**.
+    - 配置合适的符号来代替指定远仓地址的过程就是**在本地仓库中注册远程仓库**.
+      - 但实际中远仓标识符**绝不仅仅只有代替远仓URL地址的功能**，还有更多的含义和用途！这个后面会细说.
+
+<br>
+
+- 注册远仓使用的命令：**git remote add 远仓标识符（即远仓别名） 远仓URL地址**
+  - 示例：git remote add **test_repo** git@github.com:double-cute/test.git
+    - 向本地仓库注册了一个**git@github.com:double-cute/test.git**远仓，其别名为**test_repo**.
+  - 之所以是别名，那是因为这个别名是由本地仓库的用户自己随意取的，**可以不和真实的远仓名称相同**.
+    - 例如：一个远仓git@github.com:double-cute/test.git的真实名称应该是test，但是我可以在本地仓库中用test1来代替该URL，作为远仓别名.
+    - 有了标识符，推送或拉回的时候就可以直接用别名来代替冗长的远仓URL了，例如：git push test1 master:master
+
+<br>
+
+- .git/config中的表现：
+  - 多了一个[remote "远仓别名"]的节，其中的属性url的值为注册时给出的远仓URL地址，例如：
+
+```
+[remote "repo_test"]
+    url = git@github.com:double-cute/test.git
+```
+
+<br>
+
+- 灵活用法：
+  1. 可以同时注册多个远仓：
+    - 例如：一个远仓专门用来pull，一个专门用来push作为测试仓库之类的.
+  2. 可以为同一个远仓注册多个不同的别名：
+    - 例如，同一个远仓git@github.com:double-cute/test.git在本地同时注册一个release别名和一个bugfix别名.
+      - 然后只用releasep推送经过完善测试的发布性分支，只向bugfix推送修复bug的补丁分支.
+    - 特别适用于同一个远仓具有多种功能性分支的场景.
+
+<br>
+
+- **git clone会默认注册一个名为origin的远仓：**
+  - git clone命令会自动为**被clone的远仓**注册一个名为origin的本地别名.
+    - 例如：git clone git@github.com:double-cute/test.git
+    - 接下来查看test/.git/config文件会看到
+
+```
+[remote "origin"]
+    url = git@github.com:double-cute/test.git
+```
