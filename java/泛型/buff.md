@@ -1,6 +1,6 @@
 
 
-### Java数组类型的多态bug引发对泛型多态的思考：
+### 一、Java数组类型的多态bug引发对泛型多态的思考：
 > Java数组类型有一个小bug，那就是：如果A是B的父类，那么A[]也是B[]的父类.
 
 - 这个bug虽然可以在编程时避免（不出现），然而一旦出现了就很容易（几乎是90%可能性）出错，例如：
@@ -40,6 +40,7 @@ oarr[0] = 1.5;  // 运行时异常，因为oarr的运行时类型是String[]，S
 - 因此，**Java泛型编译时检查的一条重要规则**：[具有继承关系的类型实参]的[相同泛型]**不具有继承关系**
   - 具体的说就是，如果A是B的父类，那么Generic<A>不是Generic<B>的父类！！！两者直接不能发生多态！！
     - 绝对不能用Generic<A>的引用指向Generic<B>的对象！
+  - **但A<T>一定是B<T>的父类，这是显然的.**
 
 <br>
 
@@ -48,57 +49,91 @@ oarr[0] = 1.5;  // 运行时异常，因为oarr的运行时类型是String[]，S
 
 <br><br>
 
-2. 类型参数的多态问题引出了另一个非常头疼的问题——方法传参问题：使用类型通配符（?）
-    1) 假设现在有一个方法：void func(List<?> list) { ... } // 我想让这个list参数的类型参数是不确定的，可以是任意类型，如果实参传的是String那模板就是String的，如果是Integer那模板就是Integer的，如果是某个自定义类型的，那么模板就是那个自定义类型的
-    2) 你可能会想到这样写：void func(List<Object> list) { ... }
-！！想得很美，以为参数是Object就可以接受任意类型的List<?>了？但是上面讲过了，泛型类型参数存在多态问题，比如你想传一个List<String>的参数进去，但是List<String>并不是List<Object>的子类，会直接发生编译错误！！！那该怎么办呢？
-    3) 就直接使用上面的?表示任意类型即可，即上面的：void func(List<?> list) { ... }就行了！！
-         i. 当?出现在泛型的<>中时就成为了泛型的类型通配符了！
-         ii. ?可以代表任意类型！！Generic<?>是所有的Generic<Xxx>的父类！！传参的时候使用任意Generic<Xxx>参数都没有任何问题！！
-    4) ?带来的新问题——?泛型对象是只读的，不能修改！！！
-         i. 如果你直接用List<?> list的list引用，对该List进行修改的话会直接引发编译错误！！！
-         ii. 原因其实很简单，因为?可以表示任何类型，表示任何类型的意思就是既可以表示Integer，也可以表示String，也可以表示任何自定义类型，那么你倒过来想，如果你想add一个"你好"字符串，但如果?刚好表示的是Integer，那不是类型冲突了吗？而?可以表示任何类型，你也不知道它到底表示什么类型；
-！！正是因为这个原因（?可以表示任何类型），所以不允许修改?泛型对象！！因此?泛型对象是只读的！！
-    5) ?泛型的另一个问题：定义中所有出现泛型类型参数的地方都被替换成了?，表示未知类型：
-         i. 比如泛型类中有一个方法：T get(int index);
-！！那么如果用?作为参数，那么该方法也会变成? get(int Index);了，即返回值也变成了一个未知类型了！！
-！！包括其他所有出现T的地方，都会被替换成?未知类型！
-         ii. 那么现在主要的问题来了，未知类型?到底是个什么类型呢？正因为你不确定它是什么类型所以才叫未知类型，但是在实际应用过程中（特别是在调用对象方法的时候）肯定是要确定它是一个什么类型的，否则就会出现各种类型问题！
-         iii. 未知类型?在实际中就等于其类型上限？什么是类型上限？这里先不管，反正先记住这些类型上限即可：<?>和<? super Xxx>的类型上限都是Object，<? extends Xxx>的类型上限extends后面的Xxx；
-         iv. 例如：<?>和<? super String>写法中?的类型上限就是Object，因此就直接把?返回值当成Object类型就行了，而<? extends Number>中?类型的返回值就当成Number就行了！！虽然返回?类型会进行类型提升，但是多态关系还是存在的，如果调用返回值（类型是?）的子类同名覆盖方法，则调用的是子类的那个版本！示例：
-class A { // 默认继承Object
+### 二、任意类型参数情况下的泛型传参问题：类型参数通配符?
 
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return "hahaha";
-	}
+- 首先，实例化类型参数的泛型传参肯定是没有问题的，例如：void func(List\<String\> list);  // 可以传进来ArrayList<String>实参，只要Generic是List的子类或本身即可
 
+<br>
+
+- 但如果传参时类型参数不确定，可以是任何类型实参该怎么办呢？
+  - 比如说：void func(List\<?\> list)中，?表示类型实参不确定，可以是任意的，既可以是String，也可以是Integer等.
+    - 在实际生产开发中必定会有这样的需求的，那该怎么办呢？
+  - 能想到的最直接的方案就是用Object来替换?，即void func(List\<Object\> list)，可这样是否就可以接受任意类型实参呢？
+    - **大错特错！正因为A是B的父类，但Generic<A>不是Generic<B>的父类，因此如果这样写的话运行时必定会发生类型冲突！**
+
+<br>
+
+- Java专门提供了类型参数通配符?来解决上述问题，就直接写成void func(List\<?\> list)就能解决问题了！啊哈哈哈！
+  1. 当?出现在**泛型的菱形**\<\>中时就表示**类型参数通配符**.
+  2. ?可以匹配**一个范围**中的任意类型.
+    - 什么叫一个范围呢？
+      1. ?可匹配的范围是：≤ Object
+      2. ? super Xxx可匹配的范围是：String ≤  ≤ Object
+      3. ? extends Xxx可匹配的范围是：≤ Xxx
+- 但是这里要**注意一个概念**：Generic\<? ...\>可以匹配自己范围的所有Generic\<T\>，并不是指Generic\<? ...\>是Generic\<T\>的父类！！！
+  - 这个是指**编译器语法上的匹配**，并不指**实际上真正存在继承关系**！！！
+  - 只是**语法概念**，而**非继承概念**.
+
+<br>
+
+- 那问题来了，对于类型参数是?通配符的泛型形参在方法中应该怎么使用呢？
+  - 即：
+
+```Java
+void func(List<?> list) {
+    // ???该怎么使用这个list呢？应该注意什么呢？
+}
+```
+
+1. 首先肯定要慎重，不能乱修改，比如：
+  - 如果你直接list.add("abc");就会埋下bug的种子.
+    - 设想，如果你传入的实参是List<Integer>类型的，那你添加了一个String类型的不就发生运行时类型冲突了吗！
+  - **但Java承诺过，使用泛型一定不会发生运行时类型异常，因此Java编译器会强制关闭出现上述歧义的方法调用，如果出现就会发生编译错误！**
+2. 因此，最安全稳妥的方法就是**把?当做自己的类型上限**即可：即把?当做自己匹配范围的上限最安全最稳妥，一定不可能犯错.
+  1. 把?当做Object.
+  2. 把? super Xxx当做Object.
+  3. 把? extends Xxx当做Xxx.
+
+- 例如：
+
+```Java
+void func(List<? extends String> list) {
+    list.get(0).charAt(5);  // 把?当做上限String即可
+}
+```
+
+<br>
+
+- 实际上，Java本来就是**将?的编译时类型默认为?的类型上限**：
+  - 验证方法：多态
+
+```Java
+class A {
+	public void print() { System.out.println("A"); }
 }
 
+class B extends A {
+	@Override
+	public void print() {
+		System.out.println("B");
+	}
+}
 
 public class Test {
-
-	public void test(List<?> list) {
-		list.forEach(ele -> System.out.println(ele));
+	public static void proc(List<? extends A> list) {
+		list.get(0).print();  // ?的编译时类型为A
 	}
 
-	public static void main(String[] args) {
-		ArrayList<A> list = new ArrayList<>();
-		list.add(new A());
-		list.add(new A());
-		list.add(new A());
-		new Test().test(list); // 3个"hahaha"，而不是Object类的那个toString版本！
+	public static void main(String[] args) throws NullPointerException  {
+		ArrayList<A> list = new ArrayList<>();  // 不管是A还是B都一样，ArrayList<B>结果也一样
+		list.add(new B());
+		proc(list);  // B，调用的是子类的B的print方法，发生了多态！！
+                    // 所以推断出?的编译时类型为上限A
 	}
 }
-！！注意：是把返回的?类型当做类型上限看待，而不是直接将?彻底当成类型上限来看待，因为?只能表示任意类型！！而不是一个具体的类型，只不过在使用?类型的返回值是把它看做上限是绝对安全的！！！如果不看做上限会有隐患而已！！！
-！！要当成类型上限看待是因为你还不知道里面存放的具体是什么类型的参数，由于你不确定，因此为了避免错误就把?返回值当成其类型上限，但是如果你知道那就没问题，可以直接强制类型转换：
-System.out.println(list.get(1).getClass()); // 运行时类型是永远可以记住的，这是Object类里就已经提供的基础功能，因此这里返回的是A
-A a = (A)(list.get(1));
-！接着上面的例子；
-    6) 小结：
-         i. 由于?表示任意（未知）类型，因此?泛型对象是只读的；
-         ii. 对于读取（返回）的?类型值，如果你已经知道其真实的运行时类型，则可以强转后使用，如果不清楚就当成?的类型上限使用是最安全的！
+```
+
+<br><br>
 
 3. 设定?的上下限：
     1) 单单一个?可以表示任意类型，但有时候需要限定?的范围，这种需求是普遍存在的，就举一个最简单的例子：
