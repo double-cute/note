@@ -12,13 +12,18 @@
 
 ## 目录
 
-1. [构造器]()
-2. [长度以及大小写转换]()
-3. [连接]()
-4. [检索]()
-5. [比较]()
-6. [根据指定的编码方法将String转化成二进制字节序列]()
-7. [String的一些静态工具方法]()
+1. [构造器](#一构造器)
+2. [长度以及大小写转换](#二长度以及大小写转换)
+3. [连接](#三连接)
+4. [检索](#四检索)
+  1. str[index]
+  2. index findChar|findSubString
+  3. prefix|suffix
+  4. getSubstring
+  5. replaceAChar
+5. [比较](#五比较)
+6. [根据指定的编码方法将String转化成二进制字节序列](#六根据指定的编码方法将string转化成二进制字节序列)
+7. [String的一些静态工具方法](#七string的一些静态工具方法)
 
 <br><br>
 
@@ -237,6 +242,8 @@ void getChars(int srcBegin, int srcEnd, char[] dst, int dstBegin);
 <br><br>
 
 ### 七、String的一些静态工具方法：[·](#目录)
+
+<br>
 
 **1. 将其它类型转换成字符串对象：**
 
