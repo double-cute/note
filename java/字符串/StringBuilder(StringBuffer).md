@@ -96,6 +96,8 @@ StringBuilder insert(int offset, Object obj);  // 多态插入obj.toString
 ### 四、次常用：设置单个字符、删除子串、替换  [·](#目录)
 > 全部都要注意注意**越界异常[IndexOutOfBoundsException]**
 
+<br>
+
 **1. 设置序列中的字符：**
 
 ```Java
