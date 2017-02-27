@@ -12,12 +12,14 @@
 
 ## 目录
 
-1. []()
-2. []()
+1. [长度和容量]()
+2. [构造器]()
+3. [最常用的方法：逆序、连接（追加）、插入子串]()
+4. [次常用：设置单个字符、删除子串、替换]()
 
 <br><br>
 
-### 一、长度和容量：
+### 一、长度和容量：[·](#目录)
 > 由于是可变（可修改），因此是具有动态容量属性的，容量可以自己设置.
 
 - 容量和有效长度：
@@ -38,7 +40,7 @@ int capacity(); // 查看容量（字符个数的上限）
 
 <br><br>
 
-### 二、构造器：
+### 二、构造器：[·](#目录)
 > 构造时必须确定容量大小（当然有默认的容量大小）.
 >
 >> 可以看到唯一的缺点就是**木有通过二进制序列转换的版本**，如果有这种需求**必须通过String进行中间转换**.
@@ -54,7 +56,7 @@ StringBuilder(String|CharSequence another);  // StringBuilder、StringBuffer同�
 
 <br><br>
 
-### 三、最常用的方法：逆序、连接（追加）、根据索引设置字符
+### 三、最常用的方法：逆序、连接（追加）、插入子串  [·](#目录)
 
 <br>
 
@@ -66,27 +68,53 @@ StringBuilder reverse();
 
 <br>
 
-**2. 连接（追加）：**
-    1) StringBuilder append(type val);
-    2) 追加的类型包括所有Java的基础类型（boolean、int、float等），肯定是先转换成字符串的形式再追加的；
-    3) 也可以是引用类型（当然包括String自己啦！），里面有一个版本append(Object obj);，只要该类型实现了toString方法就会将toString的结果追加到字符串末尾；
-    4) 还提供了专门追加字符序列的版本：
-         i. StringBuilder append(char[] str);
-         ii. StringBuilder append(char[] str, int offset, int len);
+**2. 连接（追加）：** 多个重载版本
 
-3. 设置序列中的字符：
-    1) 为某个字符重新赋值：void setCharAt(int index, char ch);  // 相当于s[index] = ch;
-    2) 删除指定位置的字符：StringBuilder deleteCharAt(int index);
+```Java
+StringBuilder append(CharSequence s[, int start, int end]); // 一般形式，追加s[0, )或s[start, end)
+StringBuilder append(char[] str, int offset, int len);  // char[]特供版，追加str[offset, offset + len)，只有char[]有这个版本
 
+StringBuilder append(type val);  // type支持所有的基本数据类型
+StringBuilder append(Object obj);  // 多态调用obj.toString
+```
 
+<br>
 
-6. 插入：
-    1) StringBuilder insert(int offset, type val);  // 在指定索引出插入val的字符串形式
-    2) type和上面一样支持所有Java基础类型以及Object（默认调用toString方法）、String；
-    3) 插入字符数组的版本：
-         i. StringBuilder insert(int offset, char[] str);
-         ii. StringBuilder insert(int index, char[] str, int offset, int len); // 从index的位置开始插入，只不过不能同时用两个offset命名罢了，这里的index和上面的offset是一个意思
+**3. 在指定位置插入：** 和连接的参数列表形式**完全一样**，4种
 
-7. 删除指定区间：StringBuilder delete(int start, int end); // 删除[start, end)，记住！是左闭右开的！！
+```Java
+// 插入字符串
+StringBuilder insert(int offset, CharSequence s[, int start, int end]);  // 一般形式
+StringBuilder insert(int offset, char[] str[, int start, int len]);  // char[]特供版
 
-8. 替换：StringBuilder replace(int start, int end, String str); // 将[start, end)替换成str
+StringBuilder insert(int offset, type val); // 插入一个基本类型
+StringBuilder insert(int offset, Object obj);  // 多态插入obj.toString
+```
+
+<br><br>
+
+### 四、次常用：设置单个字符、删除子串、替换  [·](#目录)
+> 全部都要注意注意**越界异常[IndexOutOfBoundsException]**
+
+**1. 设置序列中的字符：**
+
+```Java
+void setCharAt(int index, char ch);  // 单字符设值，this[index] = ch;
+StringBuilder deleteCharAt(int index);  // 单字符删除，删掉this[index]
+```
+
+<br>
+
+**2. 删除子串：** 注意越界异常[IndexOutOfBoundsException]
+
+```Java
+StringBuilder delete(int start, int end); // 删除this[start, end)，只有这一个版本
+```
+
+<br>
+
+**3. 替换：**
+
+```Java
+StringBuilder replace(int start, int end, String str); // this[start, end) -> str，只有这一种版本
+```
