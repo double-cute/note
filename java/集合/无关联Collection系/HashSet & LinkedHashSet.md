@@ -6,10 +6,10 @@
 
 ## 目录
 
-1. [Set仅仅是Collection的逻辑派生]()
-2. [HashSet]()
-3. [集合的天敌：可变元素]()
-4. [LinkedHashSet]()
+1. [Set仅仅是Collection的逻辑派生](#一set仅仅是collection的逻辑派生)
+2. [HashSet](#二hashset)
+3. [集合的天敌：可变元素](#三集合的天敌可变元素--)
+4. [LinkedHashSet](#四linkedhashset)
 
 <br><br>
 
