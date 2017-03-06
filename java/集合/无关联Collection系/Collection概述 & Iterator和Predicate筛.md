@@ -4,11 +4,11 @@
 
 ## 目录
 
-1. [Collection接口：假设其类型参数是E]()
-2. [只有Collection有的Iterator]()
-3. [Iterator的常用方法：假设类型参数是E]()
-4. [简洁迭代的只读数据视图原理]()
-5. [Predicate筛]()
+1. [Collection接口：假设其类型参数是E](#一collection接口假设其类型参数是e--)
+2. [只有Collection有的Iterator](#二只有collection有的iterator)
+3. [Iterator的常用方法：假设类型参数是E](#三iterator的常用方法假设类型参数是e--)
+4. [简洁迭代的只读数据视图原理](#四简洁迭代的只读数据视图原理)
+5. [Predicate筛](#五predicate筛)
 
 <br><br>
 
