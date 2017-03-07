@@ -1,6 +1,9 @@
 # Set & HashSet & LinkedHashSet
 > 1. Set是Collection的逻辑派生（没有提供任何额外方法）.
 > 2. HashSet和LinkedHashSet都是Set接口的实现类.
+>   - HashSet和LinkedHashSet**允许存放null**，因为：
+>     1. null可以hash，其hash值为0.
+>     2. null可以equals，就相当于地址比较.
 
 <br><br>
 

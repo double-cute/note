@@ -4,6 +4,10 @@
 >   - 这里的有序维护的是**元素的大小顺序**.
 >
 >> TreeSet是SortedSet最常用的实现类，由于用红黑树实现而得名TreeSet.
+>>
+>>> 所有SortedSet（包括TreeSet）**都不允许存放null**，只要add一个null就**抛出NullPointerException**，因为：
+>>>
+>>>   - null无法compare，SortedSet仅仅由compare决定位置.
 
 <br><br>
 
