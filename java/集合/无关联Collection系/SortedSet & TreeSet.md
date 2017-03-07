@@ -9,10 +9,10 @@
 
 ## 目录
 
-1. [SortedSet规定的有序集合的实现标准：时刻维护大小顺序]()
-2. [TreeSet常用方法：假设类型参数为E]()
-3. []()
-4. []()
+1. [SortedSet规定的有序集合的实现标准：时刻维护大小顺序](#一sortedset规定的有序集合的实现标准时刻维护大小顺序--)
+2. [TreeSet常用方法：假设类型参数为E](#二treeset常用方法假设类型参数为e--)
+3. [如何设定排序规则？](#三如何设定排序规则-)
+4. [SortedSet系列（囊括了TreeSet）判断元素是否重复的标准：compare = 0](#四sortedset系列囊括了treeset判断元素是否重复的标准compare--0--)
 
 <br><br>
 
@@ -137,7 +137,7 @@ TreeSet<Integer> ts = new TreeSet<>((i1, i2) -> i2 - i1); // 定制了一个降�
 
 <br>
 
-**3.&nbsp; 升序降序如何控制？**
+**4.&nbsp; 升序降序如何控制？**
 
 1. 升序就是return v1 - v2; （**前减后**）
 2. 降序就是return v2 - v1; （**后减前**）
