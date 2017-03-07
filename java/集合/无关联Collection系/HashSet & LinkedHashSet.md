@@ -8,8 +8,7 @@
 
 1. [Set仅仅是Collection的逻辑派生](#一set仅仅是collection的逻辑派生)
 2. [HashSet](#二hashset)
-3. [集合的天敌：可变元素](#三集合的天敌可变元素--)
-4. [LinkedHashSet](#四linkedhashset)
+3. [LinkedHashSet](#三linkedhashset)
 
 <br><br>
 
@@ -161,130 +160,7 @@ class R {
 
 <br><br>
 
-### 三、集合的天敌：可变元素  [·](#目录)
-> 如果随意**改变集合中元素的内容**，就可能**导致该元素位置信息的紊乱**.
-
-<br>
-
-**1.&nbsp; 原因很简单：**
-
-- 虽然元素**内容改变**了，但其本身在集合中的**物理位置没有改变**.
-- 但由于内容改变了，依赖内容计算的**hashCode、equals等决定物理位置的信息值**也随之**改变**.
-- 这就导致实际 **物理位置**和**位置信息** 不匹配而发生 **信息错位**，从而导致致命的错误.
-
-<br>
-
-**2.&nbsp; 以HashSet为例：**
-
-```Java
-class R {
-	int val;
-	public R(int val) {
-		this.val = val;
-	}
-	@Override
-	public int hashCode() {
-		return val;
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-
-		if (obj != null && obj.getClass() == R.class) {
-			R another = (R)obj;
-			return this.val == another.val;
-		}
-
-		return false;
-	}
-	@Override
-	public String toString() {
-		return String.valueOf(val);
-	}
-
-}
-
-
-HashSet<R> hs = new HashSet<>();
-
-// op1
-hs.add(new R(5));
-hs.add(new R(-3));
-hs.add(new R(9));
-hs.add(new R(-2));
-
-// -2 -3 5 9
-
-Iterator<R> it = hs.iterator();
-
-// op2
-R first = it.next();
-first.val = -3;
-// -3 -3 5 9
-
-// op3
-hs.remove(new R(-3));
-// -3 5 9
-
-// op4
-hs.contains(new R(-3));  // false
-hs.contains(new R(-2));  // false
-```
-
-- op1：4个add
-
-| 桶编号 | 内容 |
-| --- | --- |
-| -2 | -2 |
-| -3 | -3 |
-| 5 | 5 |
-| 9 | 9 |
-
-- op2：first.val = -3
-
-| 桶编号 | 内容 |
-| --- | --- |
-| -2 | **-3**（原来是-2）|
-| -3 | -3 |
-| 5 | 5 |
-| 9 | 9 |
-
-- op3：hs.remove(new R(-3));
-  - hashCode找到桶(-3)，再找equals(-3)
-  - 因此删掉了**第2个**桶.
-
-| 桶编号 | 内容 |
-| --- | --- |
-| -2 | **-3** |
-| ~~-3~~ | ~~-3~~ |
-| 5 | 5 |
-| 9 | 9 |
-
-- op4：
-  1. hs.contains(new R(-3)); // -3的桶找不到，false
-  2. hs.contains(new R(-2)); // -2的桶能找到，但里面装的内容是-3，equals返回false
-
-| 桶编号 | 内容 |
-| --- | --- |
-| -2 | **-3** |
-| 5 | 5 |
-| 9 | 9 |
-
-- **可以看到混乱至极.**
-
-<br>
-
-**3.&nbsp; 总结：**
-
-- 不仅是HashSet，还有很多需要hashCode、equals以及其它（甚至自定义）方法计算物理位置的集合.
-  1. 要么存放只读元素.
-  2. 如果存放的是可变元素，那也尽量不去修改（严格地说应该是禁止修改）其中元素的内容.
-
-<br><br>
-
-### 四、LinkedHashSet：[·](#目录)
+### 三、LinkedHashSet：[·](#目录)
 
 1. 仅仅就是HashSet的基础上额外使用了一个链表记录了元素的插入顺序（add的顺序）.
   - 因此仍然是不可重复的.
