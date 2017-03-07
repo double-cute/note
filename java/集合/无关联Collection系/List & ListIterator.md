@@ -16,8 +16,8 @@
 
 ## 目录
 
-1. [List独有的索引操作方法：假设类型参数为E]()
-2. [ListIterator：假设类型参数为E]()
+1. [List独有的索引操作方法：假设类型参数为E](#一list独有的索引操作方法假设类型参数为e--)
+2. [ListIterator：假设类型参数为E](#二listiterator假设类型参数为e--)
 
 <br><br>
 
