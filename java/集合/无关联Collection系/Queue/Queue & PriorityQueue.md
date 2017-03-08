@@ -7,8 +7,8 @@
 
 ## 目录
 
-1. [Queue的特有方法]()
-2. [PriorityQueue]()
+1. [Queue的特有方法](#一queue的特有方法)
+2. [PriorityQueue](#二priorityqueue)
 
 <br><br>
 
