@@ -30,12 +30,12 @@
 
 ## 目录
 
-1. [Deque的双端操作方法]()
-2. [Deque特有的扩展方法]()
-3. [Deque对栈操作的支持]()
-4. [ArrayDeque]()
-5. [LinkedList]()
-6. [各类线性表的性能比较]()
+1. [Deque的双端操作方法](#一deque的双端操作方法)
+2. [Deque特有的扩展方法](#二deque特有的扩展方法)
+3. [Deque对栈操作的支持](#三deque对栈操作的支持)
+4. [ArrayDeque](#四arraydeque)
+5. [LinkedList](#五linkedlist)
+6. [各类线性表的性能比较](#六各类线性表的性能比较)
 
 <br><br>
 
