@@ -23,56 +23,192 @@
 
 <br><br>
 
-### 一、Map接口的通用方法：都是Map的对象方法
-    1) 和Collection一样，Map也提供了很多基础的字典操作通用方法；
-    2) 插入元素（Map的元素就是键值对）：
-         i. V put(K key, V value);  // 插入一对键值，如果之前已经存在该键了，那么就覆盖，并返回原来键值对的值！如果之前不存在那就是新添加了，返回的是null（之前的值不存在所以返回null）
-         ii. void putAll(Map m);  // 将另一个字典中的内容拷贝到本字典中
-    3) 删除/清空：
-         i. V remove(Object key);  // 删掉指定key对应的Entry，返回删除之前的value（失败返回null）
-         ii. default boolean remove(Object key, Object value);  // 精确删除key-value对（key和value必须都能匹配上），成功返回true
-         iii. void clear();  // 清空集合，这个方法比较通用
-    4) 常用方法：
-         i. int size(); // 存放了多少个键值对
-         ii. boolean isEmpty(); // 判空
-         iii. V get(K key);  // 返回指定键所对应的值
-    5) 获取键/值的集合：
-         i. Set<K> keySet();  // 返回键组成的Set集合
-         ii. Collection<V> values(); // 返回无结构的value集合，有多少key就有多少value，因此该集合中的value肯定是可以重复的
-！！这两个方法返回的集合和Map中的key和value是一一映射的（返回的是Map中的key和value的镜像），在任意一方对内容进行改动都会直接更新到另一方！！使用时要小心
-         iii. Set<Map.Entry<K, V>> entrySet();  // 直接返回键值对的包装对象Entry所组成的集合，该Entry的类型是Map.Entry，是Map中定义的内部类
-！！Map.Entry的用法：都是Map.Entry的对象方法
-              a. K getKey(); // 得到该条目的key
-              b. V getValue(); // 得到该条目的value
-              c. V setValue(V value); // 重设该条目的value
-！同样，返回的Entry的Set也是原Map中内容的镜像，通过该返回的Set修改会影响到原Map（同样原Map也能反过来影响该镜像），例如：
-public class Test {
+- 接下来介绍的都是Map根接口中定义的**基础对象方法**，所有Map实现类都可以使用的方法.
+  - 可以看到凡是须要在Map中查看参数是否存在的方法，被检查的参数一定是Object类型的.
+    - 就是为了多态调用equals方法进行相等比较，像：
+      1. remove(Ojbect key...);
+      2. contains(Object key \| Object value);
+      3. get
+    - 但那些主动插入（设值等）方法传入的参数就必须是精确匹配的类型K或V了，例如：
+      - put(K key, V value);
+      - Java的设计理念默认**查看是被动的**，**其余操作是主动的**：
+        1. 主动操作默认是**提前知道类型**的，因此要用精确的类型.
+        2. 被动操作默认是**不知道类型**的，因此使用Object.
 
-	public static void main(String[] args) {
+<br><br>
 
-		Map mp = new HashMap();
-		mp.put(1, "haha");
-		mp.put(2, "haha");
-		mp.put(3, "haha");
-		Iterator it = mp.entrySet().iterator(); // 得到镜像的迭代器
-		while (it.hasNext()) {
-			((Map.Entry)it.next()).setValue("papa"); // 用镜像修改
-		}
+### 一、大小、判空、插入、删除：
+> **覆盖了toString方法**，因此可以方便输出全部key-value对.
 
-		System.out.println(mp.values()); // 查看原像，结果全是"papa"
+<br>
 
-	}
-}
-          iv. 通常可以通过keySet（结合get方法）用forEach遍历Map：
-for (Key key: map.keySet()) {
-	System.out.println(key + " --> " + map.get(key));
-}
-    6) 查看是否包含某个key或者value：
-         i. boolean containsKey(K key); // 是否包含某个key
-         ii. boolean containsValue(Object value);  // 是否包含某个value
-    7) Map重写了toString方法，以[key=value, key=value...]的形式返回字符串，因此key和value必须要自己实现toString才行；
+**1.&nbsp; 大小 & 判空：**
 
-3. Java 8为Map新增的若干默认方法：
+```Java
+// 1. 返回当前存放的entry的个数
+int size();
+
+// 2. 判空
+boolean isEmpty();
+```
+
+<br>
+
+**2.&nbsp; 插入：**
+
+```Java
+/** 1. 插入一对key-value
+ *  - 如果：
+ *    1. key之前已经存在了，那么覆盖value并返回旧的value
+ *    2. 否则添加并返回null
+ */
+V put(K key, V value);
+
+// 2. 将另一个字典插入this（key重复会覆盖value）
+void putAll(Map m);  // 将另一个字典中的内容拷贝到本字典中
+```
+
+<br>
+
+**3.&nbsp; 删除 & 清空：**
+
+```Java
+// 1. 根据key精确删除对应的一整个entry，返回之前的value
+V remove(Object key);
+
+/** 2. 严格匹配key-value删除对应的entry
+ *  - 因为key是不重复的，因此只根据key删entry足够了
+ *    - 严格匹配key-value才能删的应用场景比较少
+ */
+default boolean remove(Object key, Object value);
+
+// 3. 清空
+void clear();
+```
+
+<br><br>
+
+### 二、查看、修改：
+> 查看获得全部都是Map中内容的引用，可以**通过这些返回的引用直接修改原数据**.
+>
+> - 不管是key还是value还是entry，都可以修改.
+
+<br>
+
+**1.&nbsp; 是否包含指定key&value：**
+
+```Java
+// 1. 是否包含指定key
+boolean containsKey(Object key);
+
+// 2. 是否包含指定value
+boolean containsValue(Object value);
+```
+
+<br>
+
+**1.&nbsp; 根据key获取对应的value：** 最为常用
+
+```Java
+// 根据equals查找key，并返回相应的value
+  // 如果没找到则返回null
+V get(Object key);
+```
+
+<br>
+
+**2.&nbsp; 获取key&value的结合：**
+
+```Java
+// 1. 获取key组成的集合
+Set<K> keySet();  // 返回键组成的Set集合
+
+/** 2. 返回的是一种可重复的Set.
+ *
+ *  - 返回的集合是一种特殊的Map内部类：private Map.values
+ *    1. 有多少个key，则返回的集合中就有多少个value
+ *    2. 因此里面的values是可以重复的
+ *    3. 由于Map.Values类型无法访问，因此只能当做Collection实例使用
+ *
+ *  - 返回的集合中value的顺序和keySet中key的顺序保持一致的！
+ *    - 为了达到这个目的，返回集合的类型也就必须要用Map了
+ */
+Collection<V> values();
+```
+
+<br>
+
+**3.&nbsp; 获取entry集合：**
+
+```Java
+/** 1. 直接返回所有entry所组成的集合
+ *
+ *  - entry的类型是Map的内部接口：interface Map.Entry
+ *    1. Map.Entry对外部开放，因此可以随意使用.
+ *    2. 但每种Map实现类中的Entry实现类都是对外隐藏的.
+ *      - 在外部想操作entry实例，不得不使用Map.Entry引用.
+ *
+ *  
+ *  - 返回的集合其实是一种特殊类型.
+ *    - 是Map内部定义的：private class EntrySet;
+ *      1. 专门用于存放entry，并且保持和原Map中key相同的顺序.
+ *        - 因此底层肯定还是一个Map结构.
+ *      2. 但由于是对外隐藏的，因此只能当做普通的Set来使用.
+ */
+Set<Map.Entry<K, V>> entrySet();
+```
+
+- 操作Map.Entry：**Map.Entry的对象方法**
+
+```Java
+// 1. 获取key
+K getKey();
+
+// 2. 获取value
+V getValue();
+
+// 3. 重置value
+  // 返回旧的value
+V setValue(V value);
+```
+
+<br><br>
+
+### 三、遍历：
+> 所有的遍历方法都是**记忆类型**的，因此**无需任何强转**.
+>
+>> 随意遍历，随意浪.
+
+<br>
+
+```Java
+HashMap<K, V> mp = ...;
+
+/* === 1. key-value打包在一起遍历 === */
+
+// 直接Map.forEach，最新Java才支持的
+mp.forEach((K key, V value) -> ...);
+// 但没有对应的forEach和Iterator遍历
+
+// entrySet遍历
+mp.entrySet.forEach(Map.Entry<K, V> entry -> ...);
+for (Map.Entry<K, V> entry: mp.entrySet()) { ... }
+Iterator<Map.Entry<K, V>> it = mp.entrySet().iterator();
+
+/* === 2. key、value分开，通过遍历key来遍历value === */
+mp.keySet().forEach(K key -> V value = mp.get(K) ... );
+for (K key: mp.keySet()) { V value = mp.get(key); ... }
+Iterator<K> it = mp.keySet().iterator();
+
+/* === 3. 只遍历value === */
+mp.values().forEach(V value -> ...);
+for (V value: mp.values()) { ... }
+Iterator<V> it = mp.values().iterator();
+```
+
+<br><br>
+
+### 、
     1) 除了remove(key, value)之外Java还新增了很多方便Map使用的默认方法；
     2) default V compute(K key, BiFunction remappingFunction);
          i. BiFunction是一个二元运算接口（函数式接口）：
