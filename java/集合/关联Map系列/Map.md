@@ -43,7 +43,7 @@
 
 <br><br>
 
-### 一、大小、判空、插入、删除：
+### 一、大小、判空、插入、替换（修改）、删除：
 > **覆盖了toString方法**，因此可以方便输出全部key-value对.
 
 <br>
@@ -70,11 +70,48 @@ boolean isEmpty();
  */
 V put(K key, V value);
 
+/** 2. 不存在时插入
+ *    
+ *     1. key不存在时：插入key-value & 返回null
+ *     2. key-null时：插入key-value & 返回null
+ *     3. key-value时：不插入 & 返回旧key
+ */
+
+default V putIfAbsent(K key, V value);
+
 // 2. 将另一个字典插入this（key重复会覆盖value）
 void putAll(Map m);  // 将另一个字典中的内容拷贝到本字典中
 ```
 
 <br>
+
+**2.&nbsp; 替换（修改）：**
+
+```Java
+/** 1. 修改已存在的key-value，返回旧value
+ *  - 前提是key必须存在，否则拒绝替换返回null
+ */
+default V replace(K key, V value);
+
+/** 2. 上一个方法的精确版，必须oldValue也能匹配上
+ *
+ *  - 也就是说：必须同时满足下面两个条件才能替换成功！
+ *    1. key必须存在.
+ *    2. oldValue必须匹配上.
+ *
+ *  - 由于调用这个方法一般是提前知道oldValue的，因此
+ *    - 不返回oldValue而是返回方法是否执行成功的标志.
+ */
+default boolean replace(K key, V oldValue, V newValue);
+
+
+iii. 全部批量重设：default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function);  // 根据函数（通过key-value计算）重设每一个键值对的value
+
+```
+
+<br>
+
+
 
 **3.&nbsp; 删除 & 清空：**
 
@@ -116,9 +153,12 @@ boolean containsValue(Object value);
 **1.&nbsp; 根据key获取对应的value：** 最为常用
 
 ```Java
-// 根据equals查找key，并返回相应的value
-  // 如果没找到则返回null
+// 1. 正产取值：根据equals查找key，并返回相应的value
+  // key不存在就返回null
 V get(Object key);
+
+// 2. 非空取值：如果key存在就取值，不存在就返回defaultValue
+default V getOrDefault(Object key, V defaultValue);
 ```
 
 <br>
@@ -192,7 +232,9 @@ HashMap<K, V> mp = ...;
 
 /* === 1. key-value打包在一起遍历 === */
 
-// 直接Map.forEach，最新Java才支持的
+// Map层级上的简洁遍历，直接Map.forEach（最新Java才支持的）
+default void forEach(BiConsumer<? super K, ? super V> action);
+// 示例：
 mp.forEach((K key, V value) -> ...);
 // 但没有对应的forEach和Iterator遍历
 
@@ -235,11 +277,7 @@ public interface BiFunction<T, U, R> {
 
 ！！3) 4)两个方法当计算出来的新value为null时都会删除原键值对！！
 
-！！接下来介绍几个非常常用且实用的默认方法！
-      1) 如果一个键不存在（不存在或者对应的value为空）就添加/覆盖一对键值：default V putIfAbsent(K key, V value);
-      2) 直接精确删除一对键值（之前讲过）：default boolean remove(K key, V value);
-      3) 简洁遍历：default void forEach(BiConsumer<? super K, ? super V> action);  // 例如典型的打印遍历：map.forEach((k, v) -> System.out.println(k + " ---> " + v));
-      4) 防无获取值：default V getOrDefault(Object key, V defaultValue);  // 如果不包含key（是不包含，key-null的情况不算，只是不包含）就用defaultValue返回，否则返回正常的value
+
       5) 重设：相当于set一个key的value为新的value，只不过Map没有提供set方法
            i. default V replace(K key, V value);  // 将key的值重设为新的value，返回老的value
            ii. default boolean replace(K key, V oldValue, V newValue);  // 精确找到key-oldvalue对，然后将oldValue替换成新的newValue，替换成功返回true
