@@ -2,10 +2,16 @@
 > Map和Collection处于同一个集成层次上，是有关联关系集合的根接口，通过**key来找value**.
 >
 >> - key是键值对唯一性的标识，因此key不能重复.
+>>
+>> <br>
+>>
 >> - **Set底层是用Map实现的，即value为null的Map：**
 >>   1. 因此Set就相当于只保存key（value等于null）的Map.
 >>   2. Set的所有实现Map也有相对应的实现：HashMap、LinkedHashMap、SortedMap、TreeMap、EnumMap.
 >>     - 可以看到**完全和Set的实现一一对应.**
+>>
+>> <br>
+>>
 >> - 但Map没有线性表的存储方式（List、Queue），即没有ListMap、QueueMap这种存储方式，那是因为：
 >>   - Map这种关联结构**强调的是根据key来找value**.
 >>     1. 即相当于List根据索引找value一样，list[1]是根据索引1取出value，而map["hello"]则是根据key("hello")来找value.
