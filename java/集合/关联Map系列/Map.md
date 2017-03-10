@@ -23,9 +23,12 @@
 
 ## 目录
 
-1. []()
-2. []()
-3. []()
+1. [大小、判空、清空]()
+2. [插入]()
+3. [替换（修改）]()
+4. [删除]()
+5. [查看]()
+6. [遍历]()
 
 <br><br>
 
@@ -41,9 +44,32 @@
         1. 主动操作默认是**提前知道类型**的，因此要用精确的类型.
         2. 被动操作默认是**不知道类型**的，因此使用Object.
 
+<br>
+
+- 术语解释：
+
+<br>
+
+> 1. 存在：参数中的key原来出现在map中，并且其value不为null.
+>
+> 2. 浮现：参数中的key出现在map中，但其value为null.
+>
+> 3. 出现：存在 + 浮现
+>   - 只要key出现在原map中就行了，不管其value是不是null.
+>
+> <br>
+>
+> - 关于返回值：**必定**、**无论如何** 都会返回**旧value**.
+>   - 只要看到方法有返回值（V类型的），那必定会返回一个旧value.
+>   - 旧的value是啥就返回啥：
+>     1. 旧的value如果是null那就返回null.
+>     2. 旧的value不存在（参数中指定的key没有出现在map中）也返回null.
+>       - 旧相当于旧值是null.        
+
+
 <br><br>
 
-### 一、大小、判空、清空：
+### 一、大小、判空、清空：[·](#目录)
 > **覆盖了toString方法**，因此可以方便输出全部key-value对.
 
 <br>
@@ -61,22 +87,7 @@ void clear();
 
 <br><br>
 
-### 二、插入：
-> 1. 存在：参数中的key原来出现在map中，并且其value不为null.
->
-> 2. 浮现：参数中的key出现在map中，但其value为null.
->
-> 3. 出现：存在 + 浮现
->   - 只要key出现在原map中就行了，不管其value是不是null.
->
-> <br>
->
-> - 关于返回值：**必定**、**无论如何** 都会返回**旧value**.
->   - 只要看到方法有返回值（V类型的），那必定会返回一个旧value.
->   - 旧的value是啥就返回啥：
->     1. 旧的value如果是null那就返回null.
->     2. 旧的value不存在（参数中指定的key没有出现在map中）也返回null.
->       - 旧相当于旧值是null.
+### 二、插入：[·](#目录)
 
 <br>
 
@@ -118,7 +129,7 @@ void putAll(Map m);  // 将另一个字典中的内容拷贝到本字典中
 
 <br><br>
 
-### 三、替换（修改）：
+### 三、替换（修改）：[·](#目录)
 
 <br>
 
@@ -146,6 +157,9 @@ default boolean replace(K key, V oldValue, V newValue);
 
 - **返回的是计算出来的新值！**
   - 如果不存在就返回null.
+- 算法步骤：
+  1. 如果存在，那么就设值.
+  2. 在设值成功的前提下，如果设的值是null，那么就删除这个entry.
 
 ```Java
 V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction);
@@ -156,9 +170,53 @@ interface BiFunction<T, U, R> { R apply(T t, U u); } // 这里是 (K key, V valu
 m.computeIfPresent(111, (key, value) -> key + value); // 将key为111的oldValue替换成key + oldValue
 ```
 
+<br><br>
+
+**4.&nbsp; 特殊的异常不安全重设：**
+
+- 返回新的值.
+
+1. 如果设的值是**非null**，如果不存在可能会抛出**[NullPointerException]异常**.
+2. 如果设的值是null，那么一定不会抛出异常：
+  1. 如果出现，则删除原entry.
+  2. 如果不出现则什么都不做.
+
+- **正常用法：** 用key和value计算出一个新value重设.
+
+```Java
+V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction);
+
+// 示例
+HashMap<Integer, Integer> m = ...; // 0-0, 1-null, 2-2
+
+m.compute(2, (key, value) -> key * value);  // 2-4
+m.compute(2, (key, value) -> null);  // 删除2-2
+m.compute(1, (key, value) -> null);  // 删除1-null
+m.compute(1, (key, value) -> key * value); // key、value空指针异常
+```
+
 <br>
 
-**4.&nbsp; 批量替换：**
+**5.&nbsp; 新旧value合并重设：**
+
+- **正常用法：** 不存在就设为newValue，存在就通过oldValue和newValue计算一个新value设值
+  - 返回新value
+
+```Java
+default V merge(K key, V newValue, BiFunction<? super V, ? super V, ? extends V> remappingFunction);
+
+if key不存在:
+    if newValue == null: 抛出空指针异常
+    map[key] = newValue;
+else:
+    result = lambda: (oldValue, newValue) -> ...;  // 注意如果newValue是null可能引发空指针异常！
+    if result == null: 删除此entry
+    else: map[key] = result
+```
+
+<br>
+
+**6.&nbsp; 批量替换：**
 
 1. 根据旧的key-value计算出一个新value替换.
 2. 这里要求必须存在，如果浮现就抛出**[NullPointerException]异常**.
@@ -172,7 +230,7 @@ m.replaceAll((key, value) -> key + value * 2); // 0+0*2, 1+1*2, 2+2*2 = 0, 3, 6
 
 <br><br>
 
-### 四、删除：
+### 四、删除：[·](#目录)
 
 <br>
 
@@ -192,7 +250,7 @@ default boolean remove(Object key, Object oldValue);
 
 <br><br>
 
-### 五、查看：
+### 五、查看：[·](#目录)
 > 查看获得全部都是Map中内容的引用，可以**通过这些返回的引用直接修改原数据**.
 >
 > - 不管是key还是value还是entry，都可以修改.
@@ -280,7 +338,7 @@ V setValue(V value);
 
 <br><br>
 
-### 三、遍历：
+### 六、遍历：[·](#目录)
 > 所有的遍历方法都是**记忆类型**的，因此**无需任何强转**.
 >
 >> 随意遍历，随意浪.
