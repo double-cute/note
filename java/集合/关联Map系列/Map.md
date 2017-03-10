@@ -43,12 +43,10 @@
 
 <br><br>
 
-### 一、大小、判空、插入、替换（修改）、删除：
+### 一、大小、判空、清空：
 > **覆盖了toString方法**，因此可以方便输出全部key-value对.
 
 <br>
-
-**1.&nbsp; 大小 & 判空：**
 
 ```Java
 // 1. 返回当前存放的entry的个数
@@ -56,74 +54,6 @@ int size();
 
 // 2. 判空
 boolean isEmpty();
-```
-
-<br>
-
-**2.&nbsp; 插入：**
-
-```Java
-/** 1. 插入一对key-value
- *  - 如果：
- *    1. key之前已经存在了，那么覆盖value并返回旧的value
- *    2. 否则添加并返回null
- */
-V put(K key, V value);
-
-/** 2. 不存在时插入
- *    
- *     1. key不存在时：插入key-value & 返回null
- *     2. key-null时：插入key-value & 返回null
- *     3. key-value时：不插入 & 返回旧key
- */
-
-default V putIfAbsent(K key, V value);
-
-// 2. 将另一个字典插入this（key重复会覆盖value）
-void putAll(Map m);  // 将另一个字典中的内容拷贝到本字典中
-```
-
-<br>
-
-**2.&nbsp; 替换（修改）：**
-
-```Java
-/** 1. 修改已存在的key-value，返回旧value
- *  - 前提是key必须存在，否则拒绝替换返回null
- */
-default V replace(K key, V value);
-
-/** 2. 上一个方法的精确版，必须oldValue也能匹配上
- *
- *  - 也就是说：必须同时满足下面两个条件才能替换成功！
- *    1. key必须存在.
- *    2. oldValue必须匹配上.
- *
- *  - 由于调用这个方法一般是提前知道oldValue的，因此
- *    - 不返回oldValue而是返回方法是否执行成功的标志.
- */
-default boolean replace(K key, V oldValue, V newValue);
-
-
-iii. 全部批量重设：default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function);  // 根据函数（通过key-value计算）重设每一个键值对的value
-
-```
-
-<br>
-
-
-
-**3.&nbsp; 删除 & 清空：**
-
-```Java
-// 1. 根据key精确删除对应的一整个entry，返回之前的value
-V remove(Object key);
-
-/** 2. 严格匹配key-value删除对应的entry
- *  - 因为key是不重复的，因此只根据key删entry足够了
- *    - 严格匹配key-value才能删的应用场景比较少
- */
-default boolean remove(Object key, Object value);
 
 // 3. 清空
 void clear();
@@ -131,7 +61,138 @@ void clear();
 
 <br><br>
 
-### 二、查看、修改：
+### 二、插入：
+> 1. 存在：参数中的key原来出现在map中，并且其value不为null.
+>
+> 2. 浮现：参数中的key出现在map中，但其value为null.
+>
+> 3. 出现：存在 + 浮现
+>   - 只要key出现在原map中就行了，不管其value是不是null.
+>
+> <br>
+>
+> - 关于返回值：**必定**、**无论如何** 都会返回**旧value**.
+>   - 只要看到方法有返回值（V类型的），那必定会返回一个旧value.
+>   - 旧的value是啥就返回啥：
+>     1. 旧的value如果是null那就返回null.
+>     2. 旧的value不存在（参数中指定的key没有出现在map中）也返回null.
+>       - 旧相当于旧值是null.
+
+<br>
+
+**1.&nbsp; 出现就覆盖，不出现就添加：**
+
+```Java
+V put(K key, V value);
+```
+
+<br>
+
+**2.&nbsp; 不存在时插入，存在时什么都不做：**
+
+```Java
+default V putIfAbsent(K key, V value);
+```
+
+<br>
+
+**3.&nbsp; key不存在时计算根据key计算出一个新的value插入，存在时什么都不做：**
+
+```Java
+V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction);
+interface Function<T, R> { R apply(T t); }
+
+// 示例
+m.computeIfAbsent(15, key -> key + 1);  // 如果15没出现在keySet，那么就将15-15+1插入m中
+// 如果原来有15-null也会插入（覆盖）15-16
+// 即使lambda表达式为key -> null，也行，新的key-null也能被插入
+```
+
+<br>
+
+**4.&nbsp; 导入整个Map（出现就覆盖，没出现就插入）：**
+
+```Java
+void putAll(Map m);  // 将另一个字典中的内容拷贝到本字典中
+```
+
+<br><br>
+
+### 三、替换（修改）：
+
+<br>
+
+**1.&nbsp; 存在就替换成value，不存在就什么都不做：**
+
+```Java
+default V replace(K key, V value);
+```
+
+<br>
+
+**2.&nbsp; 精确匹配oldValue，出现就替换，不出现就不替换：**
+
+1. 没出现当然返回false.
+2. **浮现也可以匹配！**
+  - 即原来是key-value也能被替换.
+
+```Java
+default boolean replace(K key, V oldValue, V newValue);
+```
+
+<br>
+
+**3.&nbsp; 存在就根据原有的key-value计算出新的value替换，否则什么都不做：**
+
+- **返回的是计算出来的新值！**
+  - 如果不存在就返回null.
+
+```Java
+V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction);
+
+interface BiFunction<T, U, R> { R apply(T t, U u); } // 这里是 (K key, V value) -> V returnValue
+
+// 示例
+m.computeIfPresent(111, (key, value) -> key + value); // 将key为111的oldValue替换成key + oldValue
+```
+
+<br>
+
+**4.&nbsp; 批量替换：**
+
+1. 根据旧的key-value计算出一个新value替换.
+2. 这里要求必须存在，如果浮现就抛出**[NullPointerException]异常**.
+
+```Java
+default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function);
+// 示例
+HashMap<Integer, Integer> m = ...;  // 0, 1, 2
+m.replaceAll((key, value) -> key + value * 2); // 0+0*2, 1+1*2, 2+2*2 = 0, 3, 6
+```
+
+<br><br>
+
+### 四、删除：
+
+<br>
+
+**1.&nbsp; 出现就删除，不出现就什么都不做：**
+
+```Java
+V remove(Object key);
+```
+
+<br>
+
+**2.&nbsp; 严格匹配oldValue，`浮现也可以匹配`：**
+
+```Java
+default boolean remove(Object key, Object oldValue);
+```
+
+<br><br>
+
+### 五、查看：
 > 查看获得全部都是Map中内容的引用，可以**通过这些返回的引用直接修改原数据**.
 >
 > - 不管是key还是value还是entry，都可以修改.
@@ -141,29 +202,28 @@ void clear();
 **1.&nbsp; 是否包含指定key&value：**
 
 ```Java
-// 1. 是否包含指定key
+// 1. 出现就返回true
 boolean containsKey(Object key);
 
-// 2. 是否包含指定value
+// 2. 出现就返回true，包括null出现也返回true
 boolean containsValue(Object value);
 ```
 
 <br>
 
-**1.&nbsp; 根据key获取对应的value：** 最为常用
+**2.&nbsp; 根据key获取对应的value：** 最为常用
 
 ```Java
-// 1. 正产取值：根据equals查找key，并返回相应的value
-  // key不存在就返回null
+// 1. 直取，出不出现都取
 V get(Object key);
 
-// 2. 非空取值：如果key存在就取值，不存在就返回defaultValue
+// 2. 非空取：存在就取，不存在（包括浮现）就返回defaultValue
 default V getOrDefault(Object key, V defaultValue);
 ```
 
 <br>
 
-**2.&nbsp; 获取key&value的结合：**
+**3.&nbsp; 获取key&value的结合：**
 
 ```Java
 // 1. 获取key组成的集合
@@ -184,7 +244,7 @@ Collection<V> values();
 
 <br>
 
-**3.&nbsp; 获取entry集合：**
+**4.&nbsp; 获取entry集合：**
 
 ```Java
 /** 1. 直接返回所有entry所组成的集合
@@ -229,57 +289,52 @@ V setValue(V value);
 
 ```Java
 HashMap<K, V> mp = ...;
+```
 
-/* === 1. key-value打包在一起遍历 === */
+<br>
 
-// Map层级上的简洁遍历，直接Map.forEach（最新Java才支持的）
+**1.&nbsp; key-value打包在一起遍历：**
+
+```Java
+// 1. Map层级上的简洁遍历，直接Map.forEach（最新Java才支持的）
 default void forEach(BiConsumer<? super K, ? super V> action);
 // 示例：
 mp.forEach((K key, V value) -> ...);
 // 但没有对应的forEach和Iterator遍历
 
-// entrySet遍历
+
+// 2. entrySet遍历
 mp.entrySet.forEach(Map.Entry<K, V> entry -> ...);
 for (Map.Entry<K, V> entry: mp.entrySet()) { ... }
 Iterator<Map.Entry<K, V>> it = mp.entrySet().iterator();
-
-/* === 2. key、value分开，通过遍历key来遍历value === */
-mp.keySet().forEach(K key -> V value = mp.get(K) ... );
-for (K key: mp.keySet()) { V value = mp.get(key); ... }
-Iterator<K> it = mp.keySet().iterator();
-
-/* === 3. 只遍历value === */
-mp.values().forEach(V value -> ...);
-for (V value: mp.values()) { ... }
-Iterator<V> it = mp.values().iterator();
 ```
 
-<br><br>
+<br>
 
-### 、
-    1) 除了remove(key, value)之外Java还新增了很多方便Map使用的默认方法；
-    2) default V compute(K key, BiFunction remappingFunction);
-         i. BiFunction是一个二元运算接口（函数式接口）：
-public interface BiFunction<T, U, R> {
-    R apply(T t, U u);
-}
-         ii. 在这里是指根据key所指定的key-value对，用key和value这两个值计算一个新的value；
-         iii. 如果新value不为空就覆盖原key-value对，如果新value为空就删除原key-value对，如果新旧value都为空则保持不变；
-         iv. 返回的是计算出的新value（可能为空）；
-         v. 例如：map.compute(key, (k, v) -> ((K).k).toString + ((V)v).toString());  // 用key和value的字符串连接作为新的value
+**2.&nbsp; key、value分开，通过遍历key来遍历value：**
 
-    3) V computeIfAbsent(K key, Function mappingFunction);
-！！ 如果key不存在（两种情况，一种就是真的不存在，另一种是key存在，但是其对应value为空），那么就用后面指定的函数计算出一个新的value覆盖（或者添加）；
-    4) default V computeIfPresent(K key, BiFunction remappingFunction);
-！！如果key存在（有value，且value不为空）就用函数计算一个新值覆盖原键值对
-    5) default V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction);
-！！如果key不存在（不存在或值为空）就赋成value，如果key存在（其value不为空）则用函数（通过旧value和参数中给出的新value）计算出一个新的value覆盖，如果函数计算出的新value为null则删除该键
+```Java
+// 1.
+mp.keySet().forEach(K key -> V value = mp.get(K) ... );
 
-！！3) 4)两个方法当计算出来的新value为null时都会删除原键值对！！
+// 2.
+for (K key: mp.keySet()) { V value = mp.get(key); ... }
 
+// 3.
+Iterator<K> it = mp.keySet().iterator();
+```
 
-      5) 重设：相当于set一个key的value为新的value，只不过Map没有提供set方法
-           i. default V replace(K key, V value);  // 将key的值重设为新的value，返回老的value
-           ii. default boolean replace(K key, V oldValue, V newValue);  // 精确找到key-oldvalue对，然后将oldValue替换成新的newValue，替换成功返回true
-！！注意不要和put搞混了，如果key不存在不会添加，只能重设已存在的key所对应的value
-           iii. 全部批量重设：default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function);  // 根据函数（通过key-value计算）重设每一个键值对的value
+<br>
+
+**3.&nbsp; 只遍历value：**
+
+```Java
+// 1.
+mp.values().forEach(V value -> ...);
+
+// 2.
+for (V value: mp.values()) { ... }
+
+// 3.
+Iterator<V> it = mp.values().iterator();
+```
