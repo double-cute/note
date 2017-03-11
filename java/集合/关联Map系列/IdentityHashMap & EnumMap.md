@@ -13,8 +13,8 @@
 
 ## 目录
 
-1. [IdentityHashMap]()
-2. [EnumMap]()
+1. [IdentityHashMap](#一identityhashmap)
+2. [EnumMap](#二enummap)
 
 <br><br>
 
