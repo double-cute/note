@@ -9,12 +9,12 @@
 
 ## 目录
 
-1. [TreeMap简介]()
-2. [TreeMap的特有方法]()
+1. [TreeMap简介](#一treemap简介)
+2. [TreeMap的特有方法](#二treemap的特有方法)
 
 <br><br>
 
-### 一、TreeMap简介：
+### 一、TreeMap简介：[·](#目录)
 > 是SortedMap最常用的实现类，可以和TreeSet做类比.
 
 <br>
@@ -31,7 +31,7 @@
 
 <br><br>
 
-### 二、TreeMap的特有方法：
+### 二、TreeMap的特有方法：[·](#目录)
 > 基本和TreeSet的形式一样的，只不过方法名的后缀变成了**Key、Entry、Map**.
 
 <br>
