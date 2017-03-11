@@ -8,9 +8,9 @@
 
 ## 目录
 
-1. [HashMap]()
-2. [LinkedHashMap]()
-3. [Properties]()
+1. [HashMap](#一hashmap)
+2. [LinkedHashMap](#二linkedhashmap)
+3. [Properties](#三properties)
 
 <br><br>
 
@@ -34,6 +34,8 @@
 
 ### 二、LinkedHashMap：[·](#目录)
 > 就像LinkedHashSet之于HashSet，LinkedHashMap用一张额外链表维护Entry的插入顺序，并且迭代的时候更加高效.
+
+<br>
 
 - 和HashMap一样，没有对Map做任何额外的扩展，完全当做Map使用，只不过迭代顺序和插入顺序一样罢了.
 
