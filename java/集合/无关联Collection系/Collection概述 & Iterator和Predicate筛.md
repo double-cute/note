@@ -16,6 +16,11 @@
 
 <br>
 
+- Collections工具类对Collection的支持：
+  - [Collection查询信息](../../Collections工具类%20%26%20多线程集合.md#四collection查询信息)
+
+<br>
+
 **1.&nbsp; 常用功能：**
 
 ```Java
