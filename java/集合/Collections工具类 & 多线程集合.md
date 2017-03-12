@@ -1,4 +1,4 @@
-# Collections工具类
+# Collections工具类 & 多线程集合
 > 操作集合的工具类（静态方法集），可以操作Colletion系和Map系的所有实现类对象.
 >
 >> 主要功能包括：
@@ -11,8 +11,12 @@
 
 ## 目录
 
-1. []()
-2. []()
+1. [List排序]()
+2. [List查找]()
+3. [List批量填充和替换]()
+4. [Collection查询信息]()
+5. [生成不可变集合]()
+6. [同步控制（生成多线程集合）]()
 
 <br><br>
 
@@ -171,26 +175,99 @@ static int frequency(Collection<?> c, Object o); // 一般应用于可重复的�
 
 <br><br>
 
-### 五、
-5. 设置只读集合：以下方法产生的集合都是不可变的只读集合（任何修改集合的行为都是导致运行时异常
-    1) 产生一个空的不可变集合：static final <T> Xxx<T> emptyXxx();  // Xxx支持Set、List、Map、SortedSet、SortedMap
-！！泛型类型根据返回值的接受引用推断，例如：Set<String> set = Collections.emptySet();  // 泛型参数由Set<String>推断出来
-    2) 产生一个只包含一个元素的不可变集合：
-        i. static <T> Set<T> singleton(T o);  // 产生只包含一个元素o的Set不可变集合
-        ii. static <K,V> Map<K,V> singletonMap(K key, V value);  // 产生只包含一对key-value的Map不可变集合
-        iii. static <T> List<T> singletonList(T o);
-！！注意！只有Set不符合singletonXxx的命名规范，需要记忆一下！
-    3) 返回指定集合的不可变版本（只读版本）：static <T> Xxx<T> unmodifiableXxx(Xxx<? extends T> c); // Xxx支持Collection、Set、List、Map、SortedSet、SortedMap
+### 五、生成不可变集合：
+> 这里的不可变是指：
+>
+>> 1. 通过集合本身的对象方法无法改变（比如add、clear、remove等）.
+>> 2. 但是通过元素的引用调用元素自身的对象方法还是可以改变元素的内容的.
+>>   - 例如：
+>>     1. set.add(...);  // 拒绝，集合方法修改元素将失败
+>>     2. set.remove(...);  // 同样拒绝，同样也是集合方法修改元素
+>>     3. set.forEach(ele -> ele.setValue(22));  // 允许修改，是通过元素本身的方法去修改是允许的
+>>
+>>> 不可变集合一般用于如特殊用途，比如作为常数池，专门用于存放频繁用到的一些常数之类的.
 
-4. 同步控制：
-    1) Java集合框架的所有集合Collection、Map全部都是线程不安全的，因为线程不安全的效率更高，应用更广泛，然而并没有为它们提供相应的线程安全的版本；
-    2) 只有老版本的几个集合Vector、Stack等是线程安全的（默认就是线程安全，连线程不安全的版本都没有），但是实现较差，已经没人用了；
-    3) 还好Collections工具类提供了synchronizedXxx(Xxx<T> c)方法可以将一个线程不安全的集合包装成线程安全的集合并返回：Xxx支持Collection、Set、List、Map
-         i. static <T> Collection<T> synchronizedCollection(Collection<T> c);
-         ii. static <T> Set<T> synchronizedSet(Set<T> s);
-         iii. static <T> List<T> synchronizedList(List<T> list);
-         iv. static <K,V> Map<K,V> synchronizedMap(Map<K,V> m);
-！！可以看到包装后的返回类型并不是什么新类型（没有synchronized之类的前缀），还是原有的类型，只不过底层多支持了线程安全的功能，用法和线程不安全的普通版本一模一样！！非常方便，就像变魔术一样！
-！！注意：返回类型都是Collection、Set、List、Map这样的上层接口，如果需要使用具体的实现类则需要强制类型转换一下；
-    3) 示例：ArrayList<String> list = (ArrayList<String>)Collections.synchronizedCollection(new ArrayList<String>());  // 返回值一定要(ArrayList<String>)转换一下
-！！虽然List是ArrayList的父类，但List<T>并不是ArrayList<T>的父类！这个问题会在泛型中具体讲到！！
+<br>
+
+**1.&nbsp; 生成空集合：**
+
+```Java
+/** Xxx支持Set、SortedSet、List、Map、SortedMap
+ *  
+ *  - 返回的私有的EmptyXxx内部类对象，都继承自Xxx.
+ *    - 不必担心，返回的必定是实现类对象.
+ */
+static final <T> Xxx<T> emptyXxx();
+```
+
+<br>
+
+**2.&nbsp; 生成只包含一个元素的集合：**
+
+- 返回的都是私有内部类对象SingletonXxx.
+  - 可以放心使用，一定都是实现类对象，可以放心使用.
+
+```Java
+// 1. Set
+static <T> Set<T> singleton(T o);  // 只有set没有Xxx后缀，需要特殊记忆一下！
+
+// 2. Map
+static <K,V> Map<K,V> singletonMap(K key, V value);
+
+// 3. List
+static <T> List<T> singletonList(T o);
+```
+
+<br>
+
+**3.&nbsp; 由可变集合生成一个对应的不可变集合：**
+
+```Java
+// Xxx支持Collection、Set、SortedSet、List、Map、SortedMap
+static <T> Xxx<T> unmodifiableXxx(Xxx<? extends T> c);
+```
+
+<br><br>
+
+### 六、同步控制（生成多线程集合）：
+> Java的集合框架（包括所有Collection、Map全部都是单线程的）.
+>
+> - 毕竟单线程效率更高，应用更广.
+> - 但Java集合框架**并没提供多线程版本**的集合.
+>
+>> 只有老版本的几种集合Vector、Stack等默认是线程安全的（多线程），但是实现较差，已经被新标准替代了.
+
+<br>
+
+```Java
+// 将一个单线程集合转换成多线程集合
+  // Xxx支持Collection、Set、List、Map
+static <T> Xxx<T> synchronizedXxx(Xxx<T> c);
+
+// 例如
+static <K,V> Map<K,V> synchronizedMap(Map<K,V> m);
+```
+
+<br>
+
+- 可以看到返回都是抽象接口类型的对象：Collection、Set、List、Map
+  - 你可能会烦恼：那这样的话不是要在返回后进行强转吗？
+    1. 但是，无法强制转换成集合实现类型（如HashSet、ArrayList、HashMap等具体实现类）.
+    2. 那是因为返回对象的实际运行时类型其实是Collections的私有内部类Collections.SynchronizedXxx
+  - 因此强制类型转换会发生ClassCastException错误，比如：
+
+```Java
+HashSet<Integer> hs = new HashSet<>();
+hs = (HashSet<Integer>)Collections.synchronizedSet(hs);  // 抛出类型转换异常
+// 因为HashSet和Collections.SynchronizedSet之间不兼容.
+```
+
+<br>
+
+- **如何解决多线程集合和想要的实现类之间的类型兼容问题呢？**
+  - 答案是：**不用解决**，**不用理会**.
+  - 因为Java集合框架体系中的所有实现类基本没有多抽象接口中定义的方法有任何的额外扩展！！
+    - 也就是说像HashSet、ArrayList等实现类根本没有对其抽象接口Set、List等添加任何额外方法.
+    - 唯一额外的东西就是构造器了！
+      - 但是构造器都是在转换成多线程集合之前就已经调用了，根本不影响变成多线程之后的使用！
+      - 所以，淡定淡定，就正常实用就行了.
