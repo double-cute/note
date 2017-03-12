@@ -28,6 +28,13 @@
 
 <br>
 
+- Collections工具类对List的支持如下：
+  1. [List排序](../../Collections工具类%20%26%20多线程集合.md#一list排序)
+  2. [List查找](../../Collections工具类%20%26%20多线程集合.md#二list查找)
+  3. [List批量填充和替换](../../Collections工具类%20%26%20多线程集合.md#三list批量填充和替换)
+
+<br>
+
 **1.&nbsp; 插入（添加）元素：**
 
 - 是在指定的index和index - 1之间插入，可以理解为**在index前插入**.
