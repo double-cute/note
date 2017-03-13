@@ -9,8 +9,8 @@
 
 ## 目录
 
-1. [Random]()
-2. [ThreadLocalRandom]()
+1. [Random](#一random)
+2. [ThreadLocalRandom](#二threadlocalrandom)
 
 <br><br>
 
