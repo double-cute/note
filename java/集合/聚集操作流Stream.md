@@ -12,7 +12,7 @@
 >>
 >>> 应用场景：**数据规模大、临时性、一次性的统计**，如果需要频繁统计则频繁消耗和创建流的代价又太大了.
 >>>
->>>> 目前**只支持int、long、double三种基本类型的Stream**，毕竟是统计专用，统计都是数值型元素.
+>>>> 目前**只提供了int、long、double三种基本类型的Stream**，毕竟是统计专用，统计都是数值型元素.
 
 <br><br>
 
@@ -57,6 +57,7 @@ static Stream.Builder<T> builder();
 
 // 示例
 IntStream.Builder builder = IntStream.builder();
+
 Stream.Builder<String> builder = Stream.builder();
 ```
 
@@ -73,6 +74,7 @@ Stream.Builder<T> add(T t);
 
 // 示例
 IntStream.Builder builder = IntStream.builider().add(5).add(3);
+
 /**
  *  连续调用必须要在builder()这个位置就能推断出类型参数的真实值.
  *  - 因此必须在这个位置显式声明类型实参才行
@@ -93,6 +95,7 @@ Stream<T> build();
 
 // 示例
 IntStream is = IntStream.builder().add(5).add(3).build();
+
 Stream<String> s = Stream.<String>builder().add("11").add("22").build();
 // 或者
 Stream.Builder<String> builder = Stream.builder();
@@ -101,33 +104,105 @@ Stream<String> s = builder.add("111").add("222").build();
 
 <br>
 
+**4.&nbsp; 利用Collection构造出一个Stream：**
 
-    1) Java 8的Stream有多种版本，其中最基础的根类就是Stream，其中可以存放任何类型的数据（模板类），但不过Java为了方便也实现了各种TypeStream，其中Type支持int、long、double等基本数据类型；
-    2) 构造Stream对象：
-         i. Java采用生产线模式设计Stream类，即必须先获取一个Stream对象的生产者，然后用这个生产者来生产Stream对象；
-         ii. 所有的Stream类都有一个静态工具方法builder，可以获得一个相应Stream类的生产者：static<T> Stream.Builder<T> builder();
-         iii. 生产者Builder有两个方法，一个是add，一个是build，先用add往"流"（此时的流只是一个半成品）中加入一个个元素，加完之后调用build方法完成“产品”返回最终成型的Stream流对象：
-              a. default Stream.Builder.Builder<T> add(T t);  // 其返回的还是Builder本身，因此可以连续add了，例如builder.add(1).add(2).add(3)....
-              b. Stream<T> build();  // 最终生产出成型的Stream对象，连起来就可以这样子Stream s = builder.add(1).add(2).add(3).build();
-         iv. Collection接口提供了一个stream方法，可以用集合中的元素构造一个临时的Stream对象，因此这样也可以直接构造出一个流：default Stream Collection.stream();
-    3) 构造完Stream对象后就可以调用其各种聚集方法进行统计了；
+- 假设Collection的类型参数是E.
 
-3. Stream聚集操作：
+```Java
+Stream<E> stream(); // 也就是说所有的Collection系都有这个方法可以构造Stream
+
+// 示例
+TreeSet<String> ts = ...;
+Stream<String> ss = ts.stream();
+```
+
+<br><br>
+
+### 二、流变换（修改）：
+> 将流经过一定的处理（排序、过滤等），这类操作的特点是：
+>
+> 1. 原来的流会被消耗掉，不得再使用了.
+>   - 强行使用会抛出**[IllegalStateException]异常**.
+>   - 即流已经不在状态了，不能再使用了.
+> 2. 但是，**一定会生成一个处理后的新流**，可供继续使用.
+
+<br>
+
+**1.&nbsp; 映射成另一种类型的流：**
+
+```Java
+/* === 映射成int、long、double(即xxx)类型的stream === */
+  // 1. XxxStream的方法
+XxxStream mapToXxx(ToXxxFunction mapper);
+  // 2. Stream<T>的方法
+XxxStream mapToXxx(ToXxxFunction<? super T> mapper);
+  // lambda表达式的函数式接口
+public interface ToXxxFunction<T> {
+    xxx applyAsXxx(T value);
+}
+// 示例
+Stream<String> ss = ...;
+IntStream is = ss.mapToIntStream(ele -> ele.length());
+
+/* === Stream<T>独有的，转换成任意类型的stream === */
+<R> Stream<R> map(Function<? super T, ? extends R> mapper);
+public interface Function<T, R> {
+    R apply(T t);
+}
+// 示例
+Stream<MyClass> sm = ...;
+Stream<String> ss = sm.map(ele -> ele.toString());
+```
+
+- 有时候通过Collection得到的stream需要转化，例如：
+
+```Java
+TreeSet<Integer> ts = ...;
+Stream<Integer> si = ts.stream();  // stream()返回类型为Stream<T>
+IntStream is = si.mapToIntStream(ele -> ele);  // 转换成XxxStream需要额外一步转化
+```
+
+<br>
+
+**2.&nbsp; 排序：**
+
+```Java
+// 1. XxxStream只有自然排序一种版本
+XxxStream sorted();
+
+// 2. Stream<T>支持自然排序和定制排序两种版本
+Stream<T> sorted([Comparator<? super T> comparator]);
+```
+
+<br>
+
+**3.&nbsp; 过滤：** 把满足谓词条件的**留下**
+
+```Java
+// 1. XxxStream的过滤
+XxxStream filter(XxxPredicate predicate);
+
+// 2. Stream<T>的过滤
+Stream<T> filter(Predicate<? super T> predicate);
+
+// 示例
+IntStream is = ...;  // 1, 2, 3, 4, 5
+is.filter(ele -> ele > 3);  // 4, 5
+```
+
+<br>
+
+
+
     1) 聚集操作有两类，一类是中间方法，另一类是末端方法：
         i. 中间方法：进行一定的操作得到（返回）一个新的流（比如每个元素+1得到一个新的流），而这个新的流还可以继续进行其他聚集操作（没有被消耗）；
         ii. 末端方法：通常都是会计算出一个统计值的方法（比如求平均值、统计总共有多少个元素、求最大/最小值等），这些方法会消耗流，消耗完后流就不能再使用了，想要统计其它东西就必须要重新构造流了！！
     2) 典型的中间方法：
-         i. Stream filter(Predicate predicate); // 滤掉流中“不”满足谓词条件的，即只保留满足谓词条件的元素，返回这个新的流
-         ii. TypeStream mapToType(ToTypeFunction mapper); // 将流转换成一种基本类型的流，其中type支持int、long、double这三种
-！ToTypeFunction是一个函数式接口，用来定义每个元素如何转换成新流中的元素：
-public interface ToLongFunction<T> {
-    type applyAsType(T value);
-}
-！！value必定是流中的迭代元素了；
-！！示例：Stream s = ....;  IntStream is = s.mapToIntStream(ele -> (String)ele.length());  // 将每个元素替换成其长度形成一个新的流
+
          iii. Stream peek(Consumer action);  // 观察流的内容，返回原来的流保持不变，action用来观察流中的每个元素，该方法主要用来调试，并不产生实际作用（比如输出流中的每个值）
          iv. Stream distinct(); // 去重后得到一个新的流，去重使用equals方法做相等比较，该方法不要求先对流进行排序，可以直接乱序去重（而且其算法也不是先对流进行排序的），因此非常牛逼！
-         v. Stream sorted();  // 排序（默认从小到大）得到一个新的流
+
+
          vi. Stream limit(long maxSize); // 规定最多允许访问多少个元素，比如一个流长度为5，而现在你limit(3)，那么count计算数量时返回的就是3，即规定了操作的范围
     3) 典型的末端方法：末端方法会消耗完整个流，调用完之后流宣布死亡，需要统计其它信息就得重新创建流了
          i. void forEach(Consumer action); // 遍历
