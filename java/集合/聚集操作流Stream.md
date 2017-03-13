@@ -18,12 +18,14 @@
 
 ## 目录
 
-1. []()
-2. []()
+1. [Stream构造]()
+2. [流变换（修改）]()
+3. [聚集操作]()
+4. [聚集流的使用流程]()
 
 <br><br>
 
-### 一、Stream构造：
+### 一、Stream构造：[·](#目录)
 > Stream是**聚集流**（聚集操作流的简称）的**根接口**，是**泛型**，**Stream\<T\>**.
 >
 >> 但目前只提供了IntStream、LongStream、DoubleStream三种**数值型派生接口**，分别对应三种基本类型聚集流.
@@ -118,12 +120,16 @@ Stream<String> ss = ts.stream();
 
 <br><br>
 
-### 二、流变换（修改）：
+### 二、流变换（修改）：[·](#目录)
 > 将流经过一定的处理（排序、过滤等），这类操作的特点是：
 >
 > 1. 原来的流会被消耗掉，不得再使用了.
 >   - 强行使用会抛出**[IllegalStateException]异常**.
 >   - 即流已经不在状态了，不能再使用了.
+>     - 示例：
+>       - IntStream is = ...;
+>       - is.sorted().limit();  // 错误！第一次sorted过后消耗掉了，不能再继续执行其它操作了
+>       - is = is.sorted(); is.limit();  // 正确！返回的是新流，可以继续使用
 > 2. 但是，**一定会生成一个处理后的新流**，可供继续使用.
 
 <br>
@@ -192,38 +198,179 @@ is.filter(ele -> ele > 3);  // 4, 5
 
 <br>
 
+**4.&nbsp; 去重：**
 
+- 使用该方法**无需先进行排序**，因此非常牛逼.
 
-    1) 聚集操作有两类，一类是中间方法，另一类是末端方法：
-        i. 中间方法：进行一定的操作得到（返回）一个新的流（比如每个元素+1得到一个新的流），而这个新的流还可以继续进行其他聚集操作（没有被消耗）；
-        ii. 末端方法：通常都是会计算出一个统计值的方法（比如求平均值、统计总共有多少个元素、求最大/最小值等），这些方法会消耗流，消耗完后流就不能再使用了，想要统计其它东西就必须要重新构造流了！！
-    2) 典型的中间方法：
+```Java
+// 1. XxxStream的方法
+XxxStream distinct();
 
-         iii. Stream peek(Consumer action);  // 观察流的内容，返回原来的流保持不变，action用来观察流中的每个元素，该方法主要用来调试，并不产生实际作用（比如输出流中的每个值）
-         iv. Stream distinct(); // 去重后得到一个新的流，去重使用equals方法做相等比较，该方法不要求先对流进行排序，可以直接乱序去重（而且其算法也不是先对流进行排序的），因此非常牛逼！
+// 2. Stream<T>的方法
+Stream<T> distinct();
+```
 
+<br>
 
-         vi. Stream limit(long maxSize); // 规定最多允许访问多少个元素，比如一个流长度为5，而现在你limit(3)，那么count计算数量时返回的就是3，即规定了操作的范围
-    3) 典型的末端方法：末端方法会消耗完整个流，调用完之后流宣布死亡，需要统计其它信息就得重新创建流了
-         i. void forEach(Consumer action); // 遍历
-         ii. Object[] toArray(); // 转换成相应的数组，如果是TypeStream那返回的就是Type[]了！
-常规的统计方法：
-         i. find最小/最大值：
-            a. Stream版的：Optional Stream.min | max(Comparator comparator); // Optional<T>代表任意类型，任意类型比较大小必须要规定比较接口Comparator
-            b. TypeStream版的：type TypeStream.min | max(); // 简单很多
-         ii. 统计元素个数：long count();
-         iii. 检查是否包含符合谓词条件的元素：
-            a. boolean anyMatch(Predicate predicate); // 是否存在一个满足谓词条件的元素
-            b. boolean allMatch(Predicate predicate); // 是否全部元素都满足谓词条件
-            c. boolean noneMatch(Predicate predicate); // 是否全都不满足谓词条件
-         iv. 获取第一个元素：Optional findFirst();
+**5.&nbsp; 限制最大长度：**
 
-4. 示例：
-public class Test {
-	public static void main(String[] args) {
+- 如果最大长度小于当前元素个数那么发生截断（只取前maxSize个）.
 
-		IntStream is = IntStream.builder().add(50).add(30).add(60).add(30).add(70).add(70).add(10).build();
-		is.filter(ele -> ele > 10).distinct().sorted().forEach(System.out::println);
-	}
-}
-！！Lambda表达式打印一个元素可以直接System.out::println，表示打印那个ele迭代元素，最最变态的简洁！！
+```Java
+// 1. XxxStream
+XxxStream limit(long maxSize);
+
+// 2. Stream<T>
+Stream<T> limit(long maxSize);
+```
+
+<br>
+
+**6.&nbsp; 观察：**
+
+- 不作出任何改变（返回的仍然是原来的流），仅仅就是逐个值迭代.
+  - 常用于调试.
+  - **不要在里面修改元素的内容.**
+
+```Java
+// 1. XxxStream
+XxxStream peek(XxxConsumer action);
+
+// Stream<T>
+Stream<T> peek(Consumer<? super T> action);
+
+// 示例：调试输出各个值是什么
+s.peek(ele -> System.out.println("value = " + ele));
+```
+
+<br><br>
+
+### 三、聚集操作：[·](#目录)
+> 最大的特点就是：
+>
+>> 1. 会消耗流.
+>> 2. 不会返回新的流，只会返回：
+>>   - void
+>>   - 一个统计计算结果（int、double等）.
+>>   - 一个boolean表示是否查询成功等.
+>>
+>>> 一旦聚集操作过了，再享用刚刚的流做其它操作就只能重新构造了.
+
+<br>
+
+**1.&nbsp; 遍历：**
+
+```Java
+// 1. XxxStream
+void forEach(XxxConsumer action);
+
+// 2. Stream<T>
+void forEach(Consumer<? super T> action);
+
+// 超简洁遍历
+s.forEach(System.out::println);
+```
+
+<br>
+
+**2.&nbsp; 转化成数组：**
+
+```Java
+// 1. XxxStream
+xxx[] toArray();
+
+// 2. Stream<T>
+Object[] toArray();
+```
+
+<br>
+
+**3.&nbsp; 统计个数：**
+
+```Java
+// XxxStream、Stream<T>两者都适用
+long count();
+```
+
+<br>
+
+**4.&nbsp; 找最大/最小值：**
+
+- 返回的是Optional可选类型.
+  - 这种类型专门用于防null.
+  - 想要得到对应类型数据get一下就行了.
+    - 例如：
+      - Optional<String> os = ...;
+      - String s = os.get();
+
+```Java
+// 1. XxxStream版本
+  // int、long、double本身就是有自然大小顺序的
+OptionalXxx max|min();
+
+// 2. Stream<T>版本
+  // 强制定制排序，没有自然排序的版本
+Optional<T> max|min(Comparator<? super T> comparator);
+```
+
+<br>
+
+**5.&nbsp; 是否包含满足谓词条件的元素：**
+
+```Java
+// 1. XxxStream版本
+boolean anyMatch(XxxPredicate predicate); // 至少存在一个满足
+boolean allMatch(XxxPredicate predicate); // 全部都满足
+boolean noneMatch(XxxPredicate predicate); // 全部都不满足
+
+// 2. Stream<T>
+boolean anyMatch(Predicate<? super T> predicate); // 至少存在一个满足
+boolean allMatch(Predicate<? super T> predicate); // 全部都满足
+boolean noneMatch(Predicate<? super T> predicate); // 全部都不满足
+```
+
+<br>
+
+**6.&nbsp; 获取第一个元素：**
+
+- 如果流为空则返回空的Optional（不能get）.
+  - 如果不为空就返回实的Optional（可以get）.
+
+```Java
+// 1. XxxStream
+XxxOptional findFirst();
+
+// 2. Stream<T>
+Optional<T> findFirst();
+```
+
+<br><br>
+
+### 四、聚集流的使用流程：[·](#目录)
+
+<br>
+
+- 大致步骤：
+  1. 构造.
+  2. 处理（修改、变换）.
+  3. 一次性统计.
+
+<br>
+
+- 示例：
+
+```Java
+double max = IntStream.
+	builder().	// 1. 构造
+	add(7).
+	add(3).
+	add(7).
+	add(10).
+	add(3).
+	build().
+		sorted().	// 2. 处理和变换
+		limit(9).
+		mapToDouble(e -> e * 3.14).
+			max().	// 3. 最后一步一次性统计
+			get();
+```
