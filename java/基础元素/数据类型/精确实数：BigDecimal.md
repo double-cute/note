@@ -14,12 +14,15 @@
 
 ## 目录
 
-1. []()
-2. []()
+1. [构造器]()
+2. [精度和小数点位数]()
+3. [转换成基本类型]()
+4. [算术运算]()
+5. [除法和模除]()
 
 <br><br>
 
-### 一、构造器：
+### 一、构造器：[·](#目录)
 
 <br>
 
@@ -45,7 +48,7 @@ BigDecimal(int | long | double | BigDecimal val);
 
 <br><br>
 
-### 二、精度和小数点位数：
+### 二、精度和小数点位数：[·](#目录)
 > 1. precision：精度是指当前的数字个数（不包括小数点的全部数字的个数）.
 >   - 其实就是底层字符串长度-1（减掉小数点的那个1）.
 >   - 精度不允许设值只能查看.
@@ -94,7 +97,7 @@ BigDecimal setScale(int newScale[, int roundingMode]);
 
 <br>
 
-### 三、转换成基本类型：
+### 三、转换成基本类型：[·](#目录)
 
 <br>
 
@@ -124,7 +127,7 @@ xxx xxxValue();
 
 <br><br>
 
-### 四、算术运算：
+### 四、算术运算：[·](#目录)
 
 <br>
 
@@ -156,7 +159,7 @@ BigDecimal plus();
 
 <br><br>
 
-### 四、除法和模除：
+### 四、除法和模除：[·](#目录)
 > 很多除法或者模除的结果无法精确表示（比如无限循环小数等）.
 >
 >> 毕竟无限的精确还是无法存储的，因此除法和模除一般需要制定控制精度.
@@ -178,14 +181,22 @@ BigDecimal divide(BigDecimal divisor[, [int scale, ]RoundingMode roundingMode]);
 
 **2.&nbsp; 模除：**
 
+- 模除含义（可以在浮点数之间进行）：
+  - a % b = a - (a \\ b) × b
+  - 其中a \\ b = a ÷ b的整数部分.
+
 ```Java
+/** 无须设置scale
+ *  1. a \ b取的是整数部分，自然没有scale一说.
+ *  2. a % b只涉及乘法和减法运算，不存在无限精度问题.
+ */
 
+// 1. a \ b
+BigDecimal divideToIntegralValue(BigDecimal divisor);
+
+// 2. a % b
+BigDecimal remainder(BigDecimal divisor);
+
+// 3. a \ b和a % b的结果分别放在[0]和[1]中
+BigDecimal[] divideAndRemainder(BigDecimal divisor);
 ```
-
-<br>
-
-
-         i. 首先要知道整除（即结果只取除法结果的整数部分）：BigDecimal divideToIntegralValue(BigDecimal divisor); // 定义为a \ b
-         ii. 接着就是模除：BigDecimal remainder(BigDecimal divisor); // 理论上就是a % b
-！！但是BigDecimal表示的是实数，因此两个操作数都可能有小数点，而这里的模除是广义模除，其运算方法就是 a - (a \ b) × b，因此结果很可能也有小数点，并且也可能是负数！
-    7) 还有同时得到除数和余数的方法：BigDecimal[] divideAndRemainder(BigDecimal divisor);  // 把上面两个方法分别放在[0]和[1]中一块儿返回（先\结果，后%结果）
