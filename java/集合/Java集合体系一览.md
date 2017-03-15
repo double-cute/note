@@ -6,9 +6,10 @@
 
   - Collection
     - Set：无扩展
-      - **HashSet**：无扩展，null
-      - **EnumSet**：只扩展了构造方式，not null
-      - **LinkedHashSet**：无扩展，null
+      - hash表结构：
+        - **HashSet**：无扩展，null
+        - **LinkedHashSet**：无扩展，null
+        - **EnumSet**：只扩展了构造方式，not null
       - SortedSet：扩展了顺序维护
         - **TreeSet**：无扩展，**唯一null**
     - List：扩展了插入顺序维护（**索引操作**），null
@@ -20,12 +21,13 @@
         - **ArrayDeque**：只扩展了一个设定物理上限的构造器，**not null**
         - **`LinkedList`**：无扩展（同时也是List），**null**
   - Map
-    - Hashtable
-      - **Properties**：专属用法
-    - **HashMap**：无扩展，null
-    - **EnumHashMap**：只扩展了两个构造器，not null
-    - **IdentityHashMap**：无扩展，null
-    - **LinkedHashMap**：无扩展，null
+    - hash表结构：
+      - Hashtable
+        - **Properties**：专属用法
+      - **HashMap**：无扩展，null
+      - **LinkedHashMap**：无扩展，null
+      - **EnumHashMap**：只扩展了两个构造器，not null
+      - **IdentityHashMap**：无扩展，null
     - SortedMap：只扩展了大小顺序维护的操作
       - **TreeMap**：无扩展，**唯一null**
 
@@ -33,9 +35,9 @@
 
 - **关于equals、compare的总结：**
   1. 所有hash存储结构：
-    - 相等比较：hashCode和equals共同决定.
+     - 相等比较：hashCode和equals共同决定.
   2. 所有维护大小顺序的存储结构：SortedXxx
-    - 相等比较：compare = 0（注意不是equals！）
-    - 大小比较：当然还是compare了，即compare ≠ 0
+     - 相等比较：compare = 0（注意不是equals！）
+     - 大小比较：当然还是compare了，即compare ≠ 0
   3. 其余一切存储结构：
-    - 相等比较：equals
+     - 相等比较：equals
