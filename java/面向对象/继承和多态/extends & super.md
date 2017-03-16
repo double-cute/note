@@ -111,6 +111,8 @@ public class Test {
             1. Son son = new Son...;
             2. ((Father)son).a;   // (Father)son的编译时类型为class Father {...}，因此a一定是父类的a
                - 因此对于(Father)son可见的只有class Father {...}的**编译器肉眼**部分了.
+               - 但要小心多态：((Father)son).f();  // 调用的是子类的f()，输出AA了
+                  - 多态就是：**父类编译时类型+子类运行时类型+调用重写的方法** -> 最终会调用子类版本的方法
    6. 除非this和子类引用访问的成员在class Son {...// 没extends}中找不到，才会再回溯到父类中找是否还有可见的.
       - 子类中调用u()、this.()，以及子类引用调用r.u()都能成功调用就是证明.
 
