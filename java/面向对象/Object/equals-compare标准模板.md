@@ -15,8 +15,8 @@
 
 ## 目录
 
-1. [equals模板]()
-2. [compare模板]()
+1. [equals模板](#一equals模板)
+2. [compare模板](#二compare模板)
 
 <br><br>
 
