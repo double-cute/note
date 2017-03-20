@@ -19,12 +19,12 @@
 
 ## 目录
 
-1. [Object根方法一览]()
-2. [获取运行时类型信息]()
-3. [获取对象的hash值：hashCode]()
-4. [转换成String信息：toString]()
-5. [equals]()
-6. [Object工具类]()
+1. [Object根方法一览](#一object根方法一览)
+2. [获取运行时类型信息](#二获取运行时类型信息getclass--)
+3. [获取对象的hash值：hashCode](#三获取对象的hash值hashcode--)
+4. [转换成String信息：toString](#四转换成string信息tostring--)
+5. [equals](#五equals)
+6. [Object工具类](#六object工具类)
 
 <br><br>
 
@@ -97,6 +97,8 @@ String toString();
 >> - 同时获取虚拟地址这种操作非常底层，因此也是一个本地native调用.
 >>
 >>> 子类**可以重写**，用于**作为hash结构容器元素**时计算**桶的索引**.
+>>>
+> 其规范模板见[集合/无关联Collection系列/Set/HashSet/hashCode的推荐实现方案（4.）](集合/无关联Collection系/Set/Set%20%26%20HashSet%20%26%20LinkedHashSet.md#二hashset)
 
 <br>
 
