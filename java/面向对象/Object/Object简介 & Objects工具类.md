@@ -98,7 +98,7 @@ String toString();
 >>
 >>> 子类**可以重写**，用于**作为hash结构容器元素**时计算**桶的索引**.
 >>>
-> 其规范模板见[集合/无关联Collection系列/Set/HashSet/hashCode的推荐实现方案（4.）](集合/无关联Collection系/Set/Set%20%26%20HashSet%20%26%20LinkedHashSet.md#二hashset)
+> 其规范模板见[**\[集合/无关联Collection系列/Set/HashSet/hashCode的推荐实现方案（4.）\]**](../../集合/无关联Collection系/Set/Set%20%26%20HashSet%20%26%20LinkedHashSet.md#二hashset)
 
 <br>
 
