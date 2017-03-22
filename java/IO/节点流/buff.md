@@ -1,3 +1,8 @@
+所有低级节点流无外乎就是read()、write()之外额外添加一两个方法而已.
+BufferedReaderInputStream、bufferedwriteroutputstream，属于高级处理流，可以把所有节点流包装成 **高效缓存处理流**.
+
+
+
 3. 以字符串作为流节点进行I/O：
    1) 前面介绍了，既然可以用数组（字节、字符）作为流节点，那么自然会想到用字符串作为流节点专门用来处理字符流；
    2) 其Java类是StringReader和StringBuffer，既然是专门处理字符的，因此就没有StringInputStream、StringOutputStream的版本了；
