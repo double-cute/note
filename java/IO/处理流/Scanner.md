@@ -15,18 +15,33 @@
 >>>       3. BigDecimal、BigInteger
 >>>       4. 单词本身：String，不做任何解析
 >>>       5. 模式字符串：String，指定正则表达式
-
+>>>
+>> - **注意：**
+>>    1. 如果匹配**成功**，那么位置指针移到匹配内容的后一个字符位置.
+>>       - 即**分隔符的第一个字符处**！而**不是下一个单词首字符处**！
+>>    2. 如果匹配**失败**，那么该返回null的返回null，该抛出异常的抛出异常.
+>>       - 并且，**位置指针原地不动**.
+>>       - 除了以下之外，其余匹配失败都直接抛出 **[InputMismatchException]匹配失败异常**.
+>>          1. **findInLine、findWithinHorizon**：没找到就 **返回null**.
+>>          2. **nextLine**：过了EOF还要弄就抛出 **[NoSuchElementException]没找到异常**.
 
 <br><br>
 
 ## 目录
 
-1. []()
-2. []()
+1. [构造器：包装的目标基本都是字节流]()
+2. [关闭Scanner：close]()
+3. [分隔符：delimiter]()
+4. [解析单词：hasNext-next]()
+5. [从当前位置开始跳过一个模式串：skip]()
+6. [复位：reset]()
+7. [解析行]()
+8. [忽略demiliter的正则表达式匹配]()
+9. [示例]()
 
 <br><br>
 
-### 一、构造器：包装的目标基本都是字节流
+### 一、构造器：包装的目标基本都是字节流  [·](#目录)
 
 <br>
 
@@ -63,7 +78,7 @@ Scanner(String source);
 
 <br><br>
 
-### 二、关闭Scanner：close
+### 二、关闭Scanner：close  [·](#目录)
 > Scanner同样属于IO资源，可以显式close关闭.
 >
 >> 但也实现了AutoCloseable，可以在try语句中释放.
@@ -76,7 +91,7 @@ void close();
 
 <br><br>
 
-### 三、分隔符：delimiter
+### 三、分隔符：delimiter  [·](#目录)
 > Scanner使用**正则表达式**来描述分隔符.
 
 <br>
@@ -101,7 +116,12 @@ Scanner useDelimiter(Pattern pattern | String pattern);
 
 <br><br>
 
-### 四、解析单词：hasNext-next
+### 四、解析单词：hasNext-next  [·](#目录)
+
+<br>
+
+- 如果 **下一个单词** 匹配失败. （**没hasNext检验就直接next所导致的匹配失败**）
+   - 就直接抛出 **[InputMismatchException]匹配失败异常**.
 
 <br>
 
@@ -114,7 +134,7 @@ String next();
 
 <br>
 
-**2.&nbsp; 解析成整型：** 需要指定进制radix
+**2.&nbsp; 匹配整型：** 需要指定进制radix
 
 - **默认radix = 10**，即默认是十进制的.
 - 基本类型整型只支持（即type所代表的）：**byte、short、long、BigInteger**
@@ -146,7 +166,7 @@ Scanner useRadix(int radix);
 
 <br>
 
-**3.&nbsp; 解析成 boolean & 浮点型 & BigDecimal：**
+**3.&nbsp; 匹配 boolean & 浮点型 & BigDecimal：**
 
 - type指代：boolean、float、double、BigDecimal
    - 不存在radix进制的问题.
@@ -158,7 +178,7 @@ type nextType();
 
 <br>
 
-**4.&nbsp; 解析成 正则表达式模式串：**
+**4.&nbsp; 匹配 正则表达式模式串：**
 
 - 推荐使用Pattern pattern的版本.
    - **编译好的要比没编译好的省去现场编译的时间.**
@@ -170,7 +190,9 @@ String next(Pattern pattern | String pattern);
 
 <br><br>
 
-### 五、从当前位置开始跳过一个模式串：skip
+### 五、从当前位置开始跳过一个模式串：skip  [·](#目录)
+
+<br>
 
 ```Java
 /**  是从当前位置指针处开始跳.
@@ -193,7 +215,7 @@ else
 
 <br><br>
 
-### 六、复位：reset
+### 六、复位：reset  [·](#目录)
 > 位置指针不动！
 >
 >> 复原的仅仅是locale、delimiter、radix这三者而已.
@@ -216,7 +238,7 @@ scan = scan
 
 <br><br>
 
-### 七、解析行：
+### 七、解析行：[·](#目录)
 
 <br>
 
@@ -230,7 +252,76 @@ String nextLine();
 
 <br><br>
 
-### 八、
+### 八、忽略demiliter的正则表达式匹配：[·](#目录)
+> 下面两个方法都**无视分隔符demiliter**.
+
+<br>
+
+**1.&nbsp; 剩余全文匹配：**
+
+```Java
+/**   功能描述：
+ *    
+ *     1. 从当前位置指针处开始.
+ *     2. 从接下来的horizon个字符里（包括当前位置指针处）.
+ *       - 如果 horizon = 0 或者 horizon > 剩下所有的字符个数，那么表示扫描剩余全文.
+ *     3. 找可以匹配pattern的第一个模式串.
+ *
+ *     - 如果匹配到了，那么：
+ *       1. 返回匹配到的模式串.
+ *       2. 位置指针移到匹配串最后一个字符的后面一个字符位置.
+ *     - 如果没找到，那么：
+ *       1. 返回null.
+ *       2. 位置指针原地不动.
+ */
+String findWithinHorizon(Pattern pattern | String pattern, int horizon);
+```
+
+<br>
+
+**2.&nbsp; 匹配紧接下来的一行：**
+
+```Java
+/**   功能描述：从当前位置开始的一行中，匹配模式串
+ *  
+ *    - 等价于：findWithinHorizon中 horizon = 当前位置到下一个\n的字符个数.
+ *      - 最后的EOF也当成\n
+ */
+String findInLine(Pattern pattern | String pattern);
+```
+
+<br>
+
+**3.&nbsp; 示例：**
+
+```Java
+String s = null;
+
+Scanner sc1 = new Scanner("abc999sldkfjkl999wejf");
+while ((s = sc1.findWithinHorizon("999", 0)) != null) {
+	out.println(s); // 999, 999
+}
+
+Scanner sc2 = new Scanner("abc\nsdf999\nwe\nwe999");
+s = sc2.findInLine("999");
+out.println(s); // null
+sc2.nextLine(); // 跳过abc\n这一行
+s = sc2.findInLine("999");
+out.println(s); // 999，此时匹配完之后落在第一个999h后面的\n处
+sc2.nextLine(); // 所以连跳两行（第2个\n）
+sc2.nextLine(); // 跳第3行we\n
+s = sc2.findInLine("999");
+out.println(s); // 999
+```
+
+<br><br>
+
+### 九、示例：[·](#目录)
+
+<br>
+
+- 注意：Scanner**没有任何一个方法**可以**将位置指针直接复原为0的**.
+   - 下面的所有方法都是连续操作，一气呵成.
 
 ```Java
 Scanner scan = new Scanner(
@@ -266,8 +357,3 @@ sefwe
 xclwe
 */
 ```
-
-  6) 当然Scanner为了方便也提供了正行读取的解析法：
-       i. boolean hasNextLine();  // 是否有下一行
-       ii. String nextLine(); // 直接读取下一行
-！！Scanner的所有读取都会抛弃分隔符，也就是说上面的方法读取之后都不包含空白符、换行符；
