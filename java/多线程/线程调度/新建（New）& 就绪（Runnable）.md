@@ -40,15 +40,15 @@
 public class Thread {
     private Runnable task;  // 搭载的任务
 
-    // 构造器当然是给车上一个乘客
+    // 1. 构造器当然是给车上一个乘客
     public Thread(Runnable task) {
         this.task = task;
     }
 
-    // 启动（人主动调用），启动后就绪，听从交警安排
+    // 2. 启动（人主动调用），启动后就绪，听从交警安排
     public synchronized void start();
 
-    // 在交警指示下发车（不能人主动调用），送往CPU执行
+    // 3. 在交警指示下发车（不能人主动调用），送往CPU执行
     public void run() { // 在CPU里了
         if (this.task != null) {
             this.task.run(); // 让任务的内容得到执行
@@ -56,6 +56,9 @@ public class Thread {
             // 只负责把它送进CPU
         }
     }
+
+    // 4. 其它听从调度的能力
+    ...
 }
 ```
 
@@ -79,9 +82,21 @@ public interface Runnable {
 
 **3.&nbsp; 自己设计一个可以检测异常并返回计算结果的任务：**
 
-- Thread类并没有返回任务计算结果的方法.
-- Thread的run以及Runnable的run也并不能处理异常.
-- 因此我们可以**把这两个工作都交给任务本身来完成**.
+<br>
+
+- Thread & Runnable最明显的缺点：
+   1. **无法返回任务的计算结果.**
+      - Thread的run和Runnable的run都没有返回值.
+   2. **不能抛出异常.**
+      - Thread的run和Runnable的run都不能抛出异常.
+
+<br>
+
+- 解决这个问题的思路：可以**把这两个工作都交给任务本身来完成**.
+   1. 为任务本身设计一个可以抛出异常并且能返回结果的"run（或者说是exec）方法".
+   2. 然后让Runnable的run嵌套调用，在Runnable的run中捕获异常和结果. （exec是嵌套执行体）
+      - 可以把结果作为任务的数据成员保存下来.
+      - 等线程执行完毕后通过任务的getter方法获得计算结果.
 
 ```Java
 public class Task implements Runnable {
@@ -91,17 +106,18 @@ public class Task implements Runnable {
     // 构造器族：初始化data
     public Task(...) { ... }
 
-    public Result exec() throws XxxException { // 任务执行体，可以抛出异常
+    // 嵌套执行体，既可以捕获异常也能返回计算结果
+    public Result exec() throws XxxException {
         执行任务内容.
-        return result;  // 返回任务结果
+        return result;
     }
 
     @Override
-    public void run() { // 不仅保存结果而且处理异常
+    public void run() { // 嵌套调用exec
         try {
-            this.result = exec();
+            this.result = exec(); // 不仅保存结果
         }
-        catch (XxxException e) {
+        catch (XxxException e) { // 还捕获异常
             异常处理
         }
     }
@@ -112,7 +128,13 @@ public class Task implements Runnable {
 }
 ```
 
-<br>
+- 其实完全不需要自己设计，Java提供了FutureTask<V>（任务类）Callable<V>（嵌套执行体）来满足这个需求.
+   - V类型参数表示计算结果的类型.
+
+<br><br>
+
+### 二、Thread：
+
 
 
 
