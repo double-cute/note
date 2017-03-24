@@ -133,7 +133,220 @@ public class Task implements Runnable {
 
 <br><br>
 
-### 二、Thread：
+### 二、Thread的4大状态（没有阻塞）：
+
+<br>
+
+**1.&nbsp; 新建（New）：就是构造器**
+
+- 默认线程组是主线程的组.
+- 主线程默认名为"main"，其它自定义线程默认名为"Thread-N"，**N是数字，从0计**.
+
+```Java
+// 1. 空车，run不执行任何东西，空车没意义，很少用
+Thread();
+
+// 2. 乘客、车名分别/同时指定
+Thread(Runnable task);
+Thread(String name);  // 空车很少用，不推荐
+Thread(Runnable task, String name);
+
+// 3. 指定线程组的 乘客、车名分别/同时指定
+Thread(ThreadGroup group, Runnable task);
+Thread(ThreadGroup group, String name);  // 空车很少用，不推荐
+Thread(ThreadGroup group, Runnable task, String name);
+```
+
+- 由于不推荐空车的使用，**最常用的就是下面两种**：
+
+```Java
+Thread(Runnable task[, String name]);
+Thread(ThreadGroup group, Runnable task[, String name]);
+```
+
+<br>
+
+**2.&nbsp; 就绪（Runnable）：**
+
+```Java
+/**   通知调度器把自己加入就绪队列.
+ *     - 其中调用了本地方法 native start0() 给调度器发送就绪信号.
+ *     - 一般子类不需要重写，除非是深度定制.
+ *
+ *    - 加入就绪队列后，只能听从调度器安排是否送入CPU执行，无法认为干预.
+ *    - 送入CPU时调度器会回调run方法进入运行态（run方法执行任务）.
+ *     - 千万不要自己手动调用run！是由调度器回调，调度器将run方法送进CPU执行.
+ *
+ *    - 最多只能调用1次start，超过一次就抛出IllegalThreadStateException异常（线程状态异常）
+ */
+synchronized void start();
+```
+
+<br>
+
+**3.&nbsp; 运行（Running）：**
+
+```Java
+/**   由调度器回调，不要自己手动调用
+ *  
+ *    - 内部调用的是任务体的执行体this.task.run()
+ *    - 可以看到空车什么都不做，所以空车一般没意义.
+ */
+void run() {
+    if (this.task != null) { // 空车什么都不做
+        this.task.run();
+    }
+}
+```
+
+<br>
+
+**4.&nbsp; 死亡（Stop）：** 调用枪毙方法stop以强行停车
+
+```Java
+// 容易死锁，不推荐使用
+@Deprecated
+final void stop();
+```
+
+<br><br>
+
+### 三、Thread信息查看：
+
+<br>
+
+**1.&nbsp; 描述信息：**
+
+```Java
+// Thread[线程名, 优先级[, 所属组组名]]
+String toString();
+```
+
+<br>
+
+**2.&nbsp; 线程名：**
+
+```Java
+// getter
+final String getName();
+// setter
+final synchronized void setName(String name);
+```
+
+<br>
+
+**3.&nbsp; 获取线程号：**
+
+```Java
+/**  
+ *   1. 线程ID是一个正的、long型数.
+ *   2. 在新建（New）时分配到id.
+ *   3. 保证在父进程的整个线程池中id独一无二.
+ *   4. 在线程的整个生命周期中id保持不变（且无法改变）.
+ *   5. 线程死亡后该id可以被回收再利用！
+ */
+long getId();
+```
+
+<br>
+
+**4.&nbsp; 检查线程是否活跃（是否处于动态）：**
+
+```Java
+// 动态是指：就绪、运行、阻塞
+// 静态是指：新建、死亡（就是内存中的一块儿肉）
+final native boolean isAlive();
+```
+
+<br><br>
+
+### 四、检测异常并保存计算结果的任务体：FutureTask-Callable
+> 前面讲过了，不必自行设计[检测异常 & 返回计算结果]的任务体了，Java本身就提供了一组工具.
+>
+>> 即 **FutureTask类** 和 **Callable接口**.
+
+<br>
+
+**1.&nbsp; Callable接口：** 即 **嵌套执行体task.exec**
+
+```Java
+/**  
+ *   - call就是嵌套执行体exec
+ *   - V指代线程计算结果的数据类型.
+ *   
+ *   - 可以看到，可返回计算结果，也可抛出异常
+ */
+@FunctionalInterface
+public interface Callable<V> {
+    V call() throws Exception;
+}
+```
+
+<br>
+
+**2.&nbsp; FutureTask类：** 负责**保存数据和计算结果**的任务体
+
+```Java
+public class FutureTask<V> implements Runnable {
+    private Callable<V> callable; // 嵌套执行体
+    private V result;  // 接受任务计算结果
+
+    // 1. 上车，强行不能空车
+    public FutureTask(Callable<V> callable) {
+        if (callable == null) // 空车抛异常
+            throw new NullPointerException();
+        this.callable = callable;
+    }
+
+    // 2. 任务执行体，被线程Thread的run回调
+    @Override
+    public void run() {
+        try { // 保存结果
+            this.result = this.callable.call();
+        }
+        finally {
+            ...  // 异常处理
+        }
+    }
+
+    // 3. 查看任务是否执行完毕
+    public boolean isDone();
+
+    /** 4. 取消任务
+     *  
+     *    - 这种取消只是建议性的，遇到以下情况会失败返回true：
+     *      1. 任务已经done了.
+     *      2. 之前已经被cancel过了.
+     *      3. 调度过程中发生未知错误.
+     *
+     *    - 可以在任何时候取消：
+     *      1. 在非运行态取消，则向调度器正常提交建议. （mayInterruptIfRunning不起作用）
+     *      2. 在运行态取消，则须要参考mayInterruptIfRunning.
+     *        - 如果mayInterruptIfRunning为true则表示建议stop枪毙线程.
+     *      - 犹豫cancel的时机是随机的，因此mayInterruptIfRunning的建议必填！
+     */
+    boolean cancel(boolean mayInterruptIfRunning);
+    /**   检查是否被取消
+     *  
+     *    - 检测标准是：是否在done之前，成功调用cancel过（返回true）
+     *      - 简单地说就是是否成功调用过cancel方法啦！
+     */
+    boolean isCancelled();
+
+    /**  5. 获取计算结果（必须等待线程执行完毕）
+     *  
+     *   
+     */
+    V get([long timeout, TimeUnit unit]) throws
+        InterruptedException, ExecutionException[, TimeoutException];
+}
+```
+
+<br>
+
+
+
+
 
 
 
