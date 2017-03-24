@@ -1,16 +1,18 @@
-# 无资源竞争的调度：daemon、join、sleep、yield、优先级
+# 无资源竞争的调度：daemon、join、sleep、优先级、yield
 > 这些线程调度方式和资源竞争无关，称为 **无资源竞争的调度**.
 
 <br><br>
 
 ## 目录
 
-1. []()
-2. []()
+1. [后台线程：daemon]()
+2. [插入等待：join]()
+3. [睡（阻塞）：sleep]()
+4. [优先级 & 谦让：priority & yield]()
 
 <br><br>
 
-### 一、后台线程：daemon
+### 一、后台线程：daemon  [·](#目录)
 > **Daemon Thread** 即 **守护线程**（也叫 **精灵线程**），通俗地说就叫 **后台线程**.
 >
 >> 它的作用是 **给前台的线程提供服务**，比如JVM的后台垃圾处理线程.
@@ -81,7 +83,7 @@ public class Test {
 
 <br><br>
 
-### 二、插入等待：join
+### 二、插入等待：join  [·](#目录)
 > 在这里join的意思是 **邀请别人插在你前面，然后你等他**.
 >
 >> A调用了B.join()的意思就是让B插在A的当前位置，然后A必须等待B执行完了才能继续往下执行.
@@ -131,7 +133,7 @@ public class Test {
 
 <br><br>
 
-### 三、睡（阻塞）：sleep
+### 三、睡（阻塞）：sleep  [·](#目录)
 > 是Thread的静态工具方法.
 
 ```Java
@@ -148,68 +150,103 @@ static native void sleep(long millis) throws InterruptedException;
 
 <br><br>
 
-### 四、 让步 & 优先级：yield & priority
-    1) yield表示让线程暂停一下，但这个暂停并不是进入阻塞状态，而只是让调度器申请一下重新调度一次，而线程本身则是进入就绪状态；
-    2) 也许调度器又把这个让步的线程第一个调度出来执行，这就跟没暂停一样，如何调度是调度器的事情，你无法控制；
-    3) 原型：public static native void Thread.yield();
-！！它是一个静态方法，直接调用表示当前使用该代码的线程申请让步；
-！！通常建议使用sleep来控制线程而不是yield：
-        a. sleep会抛出异常单yield不会，因此sleep更安全；
-        b. sleep比yield有更好的可以执行，因为sleep在任何系统上效果都相同，而yield随机性太高，并且在核数不同的CPU上效果有较大的差异；
-    3) 虽然无法控制，但是你可以干涉，即给调度器一个参考，提醒调度器那些线程重要度高可以先调度；
-    4) 调度器用线程优先级来衡量各个线程的重要性，在多个线程就绪时调度器会挑优先级高的线程先执行（而多个优先级值相等的线程谁应该先调度那就是基于操作系统的实现了，不同操作系统实现不尽相同），如果yield后有其它线程比让步的线程优先级高，那么就会真正的让步（暂停）去执行优先级较高的线程；
-！！因此yield是一种合理利用资源的策略，如果在一个程序中，一个线程的重要度不高不低，而其它有些线程亟待处理（重要度特别高），如果这种重要度不高不低的线程直接阻塞去让高优先级线程可能代价太大，因此可以尝试申请让步，因为让步后仍处于就绪状态，不会暂停太久；
-！！因此yield是一种利用时间资源的优秀策略；
-    5) 人为设定线程的优先级：
-        i. Java线程调度器中优先级是一个整数，范围是1~10（[1, 10]闭区间）；
-        ii. 但Thread类也提供了三个静态常量表示大致的量级：MAX_PRIORITY（10，最高优先级）、MIN_PRIORITY（1，最低优先级）、NORM_PRIORITY（5，普通优先级）；
-        iii. 默认情况下主线程main具有普通优先级（5），每个线程的优先级和创建它的父线程的优先级相同；
-        iv. 可以通过Thread类的对象方法改变和获取当前线程对象的优先级：
-             a. public final void Thread.setPriority(int newPriority); // 设置新的优先级
-             b. public final int Thread.getPriority(); // 获取优先级整数
-！！设置优先级时尽量使用三个静态常量而不要直接指定一个整数，因为并不是所有的操作系统都支持Java的10个优先级，比如Windows2000就只提供了7个优先级，但无论如何，任何操作系统都会提供者三个静态常量所代表的优先级，因此尽量使用这三个静态常量保证最可靠的移植性；
-    6) 示例：优先级高的线程比低优先级线程得到更多的执行机会
-public class Test {
+### 四、 优先级 & 谦让：priority & yield  [·](#目录)
+> 优先级高的线程得到CPU的机会更多.
+>
+>> 同时都处于运行态（Running）的线程里，**优先级高的线程在CPU轮转中获得的执行频率更高**.
+>>
+>>> 其次，一旦当前占用CPU的线程谦让（yield）了以后，会从就绪队列中挑出优先级最高的给CPU执行.
 
-	public static String threadName() {
+<br>
+
+**1.&nbsp; 优先级的程序定义：**
+
+1. Java线程调度器定义优先级是一个整数，范围是[1, 10].
+   - 但Thread类也提供了三个静态常量表示3个层次量级：
+      1. Thread.MAX_PRIORITY = 10：最高优先级.
+      2. NORM_PRIORITY = 5：普通优先级.
+      3. MIN_PRIORITY = 1：最低优先级.
+   - 并不是所有的操作系统都支持Java的10个优先级，例如Windows2000就只提供了其中的7个优先级.
+      - 但**任何操作系统必支持1、5、10这三个优先级**.
+      - 因此**多用上面3个静态常量**少随意给数字可以**提高可移植性和通用性**.
+2. 默认情况下主线程main具有普通优先级（5）.
+   - 线程的优先级**默认和创建它的父线程的优先级相同**.
+
+<br>
+
+**2.&nbsp; 设置和查看优先级：** Thread的对象方法
+
+```Java
+// 1. 查看优先级
+final int getPriority();
+
+/** 2. 设置优先级
+ *  
+ *   - 可以动态设置：在线程正在运行态时即时设置，设置之后立马原地生效！
+ *   - 设置的优先级newPriority必须处在[MIN, MAX]内.
+ *      - 否则抛出 非法参数异常[IllegalArgumentException].
+ */
+final void setPriority(int newPriority);
+```
+
+- 示例：
+
+```Java
+public class Test {
+	public static String name() { // 返回当前线程的名字
 		return Thread.currentThread().getName();
 	}
-
-	public static int threadValue() {
+	public static int priority() { // 返回当前线程的优先级
 		return Thread.currentThread().getPriority();
 	}
-
-	class Target implements Runnable {
-
+	static class Task implements Runnable {
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
 			for (int i = 0; i < 50; i++) {
-				System.out.println(threadName() + " Priority value = " + threadValue() + " " + i);
+				System.out.println(name() + " Priority value = " + priority() + " " + i);
 			}
 		}
-
 	}
-
-	public void init() {
+	public static void main(String[] args) {
 		Thread.currentThread().setPriority(6);
 		for (int i = 0; i < 50; i++) {
 			if (i == 10) {
-				Thread low = new Thread(new Target(), "Low Value Thread");
-				low.start();
-				System.out.println("Low Thread initial value = " + low.getPriority());
+				Thread low = new Thread(new Task(), "Low Priority Thread");
+				// 优先级继承父线程，6
+				System.out.println("Low Thread ini-prior = " + low.getPriority());
+
+				low.start(); // 可以在运行态动态改变优先级！
 				low.setPriority(Thread.MIN_PRIORITY);
 
-				Thread high = new Thread(new Target(), "High Value Thread");
+				Thread high = new Thread(new Task(), "High Priority Thread");
+				// 同样继承父线程的优先级
+				System.out.println("High Thread ini-prior = " + high.getPriority());
 				high.start();
-				System.out.println("High Thread initial value = " + high.getPriority());
 				high.setPriority(Thread.MAX_PRIORITY);
+                // 最后看到高优先级比低优先级更早执行完，虽然低优先级先启动.
+                // 因此说明高优先级在CPU轮转中得到更多执行频率.
 			}
 		}
 	}
-
-	public static void main(String[] args) {
-		new Test().init();
-	}
-
 }
+```
+
+<br>
+
+**3.&nbsp; 谦让：** yield，Thread的**静态工具方法**
+
+```Java
+/**  前线程表示谦让一下，请求调度器重新调度一次
+ *  
+ *   - 步骤：
+ *     1. 立即把当前线程提出到就绪队列.
+ *     2. 再从就绪队列中挑一个优先级高的送去CPU执行.
+ */
+static native void yield();
+```
+
+- **优先级都相同** 的情况下如何选择 **由调度器自己的实现决定**，无法人为干预.
+   - 因此**谦让结果的随机性很高，并且在CPU核心数不同的情况下差异较大**.
+
+- 但yield确实是一种**非常优秀的高效利用CPU资源的策略**：
+   - 如果当前线程的重要性不是很高，则可以考虑谦让给其它重要性更高的线程.
