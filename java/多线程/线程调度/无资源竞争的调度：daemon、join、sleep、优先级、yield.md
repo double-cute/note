@@ -5,10 +5,10 @@
 
 ## 目录
 
-1. [后台线程：daemon]()
-2. [插入等待：join]()
-3. [睡（阻塞）：sleep]()
-4. [优先级 & 谦让：priority & yield]()
+1. [后台线程：daemon](#一后台线程daemon--)
+2. [插入等待：join](#二插入等待join--)
+3. [睡（阻塞）：sleep](#三睡阻塞sleep--)
+4. [优先级 & 谦让：priority & yield](#四-优先级--谦让priority--yield--)
 
 <br><br>
 
