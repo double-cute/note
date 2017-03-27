@@ -20,14 +20,14 @@
 
 ## 目录
 
-1. []()
-2. []()
-3. []()
-4. []()
+1. [synchronized指定同步监视器（临界资源）]()
+2. [同步锁：Lock]()
+3. [释放同步锁的时机：开锁时机]()
+4. [死锁]()
 
 <br><br>
 
-### 一、synchronized指定同步监视器（临界资源）：
+### 一、synchronized指定同步监视器（临界资源）：[·](#目录)
 
 <br>
 
@@ -162,7 +162,7 @@ public static void main(String[] args) {
 
 <br><br>
 
-### 二、同步锁：Lock
+### 二、同步锁：Lock  [·](#目录)
 > 不像synchronized是隐式指定this或者Type.class为同步监视器，Lock对象本身就是同步监视器.
 >
 >> 其次，synchronized上锁、开锁的步骤也是隐式的（临界区的前{和后}）.
@@ -251,7 +251,7 @@ else { // 被占用或者等待超时
 
 <br><br>
 
-### 三、释放同步锁的时机：开锁时机
+### 三、释放同步锁的时机：开锁时机  [·](#目录)
 
 <br>
 
@@ -259,59 +259,73 @@ else { // 被占用或者等待超时
 2. 遇到continue、break、return等直接越过临界区的语句.
 3. 出现未处理的异常或者无法解决的错误.
 4. 线程通信：**在临界区中** 同步监视监视器 **发出wait信号** 让当前占用它的线程交出占用权并阻塞.
-    3) 下列两种情况不会释放同步锁，因此容易导致死锁，一定要慎用：
-         i. sleep和yield，虽然暂停了，但占着锁不释放；
-         ii. 调用该线程的suspend挂起，同样不释放同步锁；
 
-5. 死锁：
-    1) 即两个线程相互等待对方释放资源锁（即刚好A线程要用到B线程锁定的一个资源，而B线程中刚好也要用到A线程中锁定的一个资源），两个线程相互等待没完没了；
-    2) 任何操作系统都无法完全避免死锁，所以编程时一定要注意，特别是在同步锁特别多的情况下死锁多发；
-    3) 示例：
+<br>
+
+- 以下两种情况 **不会** 释放同步锁，因此容易导致死锁，一定要慎用：
+   1. **sleep & yield**，虽然暂停，但 **占着锁不释放**.
+   2. 调用该 **线程的suspend挂起方法**，同样 **不释放同步锁**.
+
+<br><br>
+
+### 四、死锁：[·](#目录)
+> - 即
+>    1. 两个线程.
+>    2. 同时.
+>    3. 等待对方.
+>    4. 释放自己想要的同步锁.
+>
+>> 例如：A线程想用目前B线程锁定的一个资源，而B线程也刚好在等待A线程中锁定的一个资源，这就只能无限等待了.
+>>
+>> **任何操作系统都无法完全避免死锁**，所以编程时一定要特别注意同步锁的使用，避免死锁发生.
+
+<br>
+
+- 示例：
+
+```Java
 public class Test {
 	A a = new A();
 	B b = new B();
 
 	class A implements Runnable {
-		public synchronized void foo(B b) {
-			System.out.println("In A try call B");
-			b.bar(this);
-			System.out.println("A end!");
+		synchronized void tryLockB() {
+			System.out.println("In Thread-A, try lock B.");
+			b.tryLockA();
+			System.out.println("A end.");
 		}
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			foo(b);
+			tryLockB();
 		}
 
 	}
 	class B implements Runnable {
-		public synchronized void bar(A a) {
-			System.out.println("In B try cal A");
-			a.foo(this);
+		synchronized void tryLockA() {
+			System.out.println("In Thread-B, try lock A");
+			a.tryLockB();
 			System.out.println("B end!");
 		}
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			b.bar(a);
+			tryLockA();
 		}
 
 	}
 
-	public void init() {
+	public void run() {
 		Thread ta = new Thread(a);
 		Thread tb = new Thread(b);
 
+        // 死锁，ta占用了a，tb占用了b，双方都想得到对面的b和a
 		ta.start();
 		tb.start();
 	}
 
 	public static void main(String[] args) {
-		new Test().init();
+		new Test().run();
 	}
-
 }
-！发生死锁，都在输出End之前进入死锁，相互等待；
-！！像有些方法（suspend等）容易发生死锁，应该尽量不要用；
+```
