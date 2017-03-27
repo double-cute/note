@@ -12,9 +12,9 @@
 
 ## 目录
 
-1. [构造器]()
-2. [print & println]()
-3. [格式化输出：format]()
+1. [构造器](#一构造器)
+2. [print & println](#二print--println)
+3. [格式化输出：format](#三格式化输出format--)
 
 <br><br>
 
