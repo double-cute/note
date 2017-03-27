@@ -37,7 +37,8 @@
 6. [复位：reset](#六复位reset--)
 7. [解析行](#七解析行)
 8. [忽略demiliter的正则表达式匹配](#八忽略demiliter的正则表达式匹配)
-9. [示例](#九示例)
+9. [查看整体状态信息：toString]()
+10. [示例](#十示例)
 
 <br><br>
 
@@ -316,7 +317,36 @@ out.println(s); // 999
 
 <br><br>
 
-### 九、示例：[·](#目录)
+### 九、查看整体状态信息：toString  [·](#目录)
+
+<br>
+
+```Java
+String toString() {
+    StringBuilder sb = new StringBuilder();
+    sb.append("java.util.Scanner");
+    sb.append("[delimiters=" + delimPattern + "]"); // 重要
+    sb.append("[position=" + position + "]");  // 调试时可参考
+    sb.append("[match valid=" + matchValid + "]");
+    sb.append("[need input=" + needInput + "]");
+    sb.append("[source closed=" + sourceClosed + "]");
+    sb.append("[skipped=" + skipped + "]");
+    sb.append("[group separator=" + groupSeparator + "]");
+    // 数值解析的规范字符串，没事儿可以多看看
+    sb.append("[decimal separator=" + decimalSeparator + "]");
+    sb.append("[positive prefix=" + positivePrefix + "]");
+    sb.append("[negative prefix=" + negativePrefix + "]");
+    sb.append("[positive suffix=" + positiveSuffix + "]");
+    sb.append("[negative suffix=" + negativeSuffix + "]");
+    sb.append("[NaN string=" + nanString + "]");
+    sb.append("[infinity string=" + infinityString + "]");
+    return sb.toString();
+}
+```
+
+<br><br>
+
+### 十、示例：[·](#目录)
 
 <br>
 
