@@ -1,51 +1,112 @@
+# InputStreamReader & 标准流重定向 & 和其它进程IO
 
-1. 将字节流转换成字符流：
-    1) Java只提供了将字节流转换成字符流的方法，但是并没有提供字符流转换成字节流的方法。这是因为字符流要比字节流操作更加方便、直观，毕竟字符是人直接能看得懂的；
-！！因此，如果一个流已经是字符流了，那就没有必要再转换成字节流了，毕竟字符流操作比字节流方便啊！而将字节流转换成字符流的目的就是为了操作更方便，所以Java不提供字符流到字节流的转换；
-    2) 完成这个工作只需要InputStreamReader类就行了，其实该类名的全称应该是InputStream to Reader，即把InputStream转化成Reader的意思；
-    3) InputStreamReader的API源码：
-[java] view plain copy 在CODE上查看代码片派生到我的代码片
-public class InputStreamReader extends Reader {  
+<br><br>
 
-    private final StreamDecoder sd;  
+## 目录
 
-    /**
-     * Creates an InputStreamReader that uses the default charset.
-     *
-     * @param  in   An InputStream
-     */  
-    public InputStreamReader(InputStream in) {  
-！！可以看到，它继承的就是Reader，而构造器所包装的参数是一个InputStream，因此直接用构造器就能返回一个Reader对象，因此转换直接用构造器来实现；
-    4) 示例：Reader r = InputStreamReader(System.in);   // System.in原本是InputStream的字节流，现在被转换成字符流了
-    5) 同样OutputStreamWriter可以将输出字节流转换成输出字符流，其构造器：OutputStreamWriter(OutputStream out);  // 同样使用构造器完成转换
-    6) 示例：从标准输入读取并处理
-[java] view plain copy 在CODE上查看代码片派生到我的代码片
-public class Test {  
+1. []()
+2. []()
+3. []()
 
-    public static void main(String[] args) throws IOException {  
-        try (  
-            InputStreamReader reader = new InputStreamReader(System.in);  
-            BufferedReader br = new BufferedReader(reader);  
-        ) {  
-            String line = null;  
-            while ((line = br.readLine()) != null) {  
-                if (line.equals("exit")) {  
-                    System.exit(1);  
-                }  
-                System.out.println("Input: " + line);  
+<br><br>
+
+### 一、byte2char流转换器——InputStreamReader：
+> Java只提供了将字节流转换成字符流的IO工具类InputStreamReader，但是并没有提供字符流转换成字节流的工具.
+>
+>> 原因很简单，这是因为字符比字节更具体和高级，**低级到高级很正常**，高级降为低级的应用场景几乎不存在.
+>>
+>>> - 设想：如果一个流已经是字符流了，那就没有必要再转换成字节流了，毕竟字符流操作比字节流方便.
+>>>    - 将字节流转换成字符流的目的就是为了 **操作更方便和直观**，所以Java不提供字符流到字节流的转换.
+
+<br>
+
+**1.&nbsp; InputStreamReader的转换原理：** 用构造器包装一个字节流直接变成字符流
+
+- InputStreamReader本来就 **直接继承并实现了Reader**，因此 **其编译时类型就是Reader族**！
+
+```Java
+// 将一个字节流包装成InputStreamReader（中间过渡字符流Reader）
+   // 可以选择性地用3种方式指定字节到字符的编码方式
+InputStreamReader(InputStream in[, Charset charset | String charsetName | CharsetDecoder dec]);
+```
+
+<br>
+
+**2.&nbsp; 其余的话，在方法上没有对Reader做任何拓展，完全可以当做Reader来使用：**
+
+- 但更多的情况是：
+   1. 在利用InputStreamReader构造器转换出一个Reader后.
+   2. 就把结果当做一个普通Reader节点流.
+   3. 接着去被另外的高级处理流继续包装.
+      - 最常见的例子是：System.in(InputStream) -InputStreamReader-> BufferedReader
+
+```Java
+public static void main(String[] args) throws IOException {  
+    try (  
+        // 转换后的结果作为中间过渡
+        InputStreamReader interReader = new InputStreamReader(System.in);
+        // 接着继续被其它高级处理流包装
+        BufferedReader br = new BufferedReader(interReader);  
+    )
+    {  
+        String line = null;  
+        while ((line = br.readLine()) != null) {  
+            if (line.equals("exit")) {  
+                System.exit(1);  
             }  
+            System.out.println("Input: " + line);  
         }  
     }  
 }  
-！这里我们使用了BufferedReader对字符输入流reader进行了一层包装，以为BufferedReader（处理流）具有缓冲功能，可以实现整行读取，读取效率也很高；
+```
+
+<br><br>
+
+### 二、标准流重定向：
+
+<br>
+
+**1.&nbsp; 什么是标准流：**
+
+- 即标准输入输出流（即标准IO流）的简称.
+   1. 总共包含3者：传统延承C语言的称呼就是stdin、stdout、stderr.
+      - Java中分别对应：System.in、System.out、System.err.
+   2. 分别代表标准输入流、标准输出流、标准错误流.
+   3. 三者的默认定义：
+      1. static final **InputStream** System.in：**键盘输入**，流向程序.
+      2. static final **PrintStream** System.out：程序正常输出，流向**屏幕终端**.
+      3. static final **PrintStream** System.err：程序的异常以及报错信息输出，流向**屏幕终端**.
+
+<br>
+
+**2.&nbsp; 重定向的内容：** 只能重定向指向，不能改变标准流的作用！
+
+| 标准流 | 指向 | 作用 |
+| --- | --- | --- |
+| System.in | 指向（键盘，即输入源） | 从输入源读取数据到程序 |
+| System.out | 指向（屏幕终端，即输出目的地） | 将程序的正常输出送到输出目的地 |
+| System.err | 指向（屏幕终端，即输出目的地） | 将程序的错误信息输出送到输出目的地 |
+
+<br>
+
+**3.&nbsp; 利用System的setXxx静态工具方法进行重定向指向：**
+
+```Java
+// 三者调用本地native方法进行重定向，毕竟标准IO是OS的财产！
+static void setIn(InputStream in);
+static void setOut(PrintStream out);
+static void setErr(PrintStream err);
+
+// 作用等价于：虽然三者都是final的，只是一个比喻罢了
+System.setIn(newIn); --> System.in = newIn;
+System.setOut(newOut); --> System.out = newOut;
+System.setErr(newErr);  --> System.err = newErr;
+```
+
+<br>
 
 
 
-[疯狂Java]I/O：标准流重定向、JVM读写其它进程数据
-标签： 疯狂Java标准流重定向JVM读写其它进程的数据
-2016-04-24 14:24 467人阅读 评论(0) 收藏 编辑 删除
-分类： 疯狂Java笔记（124）  
-1. 标准输入输出流：
    1) 标准I/O流就是指System.in、System.out、System.err这三个，分表表示标准输入流、标准输出来、标准错误流；
    2) 三者默认的流节点分别是键盘、屏幕、屏幕，这也是我们频繁使用的三个I/O流；
 
