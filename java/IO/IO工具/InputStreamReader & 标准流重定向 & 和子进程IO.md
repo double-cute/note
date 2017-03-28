@@ -4,9 +4,9 @@
 
 ## 目录
 
-1. [byte2char流转换器——InputStreamReader]()
-2. [标准流重定向]()
-3. [和子进程IO]()
+1. [byte2char流转换器——InputStreamReader](#一byte2char流转换器inputstreamreader)
+2. [标准流重定向](#二标准流重定向)
+3. [和子进程IO](#三和子进程io)
 
 <br><br>
 
