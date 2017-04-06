@@ -63,6 +63,20 @@
       $4
     """
 
+  'bcode':
+    'prefix': 'ass'
+    'body': """
+      **$1.&nbsp; $2：**
+
+      ```Shell
+      $3
+      ```
+
+      <br>
+
+      $4
+    """
+
   'brbr':
     'prefix': 'bnn'
     'body': """
