@@ -1,4 +1,4 @@
-# 遍历：cd
+# 遍历系统目录树：cd
 > change current working directory
 >
 >> 改变当前工作目录.
