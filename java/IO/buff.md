@@ -26,7 +26,7 @@ public interface Serializable {
 
 - 我们知道空的接口是标记接口，是给人看的，不是给编译器看的.
    - 但该接口和Cloneable不一样，后者是纯的标记接口，而该接口：
-      1. 不仅有类型的作用（用它来定义引用很有意义）. （**不实现该接口就不用用对象流IO对象**）
+      1. 不仅有类型的作用（用它来定义引用很有意义）. （**不实现该接口就无法用对象流IO对象**）
       2. 而且具有隐式的接口方法，只不过**这类方法是通过反射调用的**.
 
 <br>
@@ -34,6 +34,22 @@ public interface Serializable {
 **2.&nbsp; 该接口的隐式定义：**
 
 ```Java
+public interface Serializable {
+    private static final long serialVersionUID;
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+    }
+
+
+    private Object readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        return in.defaultReadObject();
+    }
+    private void readObjectNoData() throws ObjectStreamException;
+
+    ANY-ACCESS-MODIFIER Object readResolve() throws ObjectStreamException;
+    ANY-ACCESS-MODIFIER Object writeReplace() throws ObjectStreamException;
+}
 
 ```
 
@@ -159,7 +175,7 @@ public class Test implements Serializable {
 
 
 	public static void print(String s) {
-		System.out.println(s);
+		System.out.println(s);   
 	}
 
 	public static void main(String[] args) throws IOException, ClassNotFoundException {
