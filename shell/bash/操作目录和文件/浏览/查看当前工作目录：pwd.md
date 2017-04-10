@@ -1,7 +1,11 @@
 # 查看当前工作目录：pwd
 > print current working directory
 >
->> 显示当前工作路径
+>> 显示当前工作路径.
+
+<br>
+
+- **coreutils: /bin/pwd**
 
 <br><br>
 
