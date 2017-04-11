@@ -32,3 +32,5 @@ apt install mysql-server-core-X.XX  # 目前最新版是5.7
 
 - 安装完毕后第一次设置root登录密码：mysql -u root -p
    - 回车后键入密码后生效，之后使用root登录就使用该密码.
+
+- 记得将/usr/share/java/mysql-connector-java.jar加入到eclipse的user library中.
