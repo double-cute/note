@@ -77,6 +77,20 @@
       $4
     """
 
+  'sqlcode':
+    'prefix': 'sll'
+    'body': """
+      **$1.&nbsp; $2：**
+
+      ```SQL
+      $3
+      ```
+
+      <br>
+
+      $4
+    """
+
   'brbr':
     'prefix': 'bnn'
     'body': """
