@@ -5,7 +5,7 @@
 
 <br>
 
-- **coreutils: /bin/pwd**
+- coreutils: /bin/pwd
 
 <br><br>
 
