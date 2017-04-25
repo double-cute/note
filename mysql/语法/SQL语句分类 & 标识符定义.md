@@ -35,15 +35,16 @@
    - 准确地说是：**表级** 的增删改.
       - 主要包含**create、alter、drop、truncate**（高级的删除）等 **数据表操作** 语句.
 2. DML（Data Manipulation Language，数据操作语言）.
-   - 准确地说是：**数据项级** 的增删改.
+   - 准确地说是：**数据项级** 的增删改查.
       - 主要包含**insert、update、delete**等 **数据项操作** 语句.
-3. 查询语句：即**select语句**.
-   - 是SQL语句中最复杂、最灵活、功能最丰富的语句.
-4. 事务控制语句.
-   - 主要包含**commit、rollback、savepoint**等语句.
-5. DCL（Data Control Language，数据控制语言）.
-   - 属于数据库管理员（DBA）使用的权限、安全等的管理语句.
+3. DQL（Data Query Language，数据查询语言）.
+   - 即select语句，是SQL中功能最丰富、用法最灵活的语句.
+4. DCL（Data Control Language，数据控制语言）.
+   1. 数据库管理员（DBA）使用的权限、安全等的管理语句.
       - 主要包含**grant、revoke**等语句.
+   2. 事务控制语句：
+      - 主要包含**commit、rollback、savepoint**等语句.
+
 
 <br><br>
 
