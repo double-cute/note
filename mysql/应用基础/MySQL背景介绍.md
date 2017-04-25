@@ -1,3 +1,16 @@
+# MySQL背景介绍
+
+<br><br>
+
+## 目录
+
+1. []()
+2. []()
+
+<br><br>
+
+### 一、
+
 收购关系：MySQL由MySQL AB开发 -> SUN -> Oracle
   - AB 是瑞典语aktiebolag的缩写，及瑞典语中的 有限公司的意思
 
@@ -11,18 +24,7 @@
 
 
 
-DataBase DB 数据库 存储数据的仓库
-DataBase Management System DBMS 数据库管理系统 有效组织和管理DB和其中的数据
-MySQL是一款经典的DBMS
-数据库管理员（Database Administrator，简称DBA，从事管理和维护DBMS的人员，属于运维工程师的一个分支
-DataBase System DBS 最大的概念，包括 相关软（DMBS、OS、DMBS辅助软件DataBase Application数据库应用软件（可视化软件等））硬（计算机、存储介质）件、DBA组成的综合系统.
 
-数据管理：对各种数据进行  分类、组织、编码、存储、检索、维护
-
-数据管理结束的发展阶段：
-1. 人工管理阶段.
-2. 文件系统阶段.
-3. 数据库阶段.
 
 MySQL
 1. 3个瑞典人：David Axmark、Allan Larsson、Michael Widenius
