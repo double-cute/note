@@ -13,18 +13,19 @@
 
 ## 目录
 
-1. [构造器](#一构造器)
+1. [构造器]()
 2. [长度、判空、大小写转换]()
-3. [连接](#三连接)
-4. [检索](#四检索)
-   1. str[index]
-   2. index findChar|findSubString
-   3. prefix|suffix
-   4. getSubstring
-   5. replaceAChar
-5. [比较](#五比较)
-6. [根据指定的编码方法将String转化成二进制字节序列](#六根据指定的编码方法将string转化成二进制字节序列)
-7. [String的一些静态工具方法](#七string的一些静态工具方法)
+3. [内容比较：相等&大小]()
+4. [索引随机访问：根据索引获取字符&子串]()
+5. [定位：确定字符&子串的索引位置]()
+6. [匹配：子串、前后缀、模式串]()
+7. [处理&改造：脱白、分割、连缀、替换]()
+8. [字符串连接]()
+9. [编码成byte数组 & 转化成char数组]()
+10. [获取一个格式化字符串：静态工具方法format]()
+11. [将其它类型转换成String：静态工具方法valueOf]()
+12. [字符串常量池注册：intern]()
+13. [字符串哈希：hashCode]()
 
 <br><br>
 
@@ -140,7 +141,7 @@ int compareTo[IgnoreCase](String anotherString);
 
 <br>
 
-### 四、随机访问：根据索引获取字符&子串  [·](#目录)
+### 四、索引随机访问：根据索引获取字符&子串  [·](#目录)
 
 <br>
 
@@ -435,7 +436,7 @@ static String format([Locale] l, String format, Object... args);
 
 <br><br>
 
-### 十一、将其它类型转换成String：String的静态工具方法valueOf  [·](#目录)
+### 十一、将其它类型转换成String：静态工具方法valueOf  [·](#目录)
 
 <br>
 
@@ -485,3 +486,21 @@ String intern();
       2. 如果不存在就将this的内容加入常量池中，并返回常量池String的引用.
 - 因此，不管s1和s2是如何创建（获取）的，只有它俩equals相等，那么s1.intern() == s2.intern()一定为true.
    - 必定地址相同，都来自于常量池的那个String.
+
+<br><br>
+
+### 十三、字符串哈希：hashCode  [·](#目录)
+
+<br>
+
+```Java
+// 覆盖于Object的hashCode
+int hashCode();
+```
+
+<br>
+
+- 算法：s[0] × 31^(n-1) + s[1] × 31^(n-2) ... + s[n-1]
+   - ^表示次方.
+   - 内部维护这一个private int hash，只有第一次调用该方法时会计算一次.
+      - 后面再调用就直接返回hash变量了.
