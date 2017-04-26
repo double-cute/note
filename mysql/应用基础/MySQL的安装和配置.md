@@ -87,27 +87,29 @@ service 服务的名称 操作类型
 <br>
 
 **1.&nbsp; 下载安装包：**
-![](assets/sample.gif "搞笑gif")
-- 在主页 [**https://www.mysql.com**](https://www.mysql.com) 上点击 **Downloads** 选项卡.
+
+<br>
+
+- 1. 在主页 [**https://www.mysql.com**](https://www.mysql.com) 上点击 **Downloads** 选项卡.
 
 ![](assets/index-downloads.png)
 
-- 接着在Downloads选项卡中单击 **Community** 子选项卡.
+- 2. 接着在Downloads选项卡中单击 **Community** 子选项卡.
    - 学习MySQL就选择免费的Community版本.
 
 ![](assets/downloads-community.png)
 
-- 接着在Community的选项卡页面单击 **MySQL on Windows (Installer & Tools)** 入口.
+- 3. 接着在Community的选项卡页面单击 **MySQL on Windows (Installer & Tools)** 入口.
 
 ![](assets/community-windows.png)
 
-- 接下来选择 **MySQL Installer**，它包含了下面所有的MySQL在Windows平台下的产品，是一组集中安装软件.
+- 4. 接下来选择 **MySQL Installer**，它包含了下面所有的MySQL在Windows平台下的产品，是一组集中安装软件.
 
 ![](assets/windows-installer.png)
 
 <br>
 
-- 在Installer页面中下载 **.msi** 的MySQL **Windows Installer** 安装包.
+- 5. 在Installer页面中下载 **.msi** 的MySQL **Windows Installer** 安装包.
    - 这里注意以下几点：
       1. 显示只有32位的安装包，但第一行已经注明了，其中同时包含了x86和x64两种版本，可以自由选择.
       2. 选择广泛推荐的GA版本.
@@ -116,3 +118,65 @@ service 服务的名称 操作类型
          - 这里直接给出离线安装版的链接：[**下载**](https://dev.mysql.com/downloads/file/?id=470091)
 
 ![](assets/installer-msi.png)
+
+<br>
+
+**2.&nbsp; 安装MySQL服务器：**
+
+<br>
+
+- 1. 打开之前下载下来的.msi安装包.
+
+![](assets/ins-open.png)
+
+<br>
+
+- 2. **同意协议** 并下一步.
+
+![](assets/ins-agree.png)
+
+<br>
+
+- 3. 选择 **自定义安装** 并下一步.
+
+![](assets/ins-custom.png)
+
+<br>
+
+- 4. 选择 **要安装的组件** 并下一步.
+   - **在左侧选择要安装的组件** 后，点击中间的箭头（右表示添加，坐表示去掉）添加到 **右侧待安装一栏** 中.
+   - 可以看到MySQL Windows Installer不仅包含服务器端部分，还包含其它好多组件：**x86和x64都有**
+      1. 服务器部分.
+      2. 数据库应用（客户端）：WorkBench、Shell、Utilities等.
+      3. 各编程语言的接口驱动Connector.
+      4. MySQL文档.
+
+![](assets/ins-select-to-install.png)
+
+<br>
+
+- 5. 提示需要安装Windows环境下的依赖库 **Microsoft Visual C++ 2013**，**点击执行** 并安装.
+
+![](assets/ins-check-mscpp.png)
+![](assets/ins-mscpp-install.png)
+![](assets/ins-mscpp-close.png)
+
+<br>
+
+- 6. 依赖环境安装成功，回到之前的页面，点击下一步进入安装.
+
+![](assets/ins-check-ok.png)
+
+<br>
+
+- 7. 点击执行安装（可以查看安装细节过程）.
+   - 安装完毕后点击下一步进入提示配置的画面.
+   - 再点下一步进行数据库配置.
+
+![](assets/ins-install.png)
+![](assets/ins-finish.png)
+![](assets/ins-to-configure.png)
+
+<br>
+
+**3.&nbsp; 配置数据库：**
