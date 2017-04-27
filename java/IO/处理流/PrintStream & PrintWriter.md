@@ -15,7 +15,7 @@
 1. [构造器](#一构造器)
 2. [print & println](#二print--println)
 3. [格式化输出：format](#三格式化输出format--)
-4. [追加：append]()
+4. [追加：append](#四追加append--)
 
 <br><br>
 
