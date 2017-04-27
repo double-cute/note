@@ -4,7 +4,7 @@
 >> - **除了print、println、format/printf之外，这两者可以完全当做OutputStream和Writer使用**.
 >>    - 其余没有扩展任何方法.
 >>
->>> - 但两者输入的格式 **都是文本字符**.
+>>> - 但两者的输出格式 **都是文本字符**.
 >>> - 再加上，两者的方法基本相同，
 >>>    - 因此 **前者运用较多**，因为前者是以字节的形式处理输出，比后者字符形式要高效.
 
@@ -15,6 +15,7 @@
 1. [构造器](#一构造器)
 2. [print & println](#二print--println)
 3. [格式化输出：format](#三格式化输出format--)
+4. [追加：append]()
 
 <br><br>
 
@@ -29,9 +30,7 @@
 
 ```Java
 // PrintStream
-PrintStream(File file | String fileName[, String charset]);
-//  PrintWriter
-PrintWriter(File file | String fileName[, String charset]);
+PrintStream|PrintWriter(File file | String fileName[, String charset]);
 ```
 
 <br>
@@ -90,7 +89,9 @@ void println(String s | char[] s);
 
 <br>
 
-**3.&nbsp; 多态输出单个Object：** 多态**调用运行时类型的toString**方法！
+**3.&nbsp; 放空多态输出单个Object：** 多态**调用运行时类型的toString**方法！
+
+- null输出"null"字符串
 
 ```Java
 void print(Object obj);
@@ -124,7 +125,7 @@ void println(); // 等价于print('\n');
 
 ```Java
 // args虽然是Object类型的，但实际是根据其 **运行时类型** 决定如何格式化
-PrintStream format([Locale l, ]String format, Object ... args)
+PrintStream|PrintWriter format([Locale l, ]String format, Object ... args)
 ```
 
 - Java format的语法格式总结：
@@ -182,3 +183,23 @@ PrintStream format([Locale l, ]String format, Object ... args)
 | %-10f | -表示左对齐（在字宽10中左对齐），默认是右对齐 |
 | %0+8d | 前缀不0表示字宽不足补前缀0 |
 | %,10d | ,表示逗号分组（还带一个右对齐10字宽）|
+
+<br><br>
+
+### 四、追加：append  [·](#目录)
+
+<br>
+
+**1.&nbsp; 追加单个字符：**
+
+```Java
+PrintStream append(char c);
+```
+
+<br>
+
+**2.&nbsp; 追加一个字符序列：**
+
+```Java
+PrintStream|PrintWriter append(CharSequence cs[, int start, int end]);
+```

@@ -24,6 +24,10 @@
 >>       - 除了以下之外，其余匹配失败都直接抛出 **[InputMismatchException]匹配失败异常**.
 >>          1. **findInLine、findWithinHorizon**：没找到就 **返回null**.
 >>          2. **nextLine**：过了EOF还要弄就抛出 **[NoSuchElementException]没找到异常**.
+>>    3. 所有改变Scanner对象属性的方法（**useXxx，如useDelimiter、useRadix等**）：
+>>       - **返回的新的Scanner对象保持原有的位置指针！！**
+>>          - 也就是说可以接着利用新的Scanner对象 **继续往下解析**.
+
 
 <br><br>
 
@@ -111,7 +115,6 @@ Pattern delimiter();
 
 ```Java
 // 既可以用Pattern指定，也可以用String正则表达式源命令来指定
-  // 返回新的scanner，原来的scanner不能用了（无效了）
 Scanner useDelimiter(Pattern pattern | String pattern);
 ```
 
@@ -138,7 +141,7 @@ String next();
 **2.&nbsp; 匹配整型：** 需要指定进制radix
 
 - **默认radix = 10**，即默认是十进制的.
-- 基本类型整型只支持（即type所代表的）：**byte、short、long、BigInteger**
+- 基本类型整型只支持（即type所代表的）：**byte、short、int、long、BigInteger**
    - **没有char**.
 - 进制支持**2 - 16**，最好**不要超过16**，因为**≥16的数字没法表示**.
 
@@ -161,7 +164,6 @@ int radix();
 - 重设默认的进制radix：
 
 ```Java
-// 返回重设后的新的scanner，旧的scanner失效了（无法再使用了）
 Scanner useRadix(int radix);
 ```
 
@@ -285,7 +287,7 @@ String findWithinHorizon(Pattern pattern | String pattern, int horizon);
 ```Java
 /**   功能描述：从当前位置开始的一行中，匹配模式串
  *  
- *    - 等价于：findWithinHorizon中 horizon = 当前位置到下一个\n的字符个数.
+ *    - 等价于：findWithinHorizon中 horizon = 当前位置到下一个\n的字符个数. （**不包括\n**）
  *      - 最后的EOF也当成\n
  */
 String findInLine(Pattern pattern | String pattern);

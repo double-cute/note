@@ -160,7 +160,7 @@ char charAt(int index);  // index越界直接抛出异常[IndexOutOfBoundsExcept
 String substring(int beginIndex[, int endIndex]);
 
 // 2. CharSequence版本：就只有[beginIndex, endIndex)一种
-CharSequence substring(int beginIndex, int endIndex);
+CharSequence subSequence(int beginIndex, int endIndex);
 ```
 
 <br>
