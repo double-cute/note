@@ -13,12 +13,12 @@
 
 <br>
 
-1. [dirname]()
-2. [basename]()
+1. [dirname](#一dirname)
+2. [basename](#二basename)
 
 <br><br>
 
-### 一、dirname：
+### 一、dirname：[·](#目录)
 > 截取目录名.
 
 **1.&nbsp; 格式：**
@@ -47,7 +47,7 @@ $ dirname / /home/ a.txt dir/
 
 <br><br>
 
-### 二、basename：
+### 二、basename：[·](#目录)
 > 截取文件名.
 >
 >> 实现：先截取最后一个/（如果没有/就截取全部）之后的所有字符.
