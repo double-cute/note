@@ -1,4 +1,4 @@
-# 遍历系统目录树：cd
+# 遍历：cd
 > change current working directory
 >
 >> 改变当前工作目录.
@@ -12,10 +12,9 @@
 
 <br>
 
-- **是Linux的内核命令，非shell内置命令！** 因此：
-   1. 不存在命令目录，不存在包.
+- **是Bash的内建命令！** 因此：
+   - 不存在命令目录，不存在包. （包含在/bin/bash这个可执行程序之中）
       - **which和dpkg -S均无结果.**
-   2. **cd命令在shell脚本中无效.**
 
 <br>
 
