@@ -14,7 +14,7 @@
 
 <br>
 
-- **coreutils: /bin/ls**
+- coreutils: /bin/ls
 
 <br>
 
