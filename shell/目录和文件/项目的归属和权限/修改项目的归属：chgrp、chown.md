@@ -1,7 +1,7 @@
 # 修改项目的归属：chgrp、chown
 > change group、change owner
 >
->> **都要拥有root权限才能使用！**
+>> **要拥有root权限才能使用！**
 
 <br><br>
 
@@ -15,9 +15,9 @@
 
 <br>
 
-1. [chgrp]()
-2. [chown：同时还能修改属主]()
-3. [应用情景]()
+1. [chgrp](#一chgrp)
+2. [chown：同时还能修改属主](#二chown同时还能修改属主--)
+3. [应用情景](#三应用情景)
 
 <br><br>
 
