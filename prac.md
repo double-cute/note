@@ -16,10 +16,10 @@ boolean contentEquals(CharSequence cs | StringBuffer sb);
 boolean equalsIngoreCaes(String s);
 boolean compareTo[IngnoreCase](String s);
 
-// 4. i2th
-int charAt(int index);
-int substring(int beg[, int end]);
-int subSequence(int beg, int end);
+// 4. i2thing
+char charAt(int index);
+String substring(int beg[, int end]);
+String subSequence(int beg, int end);
 
 // 5. th2i
 int indexOf|lastIndexOf(int ch | String s[, int beg]);
@@ -307,4 +307,90 @@ FileOutputStream|FileWriter(File|String f[, boolean append]);
 StringReader(String node);
 StringWriter([int iniSize]); // StringBuffer
 StringBuffer getBuffer();
+```
+
+
+
+
+
+
+```Java
+// 1. cons
+String();
+String(String|StringBuidler|StringBuffer s);
+String(byte[] b[, int offset, int len][, Charset|String cs]);
+String(char[] c[, int offset, int len]);
+
+// 2. tools
+int length();
+boolean isEmpty();
+String toUpperCase([Locale l]);
+String toLowerCase([Locale l]);
+
+// 3. cmp
+boolean equals(Object o);
+boolean contentEquals(CharSequence|StringBuffer s);  // thread safe
+boolean equalsIgnoreCase(String s);
+int compareTo[IgnoreCase](String s);
+
+// 4. i2th
+char charAt(int index);
+String substring(int beg[, int end]);
+CharSequence subSequence(int beg, int end);
+
+// 5. th2i
+int indexOf|lastIndexOf(int|String th[, int beg]);
+
+// 6. match
+boolean contains(CharSequence s);
+boolean startsWith(String prefix[, int beg]);
+boolean endsWith(String suffix);
+boolean matches(String regx);
+boolean regionMatches(
+  [boolean IgnoreCase, ]
+  int beg,
+  String other, int offset, int len
+);
+
+// 7. proc
+String trim();
+String split(String regDeli[, int limit]);
+static String join(CharSequence deli, CharSequence...|Iterable<? extends CharSequence> eles);
+String replace(char|CharSequence: oldd, neww);
+String replaceAll|replaceFirst(String regx, String replacement);
+
+// 8. concat
++=
+String concat(String s);
+StringBuilder|StringBuffer append(String|StringBuilder|StringBuffer s);
+
+// 9. 2bs/cs
+byte[] getBytes([Charset|String cs]);
+char[] toCharArray();
+
+void getBytes(int beg, int end, byte[] dst, int dstBeg); // C style without encoder
+void getChars(int beg, int end, char[] dst, int dstBeg);
+
+// 10. 2str
+// type: boolean char int long float double
+static String valueOf(type t|Object o);
+static String valueOf(char[] c[, int offset, int len]);
+
+// 11. other
+String intern();
+int hashCode(); a[0] * 31^(n-1) ... a[n-1] * 1
+
+// 12. format
+static String format([Locale l, ]String format, Object... args);
+%b %c %s %d
+%o %#o %x %#x
+%f %e %g
+%n \t %% %tc
+
+.5
+10d
+-10d
++23d
+05d
+,+5d
 ```

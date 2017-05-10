@@ -116,12 +116,12 @@ String toUpperCase([Locale locale]);  // 转成大写
 // 1. 覆盖于Object，比较的是真实的字符内容
 boolean equals(Object anObject); // 但可以和任意类型比较（自动调用anObject.toString()）
 
-// 2. 无视大小写的真实字符内容比较，只能和String类型比（自己重载的）
-boolean equalsIgnoreCase(String anotherString);
-
-// 3. 高效地和CharSequence、StringBuffer单独比较的特供版.
+// 2. 高效地和CharSequence、StringBuffer单独比较的特供版.
   // 只有大小写敏感的版本
 boolean contentEquals(CharSequence cs | StringBuffer buff);
+
+// 3. 无视大小写的真实字符内容比较，只能和String类型比（自己重载的）
+boolean equalsIgnoreCase(String anotherString);
 ```
 
 <br>
@@ -504,3 +504,7 @@ int hashCode();
    - ^表示次方.
    - 内部维护这一个private int hash，只有第一次调用该方法时会计算一次.
       - 后面再调用就直接返回hash变量了.
+
+<br><br>
+
+### 十四、Unicode Point：
