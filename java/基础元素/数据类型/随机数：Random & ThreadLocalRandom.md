@@ -4,6 +4,8 @@
 > - Random是单线程的，ThreadLocalRandom是多线程的（线程安全的）.
 >
 >> 任何语言的随机数都是用**伪随机序列**构造的，**种子一样得到的随机序列必定一样**.
+>>
+>>> - **需要定义复杂的随机序列则可以继承Random并进行拓展.**
 
 <br><br>
 
@@ -22,34 +24,40 @@
 **1.&nbsp; 构造器：**
 
 ```Java
-// 1. 默认以当前JVM的[微秒时间]作为种子
-Random();
-
-// 2. 显式设定种子
-Random(long seed);
+// 默认以当前JVM的[微秒时间]作为种子，或者显式指定一个long种子
+Random([long seed]);
 ```
 
 <br>
 
-**2.&nbsp; 获取序列中下一个随机数：**
+**2.&nbsp; 显式手动设定一个新的种子：**
+
+- 可以在程序运行中途设定，不影响之前的结果，只影响之后的结果！
 
 ```Java
-// 1. [0, bound)
-int nextInt(int bound);
+void setSeed(long seed);
+```
 
-// 2. 各自类型范围[-最大, +最大]
-int nextInt();
+<br>
+
+**3.&nbsp; 获取序列中下一个随机数：**
+
+```Java
+// 1. [true, false]
+boolean nextBoolean();
+
+// 2. 无参默认为[-最大, +最大] or 显式指定为[0, bound)
+int nextInt([int bound]);
+
+// 3. [-最大, +最大]
 long nextLong();
 
-// 3. (0.0, 1.0)
+// 4. (0.0, 1.0)
 float nextFloat();
 double nextDouble();
 
-// 4. 均值为0.0，方差为1.0的高斯分布
+// 5. 均值为0.0，方差为1.0的高斯分布
 double nextGaussian();
-
-// 5. 随机布尔值
-boolean nextBoolean();
 
 // 6. 随机二进制序列填满整个数组
 void nextBytes(byte[] bytes);     
@@ -68,5 +76,5 @@ void nextBytes(byte[] bytes);
 
 ```Java
 // 以当前所在线程的JVM当前时间作为种子
-static ThreadLocalRandom ThreadLocalRandom.current();
+static ThreadLocalRandom current();
 ```

@@ -399,4 +399,41 @@ String(int[] codePoints, int offset, int len);
 int codePointAt|codePointBefore(int index);
 int codePointCount(int beg, int end);
 int offsetByCodePoints(int beg, int codePointOffset);
+
+
+
+
+
+/* collection */
+
+// 1. size empty
+int size();
+boolean isEmpty();
+
+// 2. add
+boolean add(E e);
+
+// 3. remove
+boolean remove(Object o);
+default boolean removeIf(Predicate<? super E> filter);
+void clear();
+
+// 4. op
+boolean retainAll(Collection<?> c);
+boolean addAll(Collection<? extends E> c);
+boolean removeAll(Collection<?> c);
+
+// 5. contain
+boolean contains(Object o);
+boolean containsAll(Collection<? extends E> c);
+
+// 6. 2arr
+Object[] toArray();
+<T> T[] toArray(T[] a);
+
+// 7. iter
+Iterator<E> iterator();
+boolean hasNext(); E next();
+default void forEachRemaining(Consumer<? super E> action);
+default void remove();
 ```
