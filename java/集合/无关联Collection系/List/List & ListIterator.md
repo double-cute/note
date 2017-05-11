@@ -47,7 +47,7 @@ static <T> List<T>	nCopies(int n, T o);
 
 <br><br>
 
-### 二、equals & hashCode：
+### 二、equals & hashCode：[·](#目录)
 
 <br>
 
@@ -75,7 +75,7 @@ int	hashCode();
 
 <br><br>
 
-### 三、修改List：
+### 三、修改List：[·](#目录)
 
 <br>
 
