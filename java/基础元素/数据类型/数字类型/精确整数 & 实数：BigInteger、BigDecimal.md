@@ -1,4 +1,4 @@
-# 精确实数：BigDecimal
+# 精确整数 & 实数：BigInteger、BigDecimal
 > Java的基本数值型（包括其包装器类型）具有很大的局限性：
 >
 > 1. 存在上下界.
