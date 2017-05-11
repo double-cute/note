@@ -24,48 +24,15 @@
 
 <br>
 
+- 队列处理方法分成两类，一类是异常安全的，一类是异常不安全的：
+   1. 异常不安全的方法命名继承自Collection.
+   2. 异常不安全：满插、空取、空看 直接抛出异常！
+   3. 异常不安全：满插返回false、空取返回null、空看返回null.
+
 | | 尾插 | 头取 | 头看 |
 | :---: | :---: | :---: | :---: |
-| 异常不安全 | ```Java boolean add(E e); ```<br>来自Collection| E remove(); | E element(); |
-| 异常安全 | boolean offer(E e); | E poll(); | E peek(); |
-
-**1.&nbsp; 从队尾部添一个元素：**
-
-```Java
-/** 1. 异常不安全
- *  - 如果队列的空间是受限的，则满插时会
- *    1. 抛出异常.
- *    2. 并返回false.
- */
-boolean add(E e);
-
-// 2. 异常安全，满插时返回false，不抛出异常
-boolean offer(E e); // 空间受限满插时不抛出异常，只是返回false
-```
-
-<br>
-
-**2.&nbsp; 从队头取出一个元素（同时删除）：**
-
-```Java
-// 1. 异常不安全，空取时抛出异常
-E remove();
-
-// 2. 异常安全，空取时返回null
-E poll();
-```
-
-<br>
-
-**3.&nbsp; 偷看一下队头元素（不删除）：**
-
-```Java
-// 1. 异常不安全，空看抛出异常
-E element();  
-
-// 2. 异常安全，空看返回null
-E peek();
-```
+| 异常不安全（命名来自Collection）| `boolean add(E e);` | `E remove();` | `E element();` |
+| 异常安全 | `boolean offer(E e);` | `E poll();` | `E peek();` |
 
 <br><br>
 
@@ -73,44 +40,26 @@ E peek();
 > 即优先队列（堆）.
 >
 > - 需要根据元素的大小关系时刻堆序.
->   1. 底层用数组实现的，因此和ArrayList一样，存在capacity物理容量上限这一概念.
->   2. 队首肯定是堆顶.
+>    1. 底层用数组实现的，因此和ArrayList一样，存在capacity物理容量上限这一概念.
+>    2. 队首肯定是堆顶.
 > - 由于元素需要比较大小，而null无法比较大小，因此不能存放null，否则抛出**[NullPointerException]异常**.
 
 <br>
 
 1. **没有对Queue扩展任何方法**，方法使用上就当纯Queue使用.
 2. **排序规则设定：**
-  1. 自然排序：元素自身实现Comparable接口的compareTo方法.
-  2. 定制排序：PriorityQueue的指定Comparator的构造器
+   1. 自然排序：元素自身实现Comparable接口的compareTo方法.
+   2. 定制排序：PriorityQueue的指定Comparator的构造器
 
 <br>
 
 - 构造器：
 
 ```Java
-// 1. 空，物理容量默认
-PriorityQueue();
+// 1. 空集合，可以指定初始化数组大小（默认是11个单位），也可以选择排序规则
+PriorityQueue([int initialCapacity][,][Comparator<? super E> comparator]);
 
-// 2. 空，指定物理容量
-  // 预估的话最好要自信、精确
-PriorityQueue(int initialCapacity);
-
-// 3. 空，默认容量，定制排序
-PriorityQueue(Comparator<? super E> comparator);
-
-// 4. 空，指定容量 & 定制排序
-PriorityQueue(int initialCapacity, Comparator<? super E> comparator);
-
-/** 5. 用另一个集合构造一个堆
- *  - 如果c是PriorityQueue或者是SortedSet，那么：
- *    1. 将c.cmp赋给this.cmp
- *    2. 保持c原有的顺序构造出this
- *  - 如果c是其它集合，那么：
- *    1. 将c中元素的compareTo赋给this.cmp
- *    2. 再按照这个cmp逐个插入c中的元素整理出新的堆序
- *
- *  $$ 总之，c中的元素必须可比，如果不可比将抛出异常！
- */
-PriorityQueue(Collection<? extends E> c);
+// 2. 非空构造
+  // 如果c是无序的，则采用自然排序，否则将c或s的比较体赋给this
+PriorityQueue(Collection<? extends E> c|SortedSet<? extends E> s);
 ```
