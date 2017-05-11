@@ -13,8 +13,6 @@ ArrayList、Map、Hashtable是重点
 
 异常赶紧看
 
-Random重新整理
-
 Date搞一搞
 
 DateFormat SimpleDateFormat

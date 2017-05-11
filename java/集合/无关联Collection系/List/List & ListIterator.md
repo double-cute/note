@@ -6,6 +6,10 @@
 >   4. 两个最常用的实现类：ArrayList（数组实现）、LinkedList（链表实现，**同时也是双端队列**）
 >   5. 由于维护的是插入顺序，而插入顺序和元素本身无关，因此 **可以存放null（多个null也行）** ，毕竟不依赖compare、equals等.
 >
+>> 由于其特色是利用索引操作，因此必然要注意索引越界的问题.
+>>
+>>   - 一旦发生越界就会抛出**[IndexOutOfBoundsException]异常**.
+>
 > <br>
 >
 > - ListIterator：
@@ -16,22 +20,60 @@
 
 ## 目录
 
-1. [List独有的索引操作方法：假设类型参数为E](#一list独有的索引操作方法假设类型参数为e--)
+1. [List独有的方法：假设类型参数为E](#一list独有的索引操作方法假设类型参数为e--)
 2. [ListIterator：假设类型参数为E](#二listiterator假设类型参数为e--)
-
-<br><br>
-
-### 一、List独有的索引操作方法：假设类型参数为E  [·](#目录)
-> 由于其特色是利用索引操作，因此必然要注意索引越界的问题.
->
->   - 一旦发生越界就会抛出**[IndexOutOfBoundsException]异常**.
 
 <br>
 
-- Collections工具类对List的支持如下：
-  1. [List排序](../../Collections工具类%20%26%20多线程集合.md#一list排序)
-  2. [List查找](../../Collections工具类%20%26%20多线程集合.md#二list查找)
-  3. [List批量填充和替换](../../Collections工具类%20%26%20多线程集合.md#三list批量填充和替换)
+- **所有static开头的静态工具方法都是Collections中的！**
+
+<br><br>
+
+### 一、构造List：利用Collections工具类  [·](#目录)
+> 得到的都是immutable列表，即不可修改的，不能add、remove，否则运行时异常！
+
+<br>
+
+```Java
+// 1. 得到一个空的list
+static <T> List<T>	emptyList();
+// 2. 得到只有一个元素的list
+static <T> List<T>	singletonList(T o);
+// 3. 得到有n个o的list
+static <T> List<T>	nCopies(int n, T o);
+```
+
+<br><br>
+
+### 二、equals & hashCode：
+
+<br>
+
+**1.&nbsp; equals：**
+
+```Java
+// 要求两个list的每个元素对应equals才行！！
+boolean	equals(Object o);
+```
+
+<br>
+
+**2.&nbsp; hashCode：**
+
+```Java
+// 根据每个元素的hashCode计算
+int	hashCode();
+// 算法如下
+{
+    int hashCode = 1;
+    for (E e : list)
+        hashCode = 31*hashCode + (e==null ? 0 : e.hashCode());
+}
+```
+
+<br><br>
+
+### 三、修改List：
 
 <br>
 
@@ -55,7 +97,7 @@ boolean addAll(int index, Collection<? extends E> c);
 
 <br>
 
-**2.&nbsp; 删除元素：**
+**2.&nbsp; 删除元素（指定索引处）：**
 
 ```Java
 E remove(int index);
@@ -63,15 +105,44 @@ E remove(int index);
 
 <br>
 
-**3.&nbsp; 访问元素 & 直接设值：**
+**3.&nbsp; 全局替换元素：**
 
 ```Java
-// 1. 返回指定索引处元素的引用值
+// 1. 传统的new替换old
+static <T> boolean replaceAll(List<T> list, T oldVal, T newVal);
+
+// 2. 根据一元操作批量修改 每一个元素
+default void replaceAll(UnaryOperator<E> operator);
+// 示例
+li.replaceAll(ele -> ele + 2);  // 更新每个元素+2
+```
+
+<br>
+
+**4.&nbsp; 批量 复制&填充：**
+
+```Java
+// 1. 全部元素改为obj
+static <T> void	fill(List<? super T> list, T obj);
+
+// 2. dest的前src.lengt()个元素全部拷贝成和src一样
+  // 如果dest.length() < src.length()就异常！
+static <T> void	copy(List<? super T> dest, List<? extends T> src)
+```
+
+<br>
+
+**5.&nbsp; 索引随机访问：取值 & 设值 & 截取区间  （i2th）**
+
+```Java
+// 1. 取值：arr[i]
 E get(int index);
 
-// 2. 修改指定索引元素引用的指向
-  // 返回修改前的元素
+// 2. 设值：arr[i] = ele，并返回修改前的元素
 E set(int index, E element);
+
+// 3. 截取区间：this[fromIndex, toIndex)
+List<E> subList(int fromIndex, int toIndex);
 ```
 
 - 注意两者的区别：引用是值传递！
@@ -89,89 +160,96 @@ li.set(1, new R(1000));  // [1, 1000, 3, 4]
 
 <br>
 
-**4.&nbsp; 定位元素：**
+**6.&nbsp; 定位查找元素：th2i**
 
 - 找不到返回-1.
 - 查找依据是equals.
 
 ```Java
-// 1. 返回第一个查找到的
-int indexOf(Object o);
+// 1. 顺着找和逆着找第1个匹配的 单个元素
+int indexOf|lastIndexOf(Object o);
 
-// 2. 返回最后一个查找到的
-int lastIndexOf(Object o);
+// 2. 找到第1个匹配的 子序列
+static int indexOfSubList|lastIndexOfSubList(List<?> source, List<?> target);
+
+// 3. 二分查找单个元素（要求事先排序）
+static <T> int binarySearch(List<? extends Comparable<? super T>> list, T key); // 默认升序规则
+static <T> int binarySearch(List<? extends T> list, T key, Comparator<? super T> c); // 定制排序版本
 ```
 
 <br>
 
-**5.&nbsp; 截取区间：**
+**7.&nbsp; 顺序：**
 
 ```Java
-// 返回[fromIndex, toIndex)区间子集
-List<E> subList(int fromIndex, int toIndex);
-```
+// 1. 交换两个元素
+static void	swap(List<?> list, int i, int j);
 
-<br>
+// 2. 反转
+static void	reverse(List<?> list);
 
-**6.&nbsp; 快速大批量替换：**
+// 3. 随机打乱（可以指定自己的随机过程）
+static void	shuffle(List<?> list[, Random rnd]);
 
-```Java
-// 根据一元操作修改每一个元素
-default void replaceAll(UnaryOperator<E> operator);
+// 4. 顺时针循环位移 distance%(list.size()-1) 个位置
+  // 如果distance为负，则逆时针位移
+static void	rotate(List<?> list, int distance);
 
-// 示例
-li.replaceAll(ele -> ele + 2);  // 更新每个元素+2
-```
-
-<br>
-
-**7.&nbsp; 定制快排：**
-
-```Java
-// 定制排序
-default void sort(Comparator<? super E> cmp);
-
-// 示例
-li.sort((e1, e2) -> e2 - e1); // 降序排列
+// 5. 排序
+  // 自然排序
+static <T extends Comparable<? super T>> void sort(List<T> list);
+  // 定制排序
+default void sort(Comparator<? super E> c);
+static <T> void	sort(List<T> list, Comparator<? super T> c);
 ```
 
 <br><br>
 
-### 二、ListIterator：假设类型参数为E  [·](#目录)
-> List自己专有的迭代器.
+### 四、ListIterator：假设类型参数为E  [·](#目录)
+> List自己专有的迭代器，多了 **向前迭代 & 获取索引值** 的功能.
 
 <br>
 
 **1.&nbsp; 获取迭代器：**
 
 ```Java
-// 1. 获取从0开始的迭代器
-ListIterator<E> listIterator();
-
-// 2. 获取从index开始的迭代器
-ListIterator<E> listIterator(int index)
+// 获取从index开始的迭代器（默认无参从0开始）
+ListIterator<E> listIterator([int index]);
 ```
 
 <br>
 
 **2.&nbsp; 前向迭代：**
 
+- 返回index的都是peek，就是偷看一下一下个元素的索引，并不移动位置指针！
+
 ```Java
 // 1. 前向探测
 boolean hasPrevious();
-
-// 2. 指针前移并返回前移后指向的新元素
 E previous();
+int previousIndex();
+
+// 2. 正常地向后迭代
+boolean hasNext();
+E next();
+int nextIndex();
 ```
 
 <br>
 
-**3.&nbsp; 在当前指针位置处插入（添加）一个元素：**
+**3.&nbsp; 修改：**
 
 - 即当前位置前的一个空缺处插入.
 
 ```Java
+// 1. 在当前位置指针 前 插入一个元素
 void add(E e);
+
+// 2. 删除当前位置指针处的元素
+void remove();
+
+// 3. 设值：同样是当前位置指针处的元素
+void set(E e);
 
 // 示例
 ArrayList<Integer> li = ...;  // 0, 1, 2

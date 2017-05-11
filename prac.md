@@ -436,4 +436,16 @@ Iterator<E> iterator();
 boolean hasNext(); E next();
 default void forEachRemaining(Consumer<? super E> action);
 default void remove();
+
+
+/* random */
+Random([long seed]);
+void setSeed(long seed);
+boolean nextBoolean();
+int nextInt([int bound]);
+long nextLong();
+float nextFloat();
+double nextDouble();
+double nextGaussian();
+void nextBytes(byte[] b);
 ```
