@@ -26,7 +26,7 @@
 11. [将其它类型转换成String：静态工具方法valueOf](#十一将其它类型转换成string静态工具方法valueof--)
 12. [字符串常量池注册：intern](#十二字符串常量池注册intern--)
 13. [字符串哈希：hashCode](#十三字符串哈希hashcode--)
-14. [Unicode代码点：即Unicode字符]()
+14. [Unicode代码点：即Unicode字符](#十四unicode代码点即unicode字符--)
 
 <br><br>
 
