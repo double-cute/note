@@ -21,12 +21,11 @@
 
 <br>
 
-**1.&nbsp; 常用功能：**
+**1.&nbsp; 大小 & 判空：**
 
 ```Java
 int size();  // 元素个数
 boolean isEmpty();  // 判空
-Object[] toArray();  // 转成数组，返回类型是Object，需要强转
 ```
 
 <br>
@@ -36,12 +35,8 @@ Object[] toArray();  // 转成数组，返回类型是Object，需要强转
 - 成功添加返回true
 
 ```Java
-// 1. 添加一个元素
+// 添加一个元素，添加成功返回true
 boolean add(E e);
-
-// 2. 将c的所有元素加入this
-  // 注意被加入元素的编译时类型视为E（上限）
-boolean addAll(Collection<? extends E> c);
 ```
 
 <br>
@@ -51,39 +46,60 @@ boolean addAll(Collection<? extends E> c);
 - 成功删除返回true.
 
 ```Java
-/** 1. 删除指定元素
- *  只删第一个找到的
- *  做的是Object相等比较
- */
+// 1. 只删除1个指定元素
 boolean remove(Object o);
 
-/** 2. 集合减（this - c）
- *  元素编译时类型算Object
- *  因此还是Object相等比较
- */
-boolean removeAll(Collection<?> c);  
+// 2. 通过谓词筛批量删除
+default boolean removeIf(Predicate<? super E> filter);
 
-/** 3. 集合交（this && c）
- *  元素编译时类型算Object
- *  因此还是Object相等比较
- */
-boolean retainAll(Collection<?> c);
-
-// 4.清空集合
+// 3.清空集合
 void clear();
 ```
 
 <br>
 
-**4.&nbsp; 是否包含某个元素：**
+**4.&nbsp; 集合运算：**
+
+```Java
+// 1. 交：this && c，c的元素编译时类型为Object
+boolean retainAll(Collection<?> c);
+
+// 2. 并：this || c，c的元素编译时类型为E
+boolean	addAll(Collection<? extends E> c);
+
+// 3. 差：this - c，c的元素编译时类型为Object
+boolean removeAll(Collection<?> c);  
+```
+
+<br>
+
+**5.&nbsp; 包含关系：**
 
 ```Java
 // 1. 是否包含指定元元素o
 boolean contains(Object o);  
 
-// 2. 是否包含集合c中的所有元素
-  // 做的是类型上限Object的相等比较
+// 2. 是否包含集合c中的所有元素，c的元素编译时类型为Object
 boolean containsAll(Collection<?> c);
+```
+
+<br>
+
+**6.&nbsp; 转换成数组：**
+
+```Java
+// 1. 转换成Object数组，缺点是擦除了运行时类型
+Object[] toArray();
+
+// 2. 转换成指定类型的数组，类型和参数的类型一样
+   // 优点是可以自己主动保留元素原有的运行时类型
+   // 搞笑的是，通过参数对象的运行时类型判断，而不是.class属性判断
+<T> T[]	toArray(T[] a);
+
+// 示例：
+HashSet<String> set = new HashSet<>();
+String[] arr = set.toArray(new String[0]);
+// toArray(new Object[0]) 等价于 toArray()
 ```
 
 <br>
@@ -122,61 +138,59 @@ public class Test {
 <br><br>
 
 ### 二、只有Collection有的Iterator：[·](#目录)
-> Java的迭代器Iterator**只在Collection中有，Map中木有**！
+> Java的迭代器Iterator **只在Collection中有，Map中木有**！
 >
-> - 和C++中迭代器的概念一样，二要素：
+> - 和C++中迭代器的概念一样，2要素：
 >
->   1. 迭代器必定**从属于某个容器**，其作用就是用来遍历所属容器中的元素的.
->     - 具体就是**每种Collection实现类都有自己的Iterator内部类**.
->   2. 迭代器是在容器的只读数据视图之上进行迭代.
+>   1. 迭代器必定 **从属于某个容器**，其作用就是用来遍历所属容器中的元素.
+>     - 具体就是 **每种Collection实现类都有自己的Iterator内部类**.
+>   2. 迭代器是在容器的只读数据视图上进行迭代.
 >     - 因此不能在迭代过程中修改容器中的数据，否则会抛出异常！
->     - 除非用迭代器的**专用修改方法**对数据进行修改，其余自说三话的修改都将引发异常.
+>     - 除非用迭代器的 **专用修改方法** 对数据进行修改，其余的擅自修改都将引发异常.
 
 <br>
 
 **1.&nbsp; 迭代器的终极目标：**
 
 - 就是用统一的方法来迭代不同类型的集合！
-  1. 不同类型集合的内部数据结构不尽相同.
-    - 因此，如果要自己纯手工迭代的话相**实现起来差异较大**.
-  2. 迭代器提供统一的方法迭代不同类型集合，隐藏底层的差异.
+   1. 不同类型集合的内部数据结构不尽相同.
+      - 因此，如果要自己纯手工迭代的话相**实现起来差异较大**.
+   2. 迭代器提供统一的方法迭代不同类型集合，隐藏底层的差异.
 
 <br>
 
 **2.&nbsp; 迭代器的使用步骤：**
 
 1. 获取集合的迭代器：调用Collection的iterator**对象方法**就能获得
-2. 接着使用Iterator的对象方法hashNext、next迭代元素.
+2. 接着使用Iterator的对象方法hasNext、next迭代元素.
 
 ```Java
-Iterator<E> Collection.iterator();
+Iterator<E> iterator();
 
-// 实例
+// 示例
 ArrayList<Integer> c = ...;
 Iterator<Integer> c.iterator();
 ```
 
 <br><br>
 
-### 三、Iterator的常用方法：假设类型参数是E  [·](#目录)
+### 三、Iterator的迭代方法：假设类型参数是E  [·](#目录)
 
 ```Java
-// 1. 检查是否还有下一个元素可以迭代
+// 1. 传统迭代方式，hasNext不移动位置指针，next先移动再取元素
 boolean hasNext();
-
-// 2. 先移动一位位置指针，再取出元素（即取出下一个元素）
 E next();
 
-/** 3. 删除当前位置指针出的元素（直接修改了集合内容）
- *  等价于删除上一个next()返回的那个元素
- *  是Iterator唯一的一个可以修改集合本身内容的方法！
- */
-void remove();
-
-// 简洁迭代
+// 2. 简洁迭代：lambda，内部实现还是传统迭代
 default void forEachRemaining(Consumer<? super E> action);
 // 示例
 it.forEachRemaining(ele -> System.out.println(ele));
+
+/** 3. 删除当前位置指针处的元素（直接修改了集合内容）
+ *    - 等价于删除上一个next()返回的那个元素
+ *    - 是Iterator唯一的一个可以修改集合本身内容的方法！
+ */
+void remove();
 ```
 
 <br>

@@ -393,4 +393,10 @@ static String format([Locale l, ]String format, Object... args);
 +23d
 05d
 ,+5d
+
+// 13. code Point
+String(int[] codePoints, int offset, int len);
+int codePointAt|codePointBefore(int index);
+int codePointCount(int beg, int end);
+int offsetByCodePoints(int beg, int codePointOffset);
 ```

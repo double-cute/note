@@ -7,9 +7,6 @@ MAVEN 用来管理Java包，可以在该网站查找要用的包http://mvnreposi
 intelij
 
 
-
-String  codePoint系列要看  返回的是ASCII码
-
 Collections从新整理一下！
 
 ArrayList、Map、Hashtable是重点
