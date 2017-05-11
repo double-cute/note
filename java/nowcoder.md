@@ -17,8 +17,6 @@ Date搞一搞
 
 DateFormat SimpleDateFormat
 
-UUID.randomUUID
-
 Math搞一下
 -
 

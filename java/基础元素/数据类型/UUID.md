@@ -11,8 +11,8 @@
 
 ## 目录
 
-1. [UUID的标准组成]()
-2. [Java对UUID的基本支持]()
+1. [UUID的标准组成](#一uuid的标准组成)
+2. [Java对UUID的基本支持](#二java对uuid的基本支持)
 
 <br><br>
 
