@@ -20,10 +20,10 @@
 
 ## 目录
 
-1. [构造List：利用Collections工具类](#一list独有的索引操作方法假设类型参数为e--)
-2. [equals & hashCode](#二listiterator假设类型参数为e--)
-3. [修改List]()
-4. [ListIterator：假设类型参数为E]()
+1. [构造List：利用Collections工具类](#一构造list利用collections工具类--)
+2. [equals & hashCode](#二equals--hashcode)
+3. [修改List](#三修改list)
+4. [ListIterator：假设类型参数为E](#四listiterator假设类型参数为e--)
 
 <br>
 
