@@ -354,7 +354,7 @@ boolean regionMatches(
 
 // 7. proc
 String trim();
-String split(String regDeli[, int limit]);
+String[] split(String regDeli[, int limit]);
 static String join(CharSequence deli, CharSequence...|Iterable<? extends CharSequence> eles);
 String replace(char|CharSequence: oldd, neww);
 String replaceAll|replaceFirst(String regx, String replacement);
