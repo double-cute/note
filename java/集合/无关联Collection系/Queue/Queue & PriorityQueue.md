@@ -1,6 +1,6 @@
 # Queue & PriorityQueue
 > 1. Queue是所有FIFO结构的根接口.
->   - 其实现类有PriorityQueue（堆，优先队列）、Deque（双端队列）系（ArrayDeque、LinkedList，分别用数组和链表实现）.
+>    - 其实现类有PriorityQueue（堆，优先队列）、Deque（双端队列）系（ArrayDeque、LinkedList，分别用数组和链表实现）.
 > 2. PriorityQueue时刻按照元素大小关系维护堆序.
 
 <br><br>
@@ -15,7 +15,7 @@
 ### 一、Queue的特有方法：[·](#目录)
 > 1. **直接继承自Collection，是所有FIFO结构的根接口.**
 > 2. 实现类有PriorityQueue（堆，优先队列）、Deque（双端队列）系（ArrayDeque、LinkedList，分别用数组和链表实现）.
->   - Java**没有实现Queue的单端队列**，**直接用Deque**（双端队列）来完成单端队列功能即可.
+>    - Java**没有实现Queue的单端队列**，**直接用Deque**（双端队列）来完成单端队列功能即可.
 
 <br>
 
@@ -23,6 +23,11 @@
   - 但每种方法都有2个版本，一个是**异常安全的（不抛出异常）**，**另一种是异常不安全的（遇到异常直接抛出）**.
 
 <br>
+
+| | 尾插 | 头取 | 头看 |
+| :---: | :---: | :---: | :---: |
+| 异常不安全 | ```Java boolean add(E e); ```<br>来自Collection| E remove(); | E element(); |
+| 异常安全 | boolean offer(E e); | E poll(); | E peek(); |
 
 **1.&nbsp; 从队尾部添一个元素：**
 
