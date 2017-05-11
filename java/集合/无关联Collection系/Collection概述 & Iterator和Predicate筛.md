@@ -11,6 +11,8 @@
 
 <br><br>
 
+- **所有static开头的静态工具方法都是Collections中的！**
+
 ### 一、Collection接口：假设其类型参数是E  [·](#目录)
 > 所有无关联集合的根接口，**其方法在所有派生类中都存在（也就是在Set、List、Queue以及其实现类中都可以使用）**.
 
@@ -35,8 +37,11 @@ boolean isEmpty();  // 判空
 - 成功添加返回true
 
 ```Java
-// 添加一个元素，添加成功返回true
+// 1. 添加一个元素，添加成功返回true
 boolean add(E e);
+
+// 2. 添加多个元素
+static <T> boolean addAll(Collection<? super T> c, T... elements);
 ```
 
 <br>
@@ -63,6 +68,8 @@ void clear();
 ```Java
 // 1. 交：this && c，c的元素编译时类型为Object
 boolean retainAll(Collection<?> c);
+// 没有交集返回true，即判断是否不想交
+static boolean disjoint(Collection<?> c1, Collection<?> c2);
 
 // 2. 并：this || c，c的元素编译时类型为E
 boolean	addAll(Collection<? extends E> c);
@@ -100,6 +107,19 @@ Object[] toArray();
 HashSet<String> set = new HashSet<>();
 String[] arr = set.toArray(new String[0]);
 // toArray(new Object[0]) 等价于 toArray()
+```
+
+<br>
+
+**7.&nbsp; 统计：**
+
+```Java
+// 1. 统计o的出现次数
+static int frequency(Collection<?> c, Object o);
+
+// 2. 找出最大/最小元素，比较可以以来自然排序也可以定制
+static <T extends Object & Comparable<? super T>> T	max|min(Collection<? extends T> coll);
+static <T> T max|min(Collection<? extends T> coll, Comparator<? super T> comp);
 ```
 
 <br>
