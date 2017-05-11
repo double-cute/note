@@ -16,9 +16,9 @@
 2. [equals、hashCode、clone]()
 3. [容量 & 长度 & 判空 & 1的个数 & 2String信息]()
 4. [通过索引取值]()
-5. [设值]()
-6. [和另一个位向量做位运算（集合运算）]()
-7. [定位]()
+5. [通过索引设值]()
+6. [定位]()
+7. [和另一个位向量做位运算（集合运算）]()
 8. [和整型数组相互转换]()
 
 <br><br>
@@ -110,7 +110,7 @@ BitSet get(int fromIndex, int toIndex);
 
 <br><br>
 
-### 五、设值：[·](#目录)
+### 五、通过索引设值：[·](#目录)
 > 其中，只有设1的操作可能会增加capacity的大小.
 >
 >> 1设在超出capacity的位置就会自动增长capacity.
@@ -142,7 +142,21 @@ void flip(int index[, int toIndex]);
 
 <br><br>
 
-### 六、和另一个位向量做位运算（集合运算）：[·](#目录)
+### 六、定位：[·](#目录)
+
+<br>
+
+1. next|previous：表示搜索范围，≥ index | ≤ index
+2. set|clear：表示要找的值，为1 | 为0
+3. 返回满足条件的离index最近的那个位的索引.
+
+```Java
+int next|previous Set|Clear Bit(int index);
+```
+
+<br><br>
+
+### 七、和另一个位向量做位运算（集合运算）：[·](#目录)
 > length小的那个补0，结果会改变this！
 
 <br>
@@ -156,20 +170,6 @@ void andNot(BitSet set); // 与非（把this中set为1的那些位清零）
 
 // 2. 集合运算
 boolean	intersects(BitSet set);  // 两者有交集就返回true（有相同位是1就行）
-```
-
-<br><br>
-
-### 七、定位：[·](#目录)
-
-<br>
-
-1. next|previous：表示搜索范围，≥ index | ≤ index
-2. set|clear：表示要找的值，为1 | 为0
-3. 返回满足条件的离index最近的那个位的索引.
-
-```Java
-int next|previous Set|Clear Bit(int index);
 ```
 
 <br><br>
