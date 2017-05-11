@@ -1,13 +1,13 @@
 # SortedSet & TreeSet
 > SortedSet是有序集合的根接口（抽象接口）.
 >
->   - 这里的有序维护的是**元素的大小顺序**.
+> - 这里的有序维护的是**元素的大小顺序**.
 >
 >> TreeSet是SortedSet最常用的实现类，由于用红黑树实现而得名TreeSet.
 >>
 >>> 所有SortedSet（包括TreeSet）**都不允许存放null**，只要add一个null就**抛出NullPointerException**，因为：
 >>>
->>>   - null无法compare，SortedSet仅仅由compare决定位置.
+>>> - null无法compare，SortedSet仅仅由compare决定位置.
 
 <br><br>
 
@@ -28,49 +28,33 @@
 **实现标准：**
 
 - 大小顺序**时刻维护**.
-  1. 插入元素时会安排在合适的位置.
-  2. 删除元素之后也会即时调整剩余元素的位置.
+   1. 插入元素时会安排在合适的位置.
+   2. 删除元素之后也会即时调整剩余元素的位置.
 
 <br>
 
 - SortedSet的实现类不多，基本只会用TreeSet这个实现类，之所以叫TreeSet，是因为它使用红黑树实现的.
-  - 红黑树是SortedSet最通用、最高效的实现，还有其它很多编程语言使用红黑树作为Set的通用实现（如STL）.
-
-<br><br>
-
-### 二、TreeSet常用方法：假设类型参数为E  [·](#目录)
+   - 红黑树是SortedSet最通用、最高效的实现，还有其它很多编程语言使用红黑树作为Set的通用实现（如STL）.
 
 <br>
 
-**1.&nbsp; 返回首尾元素：**
-
-- 不存在直接抛出异常 **[NoSuchElementException]**.
-  - 如果**集合是空的情况下**调用就会抛出该异常.
+**1.&nbsp; 获取排序比较体：**
 
 ```Java
-// 1. 返回首
+Comparator<? super E> comparator();
+```
+
+<br>
+
+**2.&nbsp; 查看（peek）头和尾：**
+
+- 异常不安全：不存在直接抛出异常 **[NoSuchElementException]**.
+   - 如果**集合是空的情况下**调用就会抛出该异常.
+
+```Java
 E first();
-// 2. 返回尾
 E last();
 ```
-
-<br>
-
-**2.&nbsp; 返回小于/大于指定元素的第一个元素：**
-
-- **不存在直接返回null**，不会抛出异常.
-
-```Java
-// 1. 返回小于e的第一个元素
-E lower(E e);
-// 2. 返回大于e的第一个元素
-E higher(E e);
-```
-
-- 注意：
-  1. 参数可以不属于集合，只要能和集合中的元素比较大小即可.
-    - 例如：[1, 2, 4, 5]，那么lower(3) = 2
-  2. 如果是升序排列那么lower/higher表示小于/大于，如果是**降序排列则lower/higher表示大于/小于**.
 
 <br>
 
@@ -91,13 +75,71 @@ SortedSet<E> tailSet(E fromElement);
 
 <br><br>
 
+### 二、TreeSet：假设类型参数为E  [·](#目录)
+
+<br>
+
+- 构造器：
+
+```Java
+// 1. 构造空的，可以选择自然排序或者定制排序
+TreeSet([Comparator<? super E> cmp]);
+
+// 2. 非空构造：用其它集合构造
+  // 用c采用自然排序，用s采用s的排序体！
+TreeSet(Collection<? extends E> c|SortedSet<E> s);
+```
+
+<br>
+
+**1.&nbsp; 取头和尾（返回并删除）：**
+
+- 异常安全，不存在返回null.
+
+```Java
+E pollFirst();
+E pollLast();
+```
+
+<br>
+
+**2.&nbsp; 查看小于/大于指定元素的第一个元素：**
+
+- **不存在直接返回null**，不会抛出异常.
+
+```Java
+// 1. 取小
+E lower(E e); // <e 的第1个元素
+E floor(E e); // ≤e 的第1个元素
+
+// 2. 取大
+E higher(E e); // >e 的第1个元素
+E ceiling(E e); // ≥e 的第1个元素
+```
+
+- 注意：
+   1. 参数可以不属于集合，只要能和集合中的元素比较大小即可.
+      - 例如：[1, 2, 4, 5]，那么lower(3) = 2
+   2. 如果是升序排列那么lower/higher表示小于/大于，如果是**降序排列则lower/higher表示大于/小于**.
+
+<br>
+
+**3.&nbsp; 获取逆序迭代器：**
+
+```Java
+// 起始点是last，next向前迭代
+Iterator<E>	descendingIterator();
+```
+
+<br><br>
+
 ### 三、如何设定排序规则？ [·](#目录)
 > 共有两种方式：
 >
 > 1. 自然排序：元素自己实现Comparable接口的compareTo方法.
->   - 自然排序的意义是指元素所在**值域中的自然大小**，比如自然数中2就是大于1.
+>    - 自然排序的意义是指元素所在**值域中的自然大小**，比如自然数中2就是大于1.
 > 2. 定制排序：TreeSet(Comparator)构造器中指定一个自己的Comparator接口实现类.
->   - 定制排序的意义表示**业务逻辑需求的排序，可以违背自然排序的原则**，比如业务要求从大大小排序，那么Comparator逻辑中1就是大于2的.
+>    - 定制排序的意义表示**业务逻辑需求的排序，可以违背自然排序的原则**，比如业务要求从大大小排序，那么Comparator逻辑中1就是大于2的.
 >
 >> **两者中必须至少实现一种**，如果两个都不实现，则在插入第一个元素时安然无恙，但在插入第二个元素时由于需要和第一个元素比较大小（但木有实现大小比较的规则）而抛出异常！
 
@@ -112,7 +154,7 @@ public interface Comparable<T> { // 集合中的元素必须自己实现此接�
 ```
 
 - 很多Java类库中的类如**String、Date、BigDecimal、Integer等包装器类**都已经实现了Comparable的自然排序.
-  - 特别的**Boolean也实现了大小比较**，规定true大于false.
+   - 特别的**Boolean也实现了大小比较**，规定true大于false.
 
 <br>
 
@@ -136,8 +178,8 @@ TreeSet<Integer> ts = new TreeSet<>((i1, i2) -> i2 - i1); // 定制了一个降�
 **3.&nbsp; TreeSet排序规则的设定是如何实现的？**
 
 - TreeSet中维护着一个comparator成员.
-  1. 自然排序时默认将元素的compareTo赋给它.
-  2. 定制排序时将参数comparator赋给它.
+   1. 自然排序时默认将元素的compareTo赋给它.
+   2. 定制排序时将参数comparator赋给它.
 
 <br>
 
@@ -153,8 +195,8 @@ TreeSet<Integer> ts = new TreeSet<>((i1, i2) -> i2 - i1); // 定制了一个降�
 > 由于SortedSet也是Set的一种，因此也不允许元素重复！
 
 - 判断标准**不是equals而是compare**！
-  - 自然排序下是compareTo，定制排序下是comparator.
-  - **相等条件是compare是否返回0.**
+   - 自然排序下是compareTo，定制排序下是comparator.
+   - **相等条件是compare是否返回0.**
 
 <br>
 
