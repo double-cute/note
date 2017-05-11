@@ -9,7 +9,7 @@ intelij
 
 Collections从新整理一下！
 
-ArrayList、Map、Hashtable是重点
+Map、Hashtable是重点
 
 异常赶紧看
 
