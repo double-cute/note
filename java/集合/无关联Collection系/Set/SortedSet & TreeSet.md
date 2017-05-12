@@ -41,6 +41,7 @@
 **1.&nbsp; 获取排序比较体：**
 
 ```Java
+// 自然排序返回null
 Comparator<? super E> comparator();
 ```
 
