@@ -31,5 +31,5 @@ static <T> T max|min(Collection<T> c[, Comparator<T> cmp]);
 
 // 8. iter
 Iterator<E> iterator();
-boolean hasNext(); E next(); default void forEachRemaining(Consumer<? super T> action);
+boolean hasNext(); E next(); default void forEachRemaining(Consumer<? super E> action);
 void remove();

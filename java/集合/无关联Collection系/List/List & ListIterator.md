@@ -113,7 +113,7 @@ E remove(int index);
 // 1. 传统的new替换old
 static <T> boolean replaceAll(List<T> list, T oldVal, T newVal);
 
-// 2. 根据一元操作批量修改 每一个元素
+// 2. 根据一元操作批量修改 每一个元素，因为要返回计算结果并插入原容器，因此是E而不是? super E
 default void replaceAll(UnaryOperator<E> operator);
 // 示例
 li.replaceAll(ele -> ele + 2);  // 更新每个元素+2
