@@ -18,11 +18,6 @@
 
 <br>
 
-- Collections工具类对Collection的支持：
-  - [Collection查询信息](../Collections工具类%20%26%20多线程集合.md#四collection查询信息)
-
-<br>
-
 **1.&nbsp; 大小 & 判空：**
 
 ```Java
@@ -64,6 +59,9 @@ void clear();
 <br>
 
 **4.&nbsp; 集合运算：**
+
+- 由于retainAll、removeAll都是删除，因此是?，而addAll是加入，所以是? extends E.
+   - 记住！规律是：如果发生 **加入 或者 赋值**，那么 **被动者的类型一定要 ≥ 另一方**.
 
 ```Java
 // 1. 交：this && c，c的元素编译时类型为Object
