@@ -13,7 +13,7 @@ E pop();
 E peek();
 
 // others
-boolean removeFirst|LastOccurence(E e);
+boolean removeFirst|LastOccurrence(E e);
 Iterator<E> descendingIterator();
 
 

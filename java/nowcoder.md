@@ -24,3 +24,29 @@ Math搞一下
 1. 搭建开发环境
 2. Intellij IDEA学习使用
 3. BitBucket
+
+
+
+
+String boot
+
+网站 Spring.io
+
+直接生成一个spring工程：
+start.spring.io
+依赖：web velocity aop devtools（重新编译即可更新网站）
+下载完后，直接导入poem.xml到intellij中
+
+chrome POST MAN插件
+
+HTTP method
+PUT 幂等性，支付宝转账一次成功后拒绝反复再转账
+
+fiddler web debugger
+
+
+velocity  ""可以解析里面的命令字符，''不能解析
+
+语法见apache官网
+
+IOC 享元模式 在bean容器中构造好了以后大家都可以用
