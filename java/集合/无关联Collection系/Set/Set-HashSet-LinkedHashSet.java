@@ -14,9 +14,9 @@ hashCode: sum e.hashCode
 [Linked]HashSet(Collection<? extends E> c);
 
 boolean -> 1/0
-byte/short/char/int -> (int)val
+byte/short/char/int -> val
 long -> val ^ (val>>>32)
 float -> Float.floatToIntBits(val)
 double -> val=Double.doubleToLongBits(val); val ^ (val>>>32)
 ref -> ref.hashCode()
-obj -> sum: obj.field*prime
+obj -> sum: obj.field.hashCode() * prime
