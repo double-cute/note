@@ -60,6 +60,6 @@
 PriorityQueue([int initialCapacity][,][Comparator<? super E> comparator]);
 
 // 2. 非空构造
-  // 如果c是无序的，则采用自然排序，否则将c或s的比较体赋给this
-PriorityQueue(Collection<? extends E> c|SortedSet<? extends E> s);
+  // 如果c是无序的，则采用自然排序，否则将c或s或p的比较体赋给this
+PriorityQueue(Collection<? extends E> c|SortedSet<? extends E> s|PriorityQueue<? extends E> p);
 ```
