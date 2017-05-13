@@ -26,7 +26,7 @@ static <T> void copy(List<? super T> dst, List<? extends T> src);
 /* other */
 
 // 1. i2th
-E get(int index); E set(int index);
+E get(int index); E set(int index, E e);
 List<E> subList(int beg, int end);
 
 // 2. th2i
@@ -36,8 +36,8 @@ static <T> int binarySearch(List<T> l, T key[, Comparator<T> cmp]);
 
 // 3. order
 static void swap(List<?> l, int i, int j);
-static void reverse(List?> l);
-static void suffle(List<?> l[, Random rnd]);
+static void reverse(List<?> l);
+static void shuffle(List<?> l[, Random rnd]);
 static void rotate(List<?> l, int distance);
 static <T> void sort(List<T> l[, Comparator<T> cmp]);
 default void sort(Comparator<? super E> c);
