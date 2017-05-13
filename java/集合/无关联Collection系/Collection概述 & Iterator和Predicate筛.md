@@ -33,9 +33,10 @@ boolean isEmpty();  // 判空
 
 ```Java
 // 1. 添加一个元素，添加成功返回true
-boolean add(E e);
+boolean add(E e); // 添加到末尾
 
 // 2. 添加多个元素
+boolean addAll(Collection<? extends E> c);  // 添加到末尾
 static <T> boolean addAll(Collection<? super T> c, T... elements);
 ```
 

@@ -4,6 +4,7 @@ boolean isEmpty();
 
 // 2. add
 boolean add(E e);
+boolean addAll(Collection<? extends E> c);
 static <T> boolean addAll(Collection<? super T> c, T... eles);
 
 // 3. remove
