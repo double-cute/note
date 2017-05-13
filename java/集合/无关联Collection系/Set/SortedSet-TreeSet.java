@@ -3,7 +3,7 @@
 // 1. get cmp
 Comparator<? super E> comparator();
 
-// 2. peek: excp
+// 2. peek: unsafe
 E first();
 E last();
 
@@ -22,6 +22,6 @@ TreeSet(Collection<? extends E> c|SortedSet<E> s);
 E pollFirst();
 E pollLast();
 
-// 3. find closest th
+// 3. find closest th: safe
 E lower|floor(E e);
 E higher|ceiling(E e);
