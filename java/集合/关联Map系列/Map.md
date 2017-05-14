@@ -27,7 +27,7 @@
 2. [大小、判空、equals、hashCode](#二大小判空equalshashcode)
 3. [插入](#三插入)
 4. [删除](#四删除)
-5. [替换（修改）](#五替换修改)
+5. [替换（覆盖）](#五替换覆盖)
 6. [查找](#六查找)
 7. [获取key、value、entry集合](#七获取keyvalueentry集合)
 8. [遍历](#八遍历)
@@ -52,13 +52,11 @@
 
 <br>
 
-> 1. 存在：参数中的key原来出现在map中，并且其value不为null. （**实key**）
->    - 不存在：value为空的key + key不在map中. （**包括浮现**）
+> 1. 关联：
+>    - 即 **key关联**，即 **key关联了一个非null的value**.
 >
-> 2. 浮现：参数中的key出现在map中，但其value为null.  （**虚key**）
->
-> 3. 出现：存在 + 浮现  （**有key就行**）
->    - 只要key出现在原map中就行了，不管其value是不是null.
+> 2. 没关联：
+>    - 即 **key没关联**，即 **key不在map中，或者key关联了一个null**.
 >
 > <br>
 >
@@ -112,7 +110,9 @@ int	hashCode();
 
 <br>
 
-**1.&nbsp; 有key就覆盖，否则添加：**
+**1.&nbsp; 强行插入（不管key关联了没）：**
+
+- 返回旧value（之前没关联就相当于旧value是null）.
 
 ```Java
 V put(K key, V value);
@@ -120,7 +120,7 @@ V put(K key, V value);
 
 <br>
 
-**2.&nbsp; 非实key就插入，实key就什么都不做：**
+**2.&nbsp; key没关联就插，否则不插，全都返回旧value：**
 
 ```Java
 default V putIfAbsent(K key, V value);
@@ -128,10 +128,15 @@ default V putIfAbsent(K key, V value);
 
 <br>
 
-**3.&nbsp; 非实key就根据key计算出一个新的value插入，实key就什么都不做：**
+**3.&nbsp; key没关联就插入新值：**
+
+- key没关联就根据key计算出一个新值.
+   - 新值不为null就插入.
+   - 返回的是计算出来的新值（不管是不是null）.
+- key关联了就什么都不做，返回旧value.
 
 ```Java
-V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction);
+default V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction);
 interface Function<T, R> { R apply(T t); }
 
 // 示例
@@ -142,7 +147,7 @@ m.computeIfAbsent(15, key -> key + 1);  // 如果15没出现在keySet，那么�
 
 <br>
 
-**4.&nbsp; 导入整个Map（有key就覆盖，没key就插入）：**
+**4.&nbsp; 强行插入另一个map（不管受体里的key关联了没）：**
 
 ```Java
 void putAll(Map<? extends K,? extends V> m);  // 将另一个字典中的内容拷贝到本字典中
@@ -154,7 +159,7 @@ void putAll(Map<? extends K,? extends V> m);  // 将另一个字典中的内容�
 
 <br>
 
-**1.&nbsp; 有key就删除，没key就什么都不做：**
+**1.&nbsp; 强删entry（不管key关联没），一定返回旧value：**
 
 ```Java
 V remove(Object key);
@@ -162,7 +167,7 @@ V remove(Object key);
 
 <br>
 
-**2.&nbsp; 严格匹配oldValue，`有key就行，old可以是null（浮现也可以匹配）`：**
+**2.&nbsp; 强删entry（不管key关联没），但oldValue必须匹配（即使是null）：**
 
 ```Java
 // 既然已经知道旧value了，也就不必返回了
@@ -177,11 +182,11 @@ void clear();
 
 <br><br>
 
-### 五、替换（修改）：[·](#目录)
+### 五、替换（覆盖）：[·](#目录)
 
 <br>
 
-**1.&nbsp; 实key才能替换成value，否则什么都不做：**
+**1.&nbsp; 有key才替换（关联了null也行），一定返回旧value：**
 
 ```Java
 default V replace(K key, V value);
@@ -189,11 +194,10 @@ default V replace(K key, V value);
 
 <br>
 
-**2.&nbsp; 精确匹配oldValue，有key就替换，否则什么都不做：**
+**2.&nbsp; 有key就替换（关联null也行），但必须精确匹配oldValue，否则什么都不做：**
 
-1. 没出现当然返回false.
-2. **浮现也可以匹配！**
-   - 即原来是key-value也能被替换.
+- 替换成功返回去true.
+   - 由于事先知道oldValue，因此不返回oldValue，而返回是否成功.
 
 ```Java
 default boolean replace(K key, V oldValue, V newValue);
@@ -201,13 +205,15 @@ default boolean replace(K key, V oldValue, V newValue);
 
 <br>
 
-**3.&nbsp; 实key就根据原有的key-value计算出新的value替换，否则什么都不做：**
+**3.&nbsp; key关联就根据key-value计算新值并插入：** （先看有无关联再计算）
 
-- **返回的是计算出来的新值！**
-   - 非实key则执行失败，返回null.
-- 算法步骤：
-   1. 如果是实key，那么就设值.
-   2. **在设值成功的前提下，如果设的值是null，那么就删除这个entry.**
+- key如果有关联：
+   1. 根据key-value计算新值.
+   2. 新值非null就插入.
+   3. 新值为null就删除该entry.
+      - 最终返回新值（不管是否为null）.
+- 如果key没关联：
+   - 什么都不做，返回null.
 
 ```Java
 V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction);
@@ -220,16 +226,14 @@ m.computeIfPresent(111, (key, value) -> key + value); // 将key为111的oldValue
 
 <br><br>
 
-**4.&nbsp; 特殊的异常不安全重设：**
+**4.&nbsp; 同上：** （先计算，再看有无关联）
 
-- 返回新的值.
-
-1. 如果设的值是 **非null**，如果非实key可能会抛出**[NullPointerException]异常**.
-2. 如果设的值是null，那么一定不会抛出异常：
-   1. 如果出有key，则删除原entry.
-   2. 如果不出现则什么都不做.
-
-- **正常用法：** 用key和value计算出一个新value重设.
+- 先计算出newValue.
+   1. 如果oldValue非null（有关联），那么和computeIfPresent一样.
+      - newValue不为空就插入并返回，为空就删除并返回null.
+   2. 如果oldValue为空（无关联）.
+      - newValue不为空就插入，否则什么都不做返回null.
+- 总结：**强插，newValue为空就删，不为空就插，返回newValue.**
 
 ```Java
 V compute(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction);
@@ -247,19 +251,13 @@ m.compute(1, (key, value) -> key * value); // key、value空指针异常
 
 **5.&nbsp; 新旧value合并重设：**
 
-- **正常用法：** 不存在就设为newValue，存在就通过oldValue和newValue计算一个新value设值
-   - 返回新value
+- 强插：
+   1. 先计算newValue = oldValue为空（没关联）就为value，否则根据old和value计算出.
+   2. newValue为空就删除entry，否则覆盖.
+   3. 最终返回newValue的值（不管是不是null）.
 
 ```Java
-default V merge(K key, V newValue, BiFunction<? super V, ? super V, ? extends V> remappingFunction);
-
-if key不存在:
-    if newValue == null: 抛出空指针异常
-    map[key] = newValue;
-else:
-    result = lambda: (oldValue, newValue) -> ...;  // 注意如果newValue是null可能引发空指针异常！
-    if result == null: 删除此entry
-    else: map[key] = result
+default V merge(K key, V value, BiFunction<? super V, ? super V, ? extends V> remappingFunction);
 ```
 
 <br>
@@ -267,7 +265,7 @@ else:
 **6.&nbsp; 批量替换：**
 
 1. 根据旧的key-value计算出一个新value替换.
-2. 这里要求必须存在，如果浮现就抛出**[NullPointerException]异常**.
+2. 这里要求必须所有key必须关联，如果有一个关联null就抛出 **[NullPointerException]异常**.
 
 ```Java
 default void replaceAll(BiFunction<? super K, ? super V, ? extends V> function);
