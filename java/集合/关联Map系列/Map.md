@@ -23,14 +23,14 @@
 
 ## 目录
 
-1. [构造：Collections不可变构造方法](#一大小判空清空)
-2. [大小、判空、equals、hashCode](#二插入)
-3. [插入](#三替换修改)
+1. [构造：Collections不可变构造方法](#一构造collections不可变构造方法--)
+2. [大小、判空、equals、hashCode](#二大小判空equalshashcode)
+3. [插入](#三插入)
 4. [删除](#四删除)
-5. [替换（修改）](#五查看)
-6. [查找](#六遍历)
-7. [获取key、value、entry集合]()
-8. [遍历]()
+5. [替换（修改）](#五替换修改)
+6. [查找](#六查找)
+7. [获取key、value、entry集合](#七获取keyvalueentry集合)
+8. [遍历](#八遍历)
 
 <br><br>
 
