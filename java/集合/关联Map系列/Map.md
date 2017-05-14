@@ -23,12 +23,14 @@
 
 ## 目录
 
-1. [大小、判空、清空](#一大小判空清空)
-2. [插入](#二插入)
-3. [替换（修改）](#三替换修改)
+1. [构造：Collections不可变构造方法](#一大小判空清空)
+2. [大小、判空、equals、hashCode](#二插入)
+3. [插入](#三替换修改)
 4. [删除](#四删除)
-5. [查看](#五查看)
-6. [遍历](#六遍历)
+5. [替换（修改）](#五查看)
+6. [查找](#六遍历)
+7. [获取key、value、entry集合]()
+8. [遍历]()
 
 <br><br>
 
@@ -50,12 +52,12 @@
 
 <br>
 
-> 1. 存在：参数中的key原来出现在map中，并且其value不为null. （**value非空的key**）
+> 1. 存在：参数中的key原来出现在map中，并且其value不为null. （**实key**）
 >    - 不存在：value为空的key + key不在map中. （**包括浮现**）
 >
-> 2. 浮现：参数中的key出现在map中，但其value为null.
+> 2. 浮现：参数中的key出现在map中，但其value为null.  （**虚key**）
 >
-> 3. 出现：存在 + 浮现
+> 3. 出现：存在 + 浮现  （**有key就行**）
 >    - 只要key出现在原map中就行了，不管其value是不是null.
 >
 > <br>
@@ -66,17 +68,6 @@
 >       1. 旧的value如果是null那就返回null.
 >       2. 旧的value不存在（参数中指定的key没有出现在map中）也返回null.
 >          - 旧相当于旧值是null.        
-
-<br><br>
-
-
-
-
-
-
-V	get(Object key)
-default V	getOrDefault(Object key, V defaultValue)
-
 
 <br><br>
 
@@ -95,7 +86,7 @@ static <K,V> Map<K,V> singletonMap(K key, V value);
 
 <br><br>
 
-### 一、大小、判空、equals、hashCode：[·](#目录)
+### 二、大小、判空、equals、hashCode：[·](#目录)
 > **覆盖了toString方法**，因此可以方便输出全部key-value对.
 
 <br>
@@ -107,25 +98,21 @@ int size();
 // 2. 判空
 boolean isEmpty();
 
-boolean	equals(Object o)
+// 3. 实现了每对key-value对应相等，可以放心使用
+   // Map.equals 依赖 Set<Map.EntrySet>.equals 依赖 Map.EntrySet.equals 依赖 Map.Entry.equals（key-value对应相等）
+boolean	equals(Object o);
 
-int	hashCode()
-
-
+// 4. hash = sum: entry.hash; entry.hash = key.hash ^ value.hash
+int	hashCode();
 ```
 
 <br><br>
 
-### 二、插入：[·](#目录)
+### 三、插入：[·](#目录)
 
 <br>
 
-**1.&nbsp; 出现就覆盖，不出现就添加：**
-
-V	put(K key, V value)
-void	putAll(Map<? extends K,? extends V> m)
-default V	putIfAbsent(K key, V value)
-default V	computeIfAbsent(K key, Function<? super K,? extends V> mappingFunction)
+**1.&nbsp; 有key就覆盖，否则添加：**
 
 ```Java
 V put(K key, V value);
@@ -133,7 +120,7 @@ V put(K key, V value);
 
 <br>
 
-**2.&nbsp; 不存在时插入，存在时什么都不做：**
+**2.&nbsp; 非实key就插入，实key就什么都不做：**
 
 ```Java
 default V putIfAbsent(K key, V value);
@@ -141,7 +128,7 @@ default V putIfAbsent(K key, V value);
 
 <br>
 
-**3.&nbsp; key不存在时计算根据key计算出一个新的value插入，存在时什么都不做：**
+**3.&nbsp; 非实key就根据key计算出一个新的value插入，实key就什么都不做：**
 
 ```Java
 V computeIfAbsent(K key, Function<? super K, ? extends V> mappingFunction);
@@ -155,35 +142,46 @@ m.computeIfAbsent(15, key -> key + 1);  // 如果15没出现在keySet，那么�
 
 <br>
 
-**4.&nbsp; 导入整个Map（出现就覆盖，没出现就插入）：**
+**4.&nbsp; 导入整个Map（有key就覆盖，没key就插入）：**
 
 ```Java
-void putAll(Map m);  // 将另一个字典中的内容拷贝到本字典中
+void putAll(Map<? extends K,? extends V> m);  // 将另一个字典中的内容拷贝到本字典中
 ```
 
 <br><br>
 
-### 三、替换（修改）：[·](#目录)
-
-V	remove(Object key)
-
-// 3. 清空
-void clear();
-default boolean	remove(Object key, Object value)
-
-
-
-default V	compute(K key, BiFunction<? super K,? super V,? extends V> remappingFunction)
-default V	computeIfPresent(K key, BiFunction<? super K,? super V,? extends V> remappingFunction)
-default V	merge(K key, V value, BiFunction<? super V,? super V,? extends V> remappingFunction)
-default V	replace(K key, V value)
-default boolean	replace(K key, V oldValue, V newValue)
-default void	replaceAll(BiFunction<? super K,? super V,? extends V> function)
-
+### 四、删除：[·](#目录)
 
 <br>
 
-**1.&nbsp; 存在就替换成value，不存在就什么都不做：**
+**1.&nbsp; 有key就删除，没key就什么都不做：**
+
+```Java
+V remove(Object key);
+```
+
+<br>
+
+**2.&nbsp; 严格匹配oldValue，`有key就行，old可以是null（浮现也可以匹配）`：**
+
+```Java
+// 既然已经知道旧value了，也就不必返回了
+default boolean remove(Object key, Object oldValue);
+```
+
+**3.&nbsp; 清空：**
+
+```Java
+void clear();
+```
+
+<br><br>
+
+### 五、替换（修改）：[·](#目录)
+
+<br>
+
+**1.&nbsp; 实key才能替换成value，否则什么都不做：**
 
 ```Java
 default V replace(K key, V value);
@@ -191,11 +189,11 @@ default V replace(K key, V value);
 
 <br>
 
-**2.&nbsp; 精确匹配oldValue，出现就替换，不出现就不替换：**
+**2.&nbsp; 精确匹配oldValue，有key就替换，否则什么都不做：**
 
 1. 没出现当然返回false.
 2. **浮现也可以匹配！**
-  - 即原来是key-value也能被替换.
+   - 即原来是key-value也能被替换.
 
 ```Java
 default boolean replace(K key, V oldValue, V newValue);
@@ -203,13 +201,13 @@ default boolean replace(K key, V oldValue, V newValue);
 
 <br>
 
-**3.&nbsp; 存在就根据原有的key-value计算出新的value替换，否则什么都不做：**
+**3.&nbsp; 实key就根据原有的key-value计算出新的value替换，否则什么都不做：**
 
 - **返回的是计算出来的新值！**
-  - 如果不存在就返回null.
+   - 非实key则执行失败，返回null.
 - 算法步骤：
-  1. 如果存在，那么就设值.
-  2. 在设值成功的前提下，如果设的值是null，那么就删除这个entry.
+   1. 如果是实key，那么就设值.
+   2. **在设值成功的前提下，如果设的值是null，那么就删除这个entry.**
 
 ```Java
 V computeIfPresent(K key, BiFunction<? super K, ? super V, ? extends V> remappingFunction);
@@ -226,10 +224,10 @@ m.computeIfPresent(111, (key, value) -> key + value); // 将key为111的oldValue
 
 - 返回新的值.
 
-1. 如果设的值是**非null**，如果不存在可能会抛出**[NullPointerException]异常**.
+1. 如果设的值是 **非null**，如果非实key可能会抛出**[NullPointerException]异常**.
 2. 如果设的值是null，那么一定不会抛出异常：
-  1. 如果出现，则删除原entry.
-  2. 如果不出现则什么都不做.
+   1. 如果出有key，则删除原entry.
+   2. 如果不出现则什么都不做.
 
 - **正常用法：** 用key和value计算出一个新value重设.
 
@@ -250,7 +248,7 @@ m.compute(1, (key, value) -> key * value); // key、value空指针异常
 **5.&nbsp; 新旧value合并重设：**
 
 - **正常用法：** 不存在就设为newValue，存在就通过oldValue和newValue计算一个新value设值
-  - 返回新value
+   - 返回新value
 
 ```Java
 default V merge(K key, V newValue, BiFunction<? super V, ? super V, ? extends V> remappingFunction);
@@ -280,27 +278,7 @@ m.replaceAll((key, value) -> key + value * 2); // 0+0*2, 1+1*2, 2+2*2 = 0, 3, 6
 
 <br><br>
 
-### 四、删除：[·](#目录)
-
-<br>
-
-**1.&nbsp; 出现就删除，不出现就什么都不做：**
-
-```Java
-V remove(Object key);
-```
-
-<br>
-
-**2.&nbsp; 严格匹配oldValue，`浮现也可以匹配`：**
-
-```Java
-default boolean remove(Object key, Object oldValue);
-```
-
-<br><br>
-
-### 五、查看：[·](#目录)
+### 六、查找：[·](#目录)
 > 查看获得全部都是Map中内容的引用，可以**通过这些返回的引用直接修改原数据**.
 >
 > - 不管是key还是value还是entry，都可以修改.
@@ -319,14 +297,6 @@ boolean containsValue(Object value);
 
 <br>
 
-boolean	containsKey(Object key)
-boolean	containsValue(Object value)
-Set<Map.Entry<K,V>>	entrySet()
-Set<K>	keySet()
-Collection<V>	values()
-default void	forEach(BiConsumer<? super K,? super V> action)
-
-
 **2.&nbsp; 根据key获取对应的value：** 最为常用
 
 ```Java
@@ -339,48 +309,69 @@ default V getOrDefault(Object key, V defaultValue);
 
 <br>
 
-**3.&nbsp; 获取key&value的结合：**
+Set<Map.Entry<K,V>>	entrySet()
+Set<K>	keySet()
+Collection<V>	values()
+default void	forEach(BiConsumer<? super K,? super V> action)
+
+<br><br>
+
+### 七、获取key、value、entry集合：[·](#目录)
+
+<br>
+
+**1.&nbsp; key集合：**
 
 ```Java
-// 1. 获取key组成的集合
+// 获取key组成的集合，和Map中key的顺序保持一致
 Set<K> keySet();  // 返回键组成的Set集合
+```
 
-/** 2. 返回的是一种可重复的Set.
+<br>
+
+**2.&nbsp; value集合：**
+
+```Java
+/** 返回的是一种可重复的Set. （其实是用Map实现的）
  *
  *  - 返回的集合是一种特殊的Map内部类：private Map.values
- *    1. 有多少个key，则返回的集合中就有多少个value
- *    2. 因此里面的values是可以重复的
- *    3. 由于Map.Values类型无法访问，因此只能当做Collection实例使用
+ *     1. 有多少个key，则返回的集合中就有多少个value
+ *     2. 因此里面的values是可以重复的
+ *     3. 由于Map.Values类型无法访问，因此只能当做Collection实例使用
  *
  *  - 返回的集合中value的顺序和keySet中key的顺序保持一致的！
- *    - 为了达到这个目的，返回集合的类型也就必须要用Map了
+ *     - 为了达到这个目的，返回集合的类型也就必须要用Map了
  */
 Collection<V> values();
 ```
 
 <br>
 
-**4.&nbsp; 获取entry集合：**
+**3.&nbsp; 获取entry集合：**
 
 ```Java
-/** 1. 直接返回所有entry所组成的集合
+/** 直接返回所有entry所组成的集合
  *
  *  - entry的类型是Map的内部接口：interface Map.Entry
- *    1. Map.Entry对外部开放，因此可以随意使用.
- *    2. 但每种Map实现类中的Entry实现类都是对外隐藏的.
- *      - 在外部想操作entry实例，不得不使用Map.Entry引用.
+ *     1. Map.Entry对外部开放，因此可以随意使用.
+ *     2. 但每种Map实现类中的Entry实现类都是对外隐藏的.
+ *        - 在外部想操作entry实例，不得不使用Map.Entry引用.
  *
  *  
  *  - 返回的集合其实是一种特殊类型.
- *    - 是Map内部定义的：private class EntrySet;
- *      1. 专门用于存放entry，并且保持和原Map中key相同的顺序.
- *        - 因此底层肯定还是一个Map结构.
- *      2. 但由于是对外隐藏的，因此只能当做普通的Set来使用.
+ *     - 是Map内部定义的：private class EntrySet;
+ *        1. 专门用于存放entry，并且保持和原Map中key相同的顺序.
+ *           - 因此底层肯定还是一个Map结构.
+ *        2. 但由于是对外隐藏的，因此只能当做普通的Set来使用.
  */
 Set<Map.Entry<K, V>> entrySet();
 ```
 
-- 操作Map.Entry：**Map.Entry的对象方法**
+<br>
+
+**4.&nbsp; Map.Entry类型：**
+
+- 操作key-value
 
 ```Java
 // 1. 获取key
@@ -394,10 +385,27 @@ V getValue();
 V setValue(V value);
 ```
 
+- 比较Map.Entry：Comparrtor
+   - **Java本身没有让Map.Entry实现Comparable**，这是因为entry的比较是有选择性的.
+      1. 既可以根据key来比较entry.
+      2. 也可以根据value来比较entry.
+         - Java把这个选择权交给开发者.
+   - Java只提供了获取比较体的方法，开发者获取后可以用来干好多事.
+
+```Java
+// 1. 获取根据key比较entry的比较体
+static <K extends Comparable<? super K>,V> Comparator<Map.Entry<K,V>> comparingByKey();  // 取key的自然排序
+static <K,V> Comparator<Map.Entry<K,V>>	comparingByKey(Comparator<? super K> cmp);  // 自己定制
+
+// 2. 获取根据value比较entry的比较体
+static <K,V extends Comparable<? super V>> Comparator<Map.Entry<K,V>> comparingByValue();  // 自然
+static <K,V> Comparator<Map.Entry<K,V>> comparingByValue(Comparator<? super V> cmp);  // 定制
+```
+
 <br><br>
 
-### 六、遍历：[·](#目录)
-> 所有的遍历方法都是**记忆类型**的，因此**无需任何强转**.
+### 八、遍历：[·](#目录)
+> 所有的遍历方法都是 **记忆类型** 的，因此 **无需任何强转**.
 >
 >> 随意遍历，随意浪.
 
