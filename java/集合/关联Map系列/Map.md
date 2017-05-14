@@ -1,23 +1,23 @@
 # Map
-> Map和Collection处于同一个集成层次上，是有关联关系集合的根接口，通过**key来找value**.
+> Map和Collection处于同一个继承层次上，是有关联关系集合的根接口，通过 **key来找value**.
 >
->> - key是键值对唯一性的标识，因此key不能重复.
+>> - key是键值对唯一性的标识，因此 **key不能重复**.
 >>
 >> <br>
 >>
 >> - **Set底层是用Map实现的，即value为null的Map：**
->>   1. 因此Set就相当于只保存key（value等于null）的Map.
->>   2. Set的所有实现Map也有相对应的实现：HashMap、LinkedHashMap、SortedMap、TreeMap、EnumMap.
->>     - 可以看到**完全和Set的实现一一对应.**
+>>    1. 因此Set就相当于只保存key（value等于null）的Map.
+>>    2. Set的所有实现Map也有相对应的实现：HashMap、LinkedHashMap、SortedMap、TreeMap、EnumMap.
+>>       - 可以看到 **完全和Set的实现一一对应.**
 >>
 >> <br>
 >>
 >> - 但Map没有线性表的存储方式（List、Queue），即没有ListMap、QueueMap这种存储方式，那是因为：
->>   - Map这种关联结构**强调的是根据key来找value**.
->>     1. 即相当于List根据索引找value一样，list[1]是根据索引1取出value，而map["hello"]则是根据key("hello")来找value.
->>     2. Map的索引就是key，key可以是任何引用类型，比简单的线性关系更加复杂.
->>       - **根据key的特点来决定key-value对的存储位置.**
->>     3. 因此Map没有线性表存储结构的实现.
+>>    - Map这种关联结构 **强调的是根据key来找value**.
+>>       1. 即相当于List根据索引找value一样，list[1]是根据索引1取出value，而map["hello"]则是根据key("hello")来找value.
+>>       2. Map的索引就是key，key可以是任何引用类型，比简单的线性关系更加复杂.
+>>         - **根据key的特点来决定key-value对的存储位置.**
+>>       3. 因此Map没有线性表存储结构的实现.
 
 <br><br>
 
@@ -32,17 +32,17 @@
 
 <br><br>
 
-- 接下来介绍的都是Map根接口中定义的**基础对象方法**，所有Map实现类都可以使用的方法.
-  - 可以看到凡是须要在Map中查看参数是否存在的方法，被检查的参数一定是Object类型的.
-    - 就是为了多态调用equals方法进行相等比较，像：
-      1. remove(Ojbect key...);
-      2. contains(Object key \| Object value);
-      3. get
-    - 但那些主动插入（设值等）方法传入的参数就必须是精确匹配的类型K或V了，例如：
-      - put(K key, V value);
-      - Java的设计理念默认**查看是被动的**，**其余操作是主动的**：
-        1. 主动操作默认是**提前知道类型**的，因此要用精确的类型.
-        2. 被动操作默认是**不知道类型**的，因此使用Object.
+- 接下来介绍的都是Map根接口中定义的 **对象方法**，所有Map实现类都可以使用这些方法.
+   - 可以看到凡是须要在Map中查看参数是否存在的方法，被检查的参数一定是Object类型的.
+      - 就是为了多态调用equals方法进行相等比较，像：
+         1. remove(Ojbect key...);
+         2. contains(Object key \| Object value);
+         3. get(Object ...);
+      - 但那些主动插入（设值等）方法传入的参数就必须是精确匹配的类型K或V了，例如：
+         - put(K key, V value);
+         - Java的设计理念默认 **查看是被动的**，**其余操作是主动的**：
+            1. 主动操作默认是 **提前知道类型** 的，因此要用精确的类型.
+            2. 被动操作默认是 **不知道类型** 的，因此使用Object.
 
 <br>
 
@@ -50,26 +50,52 @@
 
 <br>
 
-> 1. 存在：参数中的key原来出现在map中，并且其value不为null.
+> 1. 存在：参数中的key原来出现在map中，并且其value不为null. （**value非空的key**）
+>    - 不存在：value为空的key + key不在map中. （**包括浮现**）
 >
 > 2. 浮现：参数中的key出现在map中，但其value为null.
 >
 > 3. 出现：存在 + 浮现
->   - 只要key出现在原map中就行了，不管其value是不是null.
+>    - 只要key出现在原map中就行了，不管其value是不是null.
 >
 > <br>
 >
-> - 关于返回值：**必定**、**无论如何** 都会返回**旧value**.
->   - 只要看到方法有返回值（V类型的），那必定会返回一个旧value.
->   - 旧的value是啥就返回啥：
->     1. 旧的value如果是null那就返回null.
->     2. 旧的value不存在（参数中指定的key没有出现在map中）也返回null.
->       - 旧相当于旧值是null.        
+> - 关于返回值：**必定**、**无论如何** 都会返回 **旧value**.
+>    - 只要看到方法有返回值（V类型的），那必定会返回一个旧value.
+>    - 旧的value是啥就返回啥：
+>       1. 旧的value如果是null那就返回null.
+>       2. 旧的value不存在（参数中指定的key没有出现在map中）也返回null.
+>          - 旧相当于旧值是null.        
+
+<br><br>
+
+
+
+
+
+
+V	get(Object key)
+default V	getOrDefault(Object key, V defaultValue)
 
 
 <br><br>
 
-### 一、大小、判空、清空：[·](#目录)
+### 一、构造：Collections不可变构造方法  [·](#目录)
+
+<br>
+
+```Java
+// 1. 空
+static <K,V> Map<K,V> emptyMap();
+// 2. 空SortedMap
+static <K,V> SortedMap<K,V> emptySortedMap();
+// 3. 单例
+static <K,V> Map<K,V> singletonMap(K key, V value);
+```
+
+<br><br>
+
+### 一、大小、判空、equals、hashCode：[·](#目录)
 > **覆盖了toString方法**，因此可以方便输出全部key-value对.
 
 <br>
@@ -81,8 +107,11 @@ int size();
 // 2. 判空
 boolean isEmpty();
 
-// 3. 清空
-void clear();
+boolean	equals(Object o)
+
+int	hashCode()
+
+
 ```
 
 <br><br>
@@ -92,6 +121,11 @@ void clear();
 <br>
 
 **1.&nbsp; 出现就覆盖，不出现就添加：**
+
+V	put(K key, V value)
+void	putAll(Map<? extends K,? extends V> m)
+default V	putIfAbsent(K key, V value)
+default V	computeIfAbsent(K key, Function<? super K,? extends V> mappingFunction)
 
 ```Java
 V put(K key, V value);
@@ -130,6 +164,22 @@ void putAll(Map m);  // 将另一个字典中的内容拷贝到本字典中
 <br><br>
 
 ### 三、替换（修改）：[·](#目录)
+
+V	remove(Object key)
+
+// 3. 清空
+void clear();
+default boolean	remove(Object key, Object value)
+
+
+
+default V	compute(K key, BiFunction<? super K,? super V,? extends V> remappingFunction)
+default V	computeIfPresent(K key, BiFunction<? super K,? super V,? extends V> remappingFunction)
+default V	merge(K key, V value, BiFunction<? super V,? super V,? extends V> remappingFunction)
+default V	replace(K key, V value)
+default boolean	replace(K key, V oldValue, V newValue)
+default void	replaceAll(BiFunction<? super K,? super V,? extends V> function)
+
 
 <br>
 
@@ -268,6 +318,14 @@ boolean containsValue(Object value);
 ```
 
 <br>
+
+boolean	containsKey(Object key)
+boolean	containsValue(Object value)
+Set<Map.Entry<K,V>>	entrySet()
+Set<K>	keySet()
+Collection<V>	values()
+default void	forEach(BiConsumer<? super K,? super V> action)
+
 
 **2.&nbsp; 根据key获取对应的value：** 最为常用
 
