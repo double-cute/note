@@ -5,12 +5,14 @@
 ## 目录
 
 1. [Collection接口：假设其类型参数是E](#一collection接口假设其类型参数是e--)
-2. [迭代遍历：Iterable接口](#二只有collection有的iterator)
-3. [Predicate筛](#四predicate筛)
+2. [迭代遍历：Iterable接口](#二迭代遍历iterable接口--)
+3. [Predicate筛](#三predicate筛)
 
 <br><br>
 
 - **所有static开头的静态工具方法都是Collections中的！**
+
+<br><br>
 
 ### 一、Collection接口：假设其类型参数是E  [·](#目录)
 > 所有无关联集合的根接口，**其方法在所有派生类中都存在（也就是在Set、List、Queue以及其实现类中都可以使用）**.
