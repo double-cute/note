@@ -9,8 +9,8 @@
 
 ## 目录
 
-1. [SortedMap](#一treemap简介)
-2. [TreeMap](#二treemap的特有方法)
+1. [SortedMap](#一sortedmap)
+2. [TreeMap](#二treemap)
 
 <br><br>
 
