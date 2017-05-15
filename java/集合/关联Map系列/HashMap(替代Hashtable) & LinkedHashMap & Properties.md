@@ -8,9 +8,8 @@
 
 ## 目录
 
-1. [HashMap](#一hashmap)
-2. [LinkedHashMap](#二linkedhashmap)
-3. [Properties](#三properties)
+1. [HashMap & LinkedHashMap](#一hashmap)
+2. [Properties](#三properties)
 
 <br><br>
 
@@ -59,7 +58,7 @@
 
 <br><br>
 
-### 三、Properties：[·](#目录)
+### 二、Properties：[·](#目录)
 > 一种比较特殊的 **Hashtable的子类**，专门用于 **读写和存放程序的配置信息**.
 >
 >> 由于是Hashtable的子类，因此是线程安全的，里面的很多方法有synchronized同步监控.
@@ -69,11 +68,8 @@
 - **构造器：**
 
 ```Java
-// 1. 空
-Properties();
-
-// 2. 用另一个Properties对象构造
-Properties(Properties defaults);
+// 空的或者用另一个Properties构造
+Properties([Properties defaults]);
 ```
 
 <br>
@@ -89,52 +85,66 @@ Properties(Properties defaults);
 
 <br>
 
-**2.&nbsp; Properties的良好使用习惯：**
+**2.&nbsp; Properties的良好使用习惯：取属性名**
 
 - 虽然它是一种特殊的Hashtable\<String, String\>，但应该也只拿它来处理程序配置属性以及属性文件，不要用来做其他用途（比如当成其它的Map\<String, String\>）：
    1. 首先**它是Hashtable的子类，Hashtable不规范，实现有缺陷**，不能滥用.
    2. 设计的初衷就是处理属性和属性文件，因此**只能在这个用途中能保证Hashtable的实现是安全可靠的**，还是不要滥用为好.
+- 举例：获取属性名
+
+```Java
+// 1. 获取全部的key
+Enumeration<?>	propertyNames();
+
+// 2. 获取全部的类型为String的key
+Set<String>	stringPropertyNames();
+```
+
+- 由于Properties要求所有的属性和值必须都是String类型的.
+   - 并且，其提供的设值方法setProperity也只能设值key-value都为String.
+   - 但是！别忘了，Properties也是Hashtable，也能用put方法将任意类型的key-value插入.
+      - 例如：props.put(new Object(), "123"); props.put("123", new Object());
+         1. propertyNames()把全部key都返回.
+         2. stringPropertyNames只取类型为String的key.
+   - 所以，不要乱用Properites！
+      - 正常用途下（只存放String类型的key-value）propertyNames和stringPropertyNames相同.
+      - 因此，规范是：
+         1. Properties只用于配置文件处理.
+         2. 只用stringPropertyNames. （并且，**Enumeration是旧标准，实现不合理**）
+   - 所以，Properties继承Hashtable实在是很愚蠢.
 
 <br>
 
-**3.&nbsp; 获取属性：**
+**3.&nbsp; 获取属性&设值：**
 
 ```Java
-// 1. 不存在时返回null
-String getProperty(String key);
+// 1. 强行取值（key没有关联就返回null或者默认值）
+String getProperty(String key[, String defaultValue]);
 
-// 2. 不存爱时返回defaultValue
-String getProperty(String key, String defaultValue);
+// 2. 强插强设，返回就value
+Object setProperty(String key, String value);
 ```
 
 <br>
 
-**4.&nbsp; 设值：**
+**4.&nbsp; IO：**
+
+- 读取配置到Properties：
+   - **是合并不是覆盖（没有的添加，有的覆盖）.**
 
 ```Java
-// 不存在插入，存在就覆盖
-synchronized Object setProperty(String key, String value);
+// 1. 从输入流中读取
+void load(InputStream|Reader in);
+// 2. 从XML文档中读取
+void loadFromXML(InputStream in);
 ```
 
-<br>
-
-**5.&nbsp; 从属性文件中加载属性：**
-
-- 这个加载是合并不是覆盖：
-  1. 并不是把原来的删掉然后再加载.
-  2. 而是和原有的数据合并（没有的添加，有的覆盖）.
+- 将Properties的内容输出到其它地方：**必须要加注释信息**
+   - **是覆盖不是合并（会删除掉原来的同名文件的）.**
 
 ```Java
-synchronized void load(InputStream inStream | Reader reader);
-```
-
-<br>
-
-**6.&nbsp; 将属性写入属性文件：**
-
-- 这个写入**是覆盖不是追加**（会删除掉原来的同名文件的）.
-
-```Java
-// comments是注释信息，在属性文件中以#开头
-void store(OutputStream out | Writer writer, String comments);
+// 1. 写到输出流（store和list效果相同）
+void store|list(OutputStream|Writer out, String comments);
+// 2. 写入XML文档
+void storeToXML(OutputStream os, String comment[, String encoding]);
 ```
