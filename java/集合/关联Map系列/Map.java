@@ -43,7 +43,7 @@ default V computeIfPresent(K k, BiFunction<? super K, ? super V, ? extends V> kv
 /* 4. find */
 
 // 1. contains: has
-boolean contains(Object k);
+boolean containsKey(Object k);
 boolean containsValue(Object v);
 
 // 2. k2v
