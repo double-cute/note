@@ -13,9 +13,9 @@
 
 ## 目录
 
-1. [开发环境下启动（直接启动）& 停止Redis服务]()
-2. [开机自动启动（生产环境下启动）]()
-3. [关于Redis配置]()
+1. [开发环境下启动（直接启动）& 停止Redis服务](#一开发环境下启动直接启动-停止redis服务)
+2. [开机自动启动（生产环境下启动）](#二开机自动启动生产环境下启动)
+3. [关于Redis配置](#三关于redis配置)
 
 <br><br>
 
@@ -124,3 +124,61 @@ $ launchctl load ~/Library/LaunchAgents/homebrew.mxcl.redis.plist
 >> 3. 运行时配置.
 
 <br>
+
+**1.&nbsp; 直接启动时配置：**
+
+```Shell
+$ redis-server [配置文件的路径名] [--配置参数 参数值]列表
+```
+
+- 直接启动时可以读取指定的配置文件作为配置.
+   - 当然也可以单独罗列配置参数指定，其余采用默认值.
+- 如果两者同时指定，那么罗列的配置参数将覆盖配置文件中的同名属性.
+   - 示例：
+
+```Shell
+# 1. 只用配置文件
+$ redis-server ~/.redis_cfg
+# 2. 只罗列参数，没有罗列出的都采用默认值
+$ redis-server --port 6700
+# 3. 同时指定，罗列将覆盖配置文件
+$ redis-server ~/.redis_cfg --port 6700
+  # 如果~/.redis_cfg中也配置了port=5490，那么最终6700将生效
+```
+
+<br>
+
+**2.&nbsp; 脚本启动时配置：**
+
+- 即/etc/init.d/中复制过去的redis_init_script.
+   - 启动脚本中CONF=...属性就指定了启动脚本采用的配置文件的路径.
+- **/etc/init.d/$PORT start** 直接以该配置文件作为配置启动Redis.
+
+<br>
+
+**3.&nbsp; 运行时配置：config set命令**
+
+- 以下命令用于在Redis运行时动态修改配置.
+   - 回复OK表示修改成功.
+
+```Shell
+$ redis-cli config set 属性名 属性值
+```
+
+- 示例：
+
+```Shell
+$ redis-cli config set loglevel warning
+```
+
+- **但并不是所有属性都允许运行时动态修改，很多不能修改（比如port）.**
+
+<br>
+
+**4.&nbsp; 运行时查看配置属性：config get**
+
+- 返回两行，第一行是属性名，第二行就是属性值.
+
+```Shell
+$ redis-cli config get 属性名
+```
