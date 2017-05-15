@@ -31,6 +31,8 @@ static int frequency(Collection<?> c, Object o);
 static <T> T max|min(Collection<T> c[, Comparator<T> cmp]);
 
 // 8. iter
+default void forEach(Consumer<? super E> action);
+
 Iterator<E> iterator();
 boolean hasNext(); E next(); default void forEachRemaining(Consumer<? super E> action);
 void remove();

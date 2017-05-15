@@ -5,9 +5,8 @@
 ## 目录
 
 1. [Collection接口：假设其类型参数是E](#一collection接口假设其类型参数是e--)
-2. [只有Collection有的Iterator](#二只有collection有的iterator)
-3. [Iterator的常用方法：假设类型参数是E](#三iterator的迭代方法假设类型参数是e--)
-4. [Predicate筛](#四predicate筛)
+2. [迭代遍历：Iterable接口](#二只有collection有的iterator)
+3. [Predicate筛](#四predicate筛)
 
 <br><br>
 
@@ -156,32 +155,46 @@ public class Test {
 
 <br><br>
 
-### 二、只有Collection有的Iterator：[·](#目录)
-> Java的迭代器Iterator **只在Collection中有，Map中木有**！
+### 二、迭代遍历：Iterable接口  [·](#目录)
+> Collection实现了Iterable接口（**Map没有实现**），使Collection得到了迭代器的支持.
 >
+> - 迭代器的终极目标：就是用统一的方法来迭代不同类型的集合！
+>    1. 不同类型集合的内部数据结构不尽相同.
+>       - 因此，如果要自己纯手工迭代的话相 **实现起来差异较大**.
+>    2. 迭代器提供统一的方法迭代不同类型集合，隐藏底层的差异.
+
+<br>
+
+- Iterable接口：
+
+```Java
+public interface Iterable<T> {
+  // 1. 传统的迭代器迭代
+  Iterator<T> iterator();
+  // 2. 简洁迭代语法糖，底层还是使用了传统迭代器迭代实现（只不过支持了Lambda表达式）
+  default void forEach(Consumer<? super T> action);
+}
+```
+
+<br>
+
+**1.&nbsp; 传统迭代器迭代：**
+
+<br>
+
 > - 和C++中迭代器的概念一样，2要素：
 >
 >   1. 迭代器必定 **从属于某个容器**，其作用就是用来遍历所属容器中的元素.
->     - 具体就是 **每种Collection实现类都有自己的Iterator内部类**.
+>      - 具体就是 **每种Collection实现类都有自己的Iterator内部类**.
 >   2. 迭代器是在容器的只读数据视图上进行迭代.
->     - 因此不能在迭代过程中修改容器中的数据，否则会抛出异常！
->     - 除非用迭代器的 **专用修改方法** 对数据进行修改，其余的擅自修改都将引发异常.
+>      - 因此不能在迭代过程中修改容器中的数据，否则会抛出异常！
+>      - 除非用迭代器的 **专用修改方法** 对数据进行修改，其余的擅自修改都将引发异常.
 
 <br>
 
-**1.&nbsp; 迭代器的终极目标：**
-
-- 就是用统一的方法来迭代不同类型的集合！
-   1. 不同类型集合的内部数据结构不尽相同.
-      - 因此，如果要自己纯手工迭代的话相**实现起来差异较大**.
-   2. 迭代器提供统一的方法迭代不同类型集合，隐藏底层的差异.
-
-<br>
-
-**2.&nbsp; 迭代器的使用步骤：**
-
-1. 获取集合的迭代器：调用Collection的iterator**对象方法**就能获得
-2. 接着使用Iterator的对象方法hasNext、next迭代元素.
+- 迭代器的使用步骤：
+   1. 获取集合的迭代器：调用Collection的iterator**对象方法**就能获得
+   2. 接着使用Iterator的对象方法hasNext、next迭代元素.
 
 ```Java
 Iterator<E> iterator();
@@ -191,9 +204,9 @@ ArrayList<Integer> c = ...;
 Iterator<Integer> c.iterator();
 ```
 
-<br><br>
+<br>
 
-### 三、Iterator的迭代方法：假设类型参数是E  [·](#目录)
+- 迭代器的方法：
 
 ```Java
 // 1. 传统迭代方式，hasNext不移动位置指针，next先移动再取元素
@@ -214,7 +227,24 @@ void remove();
 
 <br>
 
-- 示例：
+**2.&nbsp; 简洁迭代forEach语法糖：**
+
+```Java
+
+```
+
+<br>
+
+- forEach语法糖：
+   - 由于是Iterable的接口方法，因此Collection可以直接调用该方法进行Lambda简洁迭代.
+
+```Java
+default void forEach(Consumer<? super T> action);
+```
+
+<br>
+
+**3.&nbsp; 示例：**
 
 ```Java
 Collection c = new ArrayList(); // ArrayList是Collection的一个实现类，默认元素类型为Object
@@ -226,11 +256,13 @@ while (it.hasNext()) {
 	c.remove(); // 错误！！在迭代过程中使用非迭代器方法对集合进行修改会直接抛出异常！！
     it.remove(); // 正确
 }
+
+c.forEach(o -> System.out.println(o));  // 语法糖简洁迭代
 ```
 
 <br><br>
 
-### 四、Predicate筛：[·](#目录)
+### 三、Predicate筛：[·](#目录)
 > 是Java 8新增的集合过滤功能.
 >
 >> predicate是谓词的意思，即满足谓词条件的集合元素可以被过滤出来.

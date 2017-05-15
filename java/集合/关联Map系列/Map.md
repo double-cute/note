@@ -305,13 +305,6 @@ V get(Object key);
 default V getOrDefault(Object key, V defaultValue);
 ```
 
-<br>
-
-Set<Map.Entry<K,V>>	entrySet()
-Set<K>	keySet()
-Collection<V>	values()
-default void	forEach(BiConsumer<? super K,? super V> action)
-
 <br><br>
 
 ### 七、获取key、value、entry集合：[·](#目录)
