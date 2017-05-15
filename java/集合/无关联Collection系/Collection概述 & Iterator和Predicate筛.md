@@ -231,10 +231,6 @@ void remove();
 
 **2.&nbsp; 简洁迭代forEach语法糖：**
 
-```Java
-
-```
-
 <br>
 
 - forEach语法糖：
