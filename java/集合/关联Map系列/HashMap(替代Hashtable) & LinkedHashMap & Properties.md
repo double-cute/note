@@ -8,8 +8,8 @@
 
 ## 目录
 
-1. [HashMap & LinkedHashMap](#一hashmap)
-2. [Properties](#三properties)
+1. [HashMap & LinkedHashMap](#一hashmap--linkedhashmap)
+2. [Properties](#二properties)
 
 <br><br>
 
