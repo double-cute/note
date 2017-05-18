@@ -2,19 +2,21 @@
 String([String|StringBuilder|StringBuffer s]);
 String(byte[] b[, int offset, int len][, Charset|String cs]);
 String(char[] c[, int offset, int len]);
-String(int[] codePoints[, int offset, int len]);
+String(int[] codePoints, int offset, int len);
 
 // 2. tools
 int length();
 boolean isEmpty();
 String toUpperCase([Locale l]);
 String toLowerCase([Locale l]);
+String intern();
+int hashCode();  // s[0]*31^(n-1) + ... s[n-1]*1
 
 // 3. cmp
 boolean equals(Object o);
 boolean contentEquals(CharSequence|StringBuffer s);
 boolean equalsIgnoreCase(String s);
-boolean compareTo[IgnoreCase](String s);
+int compareTo[IgnoreCase](String s);
 
 // 4. i2th
 char charAt(int index);
@@ -64,11 +66,7 @@ static String format([Locale l, ]String format, Object... args);
 %f %e %g
 %n \t %% %tc
 
-// 12. other
-String intern();
-int hashCode();  // s[0]*31^(n-1) + ... s[n-1]*1
-
-// 13. code point
+// 12. code point
 String(int[] codePoints, int offset, int len);
 int codePointAt|codePointBefore(int index);
 int codePointCount(int beg, int end);
