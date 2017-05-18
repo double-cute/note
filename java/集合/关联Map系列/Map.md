@@ -393,6 +393,17 @@ static <K,V extends Comparable<? super V>> Comparator<Map.Entry<K,V>> comparingB
 static <K,V> Comparator<Map.Entry<K,V>> comparingByValue(Comparator<? super V> cmp);  // 定制
 ```
 
+- 示例：
+
+```Java
+// 按照value从大大小给entrySet排序
+HashMap<Integer, Integer> m = new HashMap<>();
+for (int i = 0; i < 10; ++i) m.put(i, i);
+Comparator<Map.Entry<Integer, Integer>> cmp = Map.Entry.comparingByValue((v1, v2) -> v2 - v1);
+SortedSet<Map.Entry<Integer, Integer>> ts = new TreeSet<>(cmp);
+ts.addAll(m.entrySet());
+```
+
 <br><br>
 
 ### 八、遍历：[·](#目录)
