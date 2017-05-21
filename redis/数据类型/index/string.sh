@@ -37,8 +37,6 @@ int(1 count):
     # set
 int(old_bit_val):
     SetBit k index bit_val
-int(res_strlen):
+int(res_strlen): # not-only-1-op, not nil == nil, others, nil == 0
     BitOp NOT|AND|OR|XOR
         res_k   op_k1 op_k2 ...
-        # not-only-1-op, not nil == nil
-        # others, nil == 0

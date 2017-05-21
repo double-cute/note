@@ -6,7 +6,7 @@ int(del_num):
 
 # 2. score op: score: float, ±inf
 # add
-int(new_add_count):
+int(new_add_num):
     zAdd k   sc1 e1   sc2 e2   ...
 # get score
 str:
@@ -31,8 +31,8 @@ str[]:
     z[Rev]Range k beg end [WITHSCORES]
 
 # 4. set op: w: float
-int(res_size):
-    zInter|UnionStore res_k
+int(dst_size):
+    zInter|UnionStore dst_k
         op_k_count  op_k1   op_k2   ...
         [WEIGHTS    w1      w2      ...]
         [AGGREGATE SUM|MIN|MAX]

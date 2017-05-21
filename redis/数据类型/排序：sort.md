@@ -20,12 +20,15 @@
 
 ## 目录
 
-1. []()
-2. []()
+1. [sort命令的完整格式](#一sort命令的完整格式)
+2. [BY other_key_pattern](#二by-other_key_pattern)
+3. [GET pattern](#三get-pattern)
+4. [示例](#四示例)
+5. [sort命令的性能分析](#五sort命令的性能分析)
 
 <br><br>
 
-### 一、sort命令的完整格式：
+### 一、sort命令的完整格式：[·](#目录)
 > **如果参考值相同，那就按照当前容器中元素的自身值排序.**
 >
 >> - 例如：当前容器中元素为1 2，参考链接值对应的是3 3，按照降序排列.
@@ -53,7 +56,7 @@ sort 目标待排序的容器键键名sort_key [LIMIT offset count] # 只输出�
 
 <br><br>
 
-### 二、BY other_key_pattern：
+### 二、BY other_key_pattern：[·](#目录)
 > 即排序的 **参考键**，也是 **依据键**.
 >
 >> - 就是根据参考键的内容对当前容器中的元素进行排序.
@@ -125,7 +128,7 @@ sort id_list BY id_5_score  # 没有意义，输出结果没有排序，保持id
 
 <br><br>
 
-### 三、GET pattern：
+### 三、GET pattern：[·](#目录)
 > 由于连接了另外一个容器键，所以可以选择输出的内容.
 >
 >> 比如，输出当前容器元素的同时也输出连接键的值（string）或者是某些字段（hash）.
@@ -137,7 +140,7 @@ sort id_list BY id_5_score  # 没有意义，输出结果没有排序，保持id
 
 <br><br>
 
-### 四、示例：
+### 四、示例：[·](#目录)
 
 <br>
 
@@ -155,7 +158,7 @@ GET "blog:*:info->view.count"
 
 <br><br>
 
-### 五、sort命令的性能分析：
+### 五、sort命令的性能分析：[·](#目录)
 
 <br>
 
@@ -178,5 +181,3 @@ GET "blog:*:info->view.count"
 
 1. 降低n，降低m.
 2. 数据量较大时尽量开启store选项将结果缓存.
-
-<br>

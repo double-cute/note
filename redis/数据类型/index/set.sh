@@ -1,18 +1,27 @@
 # 1. tools
-int(size) scard k
-int(1/0) sismember k test_ele
+int(size):
+    sCard k
+int(1/0):
+    sIsMember k test_e
 
-# 2. add & rem
-int(add num) sadd k ele [ele ...]
-int(rem num) srem k ele [ele ...]
+# 2. add & del
+int(add_num):
+    sAdd k e1 e2 ...
+int(del_num):
+    sRem k e1 e2 ...
 
 # 3. get
-str[] smembers k
+str[]:
+    sMembers k
 
 # 4. op
-str[] sdiff|sinter|sunion op_k [op_k ...]
-int(res_size) s[diff|inter|union]store res res_k op_k [op_k ...]
+str[]:
+    s{Diff|Inter|Union} op_k1 op_k2 ...
+int(dst_size):
+    s{Diff|Inter|Union}Store res_k   op_k1 op_k2 ...
 
 # 5. random
-str[] srandmember k [count] # +:diff, -:may same
-str spop k
+str[]:
+    sRandMember k [count] # +:diff, -:may same
+str:
+    sPop k
