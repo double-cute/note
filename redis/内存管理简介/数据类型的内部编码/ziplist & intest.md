@@ -11,10 +11,10 @@
 
 ## 目录
 
-1. [ziplist内部存储结构]()
-2. [每个ziplist元素的存储结构]()
-3. [ziplist编码hash类型的示意图]()
-4. [intset的结构]()
+1. [ziplist内部存储结构](#一ziplist内部存储结构)
+2. [每个ziplist元素的存储结构](#二每个ziplist元素的存储结构)
+3. [ziplist编码hash类型的示意图](#三ziplist编码hash类型的示意图)
+4. [intset的结构](#四intset的结构)
 
 <br><br>
 
@@ -97,6 +97,6 @@ typedef struct intset {
     // 3. malloc的动态空间，存放整数内容
       // 由于是数组存放，因此是有序的
     int8_t contents[];
-    
+
 } intset;
 ```
