@@ -50,3 +50,8 @@ velocity  ""可以解析里面的命令字符，''不能解析
 语法见apache官网
 
 IOC 享元模式 在bean容器中构造好了以后大家都可以用
+
+
+mysql limit
+
+velocity datatool  toolbox配置  toolbox.xml
