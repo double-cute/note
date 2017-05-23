@@ -4,10 +4,10 @@
 
 ## 目录
 
-1. [hash]()
-2. [list]()
-3. [set]()
-4. [zset]()
+1. [hash](#一hash)
+2. [list](#二list)
+3. [set](#三set)
+4. [zset](#四zset)
 
 <br><br>
 
