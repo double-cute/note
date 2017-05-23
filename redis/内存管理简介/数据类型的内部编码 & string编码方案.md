@@ -77,8 +77,6 @@ object encoding 键名
 
 <br><br>
 
-<br><br>
-
 ### 三、Redis的键和值的C语言存储结构体：[·](#目录)
 
 <br>
@@ -105,6 +103,7 @@ typedef struct redisObject { // 4 + 4 + 8 = 16字节
        *  #define REDIS_ENCODING_RAW        0
        *  #define REDIS_ENCODING_INT        1
        *  #define REDIS_ENCODING_HT         2
+            // Redis 2.4及以前用ZIPMAP编码过hash的时间换空间方案
        *  #define REDIS_ENCODING_ZIPMAP     3
        *  #define REDIS_ENCODING_LINKEDLIST 4
        *  #define REDIS_ENCODING_ZIPLIST    5
@@ -128,6 +127,7 @@ typedef struct redisObject { // 4 + 4 + 8 = 16字节
 <br>
 
 - 键就是一个指向redisObject结构体的指针而已.
+   - 但键名本身并非用redisObject存储，而是通过散列的方式存储的.
 
 ```C
 key {
