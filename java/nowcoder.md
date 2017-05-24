@@ -7,9 +7,6 @@ MAVEN 用来管理Java包，可以在该网站查找要用的包http://mvnreposi
 intelij
 
 
-Collections从新整理一下！
-
-Map、Hashtable是重点
 
 异常赶紧看
 
