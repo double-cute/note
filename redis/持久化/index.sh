@@ -30,3 +30,12 @@ int(unix_time_stamp):
 
 
 # AOF
+
+# 1. manual rewrite: opti .aof
+stat(message):
+    bgRewriteAOF
+# 2. config
+auto-aof-rewrite-percentage  120
+auto-aof-rewrite-min-size 64mb
+# 3. OS cache sync
+appendfsync always|everysec|no

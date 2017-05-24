@@ -84,7 +84,7 @@
 - 即Begin Save的缩写.
 
 ```Shell
-# 1. 执行后返回状态信息：Background saving started，表示异步快照已经在后台开启
+# 1. 执行后返回状态信息：`Background saving started`，表示异步快照已经在后台开启
 bgsave
 # 2. 快照完成后并不会提示，必须使用下面的命令查看最近一次快照成功的Unix时间戳
 lastsave  # 同样可以查看其它各种快照的成功时间点（save同步快照也行，所有都适用）
