@@ -1,4 +1,45 @@
 
+
+- sql标签：即一个可以被其它多个select、insert、update、delete、sql复用（宏替换）的SQL语句片段.
+   - 用include refid=""应用sql片段，用property标签传入OGNL表达式的值.
+
+```XML
+<sql id="xxx">${OGNL表达式}...各种${arg1}${arg2}${arg3}</sql>
+
+<!-- 使用时用include标签在响应的位置进行宏替换 -->
+<select ...>
+  select
+    <include refid="sql-id">
+      <property name="arg1" value="v1" />
+      <property name="arg2" value="v2" />
+      <property name="arg3" value="v3" />
+    </include>
+  from ...
+    ...
+</select>
+```
+
+- 也支持嵌套替换：
+   - 一个sql的property作为另一个sql的id
+
+```XML
+<sql id="test">${prefix}_table</sql>
+
+<sql id="injectSqlId">
+  from
+    <include refid="${inject_id}" />
+</sql>
+
+<select id="select">
+  select field1, field2
+  <include refid="injectSqlId">
+    <property name="inject_id" value="test" />
+    <!-- 这步之后变成了 from <include refid="test"> -->
+    <!-- 即 from ${prefix}_table 了 -->
+    <property name="prefix" value="nor" />
+  </include>
+</select>
+```
 select、insert、update、delete公用的属性
 
 | 共有属性 | 说明 |
@@ -61,3 +102,11 @@ OGNL表达式：@Param("schema") String schema, @Param("user") User user -> ${us
 - select
 
 | useCache | select中默认为true，其余默认为false，true表示该SQL语句的结果将会被二级缓存 |
+
+
+
+
+
+- parameterType
+- 动态SQL
+- 注解
