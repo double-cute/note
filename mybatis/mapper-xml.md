@@ -5,10 +5,17 @@
       - `<mappers>`  (**3种定位mapper的方式，任选一种**) (**可以有多个mappers和多个mapper**)
          1. `<mapper class="${mapper-namespace}" />`
             - 使用权限定类名.
+            - 这种方法要求namespace和.xml的文件名必须一致才行.
+               - 因为MyBatis始终是加在.xml文件，必须由class-namespace推断出是哪个.xml文件.
+               - 因此UserDao的.xml不能取成UserDao.mapper.xml
+                  - MyBatis都是动态加载的！
+                  - 在insertOne()的时候才根据xxx.id加在 类.方法
+               - 否则会发生  Invalid bound statement (not found):org.my.bat.batfirst.dao.UserDao.selectById
+                  - 如果mapper-xml文件取成UserDao.mapper.xml的话.
             - `"org.my.bat.batfirst.dao.UserDao"`
          2. `<mapper resource="${mapper-xml-app-path}" />`
             - 相对于 **resource/** 根目录来说的 **绝对路径**.
-            - `"org/my/bat/batfirst/dao/UserDao.mapper.xml"`
+            - `"org/my/bat/batfirst/dao/UserDao.xml"`
          3. `<mapper url="${mapper-xml-url}" />`
             - `"file://C:/mapper/UserDao.mapper.xml"`
       - `</mappers>`
