@@ -111,3 +111,10 @@ public TypeAliasRegistry() {
    1. 值为上述的alias：那么接口层传入的参数必须严格地为注册的.class类型！！否则类型冲突报错！
    2. 其余所有的Java类型必须写 **权限定类名**，而且必须是POJO：
       - 所有的#{} ${} <if test="OGNL"等等都是取 POJO的getter.
+
+
+@Param可以重载：
+
+// 两者构成重载.
+func(@Param("a") String s);
+func(@Param("b") String s);
