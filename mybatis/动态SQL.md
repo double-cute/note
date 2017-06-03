@@ -137,3 +137,18 @@ where state='ACTIVE'
       return object;
     }
   ```
+
+
+<br><br>
+
+### 、bind
+
+- 可以利用OGNL表达式创建一个新的OGNL表达式变量，在bind之后的位置引用该变量
+   - \_parameter是ONGL中内置的变量，用来引用传进来的参数.
+
+```xml
+<select id="selectBind" resultType="sucker">
+        <bind name="pattern" value="'%' + _parameter.getId() + '%' + _parameter.getName() + '%'" /> <!-- 得到 %15%lala% 字符串 -->
+        select * from fuck where title like #{pattern}
+    </select>
+```
