@@ -108,6 +108,8 @@ where state='ACTIVE'
 </foreach>
 ```
 
+- foreach要迭代的容器也是放在ONGL的临时map中的，想要访问该容器，也需要通过该容器在OGNL map中的key来访问，这个key名就是collection属性！
+
 - collection只跟接口层传入的参数类型有关，跟parameterType没有人任何关系.
   - foreach需要迭代的内容必然要保存在OGNLtop_stack_map的key的value中.
   - foreach维护一个 临时的、局部的ONGL stack-map.

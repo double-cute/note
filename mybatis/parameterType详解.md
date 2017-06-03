@@ -1,23 +1,10 @@
 > parameterType不写则可以有TypeHandler自动根据接口层的参数类型进行推断.
-> 如果parameterType写了，则parameterType必须和接口层的参数类型一致：
+> 如果parameterType写了，则parameterType必须和接口层的参数类型一致，不一致就会报错
    1. 完全一致，固然没问题
    2. 所有非内置别名的Java类都将看做 POJO，而POJO和map兼容，POJO.getterName == map.key
-      - 因此，下shu成立：
+      - 两者双向兼容，接口map -> paraTy=POJO，接口POJO -> paraTy="map"
 
-```xml
-List<User> selectForeach(Schema s);  s.getSake() = List<Integer>|Integer[]都行.
-<select id="selectForeach" parameterType="map|sucker|object" resultType="sucker">
-        select
-            *
-        from
-            tb_user
-        where
-            id in
-                <foreach collection="sake" item="it" open="(" separator="," close=")">
-                    #{it}
-                </foreach>
-    </select>
-```
+
 
 
 
