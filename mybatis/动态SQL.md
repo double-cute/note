@@ -89,3 +89,49 @@ where state='ACTIVE'
   where id=#{id}
 </update>
 ```
+
+
+### foreach
+
+
+
+```xml
+<foreach
+  collection="xxx"
+  index="索引名"  # 当前迭代到的元素的索引，从0计算
+  item="元素名"
+  open="("  # 其实符号
+  separator="," # 迭代内容的分隔符
+  close=")" > # 结束符号
+
+  #{item.name} // item.getName()  #{index} // 0 1 2 3
+</foreach>
+```
+
+- collection只跟接口层传入的参数类型有关，跟parameterType没有人任何关系.
+  - foreach需要迭代的内容必然要保存在OGNLtop_stack_map的key的value中.
+  - foreach维护一个 临时的、局部的ONGL stack-map.
+     1. 参数为List，则默认key为"list"，加入topMap
+     2. 参数为Collection，则默认key为"collection"，加入topMap
+     3. 参数为Array，则默认key为"array"，加入topMap
+     4. 其它情况"xxx"，则默认topmap.put("xxx", param.getXxx());
+  - 实现如下：
+
+
+  ```Java
+  private Object wrapCollection(final Object object) {
+      if (object instanceof Collection) {
+        StrictMap<Object> map = new StrictMap<Object>();
+        map.put("collection", object);
+        if (object instanceof List) {
+          map.put("list", object);
+        }
+        return map;
+      } else if (object != null && object.getClass().isArray()) {
+        StrictMap<Object> map = new StrictMap<Object>();
+        map.put("array", object);
+        return map;
+      }
+      return object;
+    }
+  ```

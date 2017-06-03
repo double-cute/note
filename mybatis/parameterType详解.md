@@ -1,3 +1,26 @@
+> parameterType不写则可以有TypeHandler自动根据接口层的参数类型进行推断.
+> 如果parameterType写了，则parameterType必须和接口层的参数类型一致：
+   1. 完全一致，固然没问题
+   2. 所有非内置别名的Java类都将看做 POJO，而POJO和map兼容，POJO.getterName == map.key
+      - 因此，下shu成立：
+
+```xml
+List<User> selectForeach(Schema s);  s.getSake() = List<Integer>|Integer[]都行.
+<select id="selectForeach" parameterType="map|sucker|object" resultType="sucker">
+        select
+            *
+        from
+            tb_user
+        where
+            id in
+                <foreach collection="sake" item="it" open="(" separator="," close=")">
+                    #{it}
+                </foreach>
+    </select>
+```
+
+
+
 - parameterType：超级灵活，待会儿细讲  
    1. 要么不写，如果写的话必须要写 **全限定类名**.
    2. 如果不写，则会使用MyBatis的TypeHandler进行自动推断.
