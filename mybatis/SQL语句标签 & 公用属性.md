@@ -50,25 +50,7 @@ select、insert、update、delete公用的属性
 | statementType | STATEMENT、PREPARED、CALLABLE，分别对应Statement、PreparedStatement、CallableStatement，默认为PREPARED |
 | timeout | 单位是秒，表示执行多久还没就过就抛出异常，默认为依赖驱动 |
 
-- parameterType：超级灵活，待会儿细讲  
-   1. 要么不写，如果写的话必须要写 **全限定类名**.
-   2. 如果不写，则会使用MyBatis的TypeHandler进行自动推断.
-      - 根据SQL语句中的#{XXX}占位符进行判断.
-         1. 内部支持的内部简化Java类型：如int表示Integer等.
-         2. 其余必须使用全限定类名.
-         3. 如果是其它Java类则该Java类必须是POJO.
-      - 占位符解析规则：#{id}则会查找名为id的getter取值来替换占位符.
-         - 如果是内部类，则#{id}则直接表示该类的对象的值.
-            1. #{xxx}：getXxx替换SQL的?占位符（根据类型来，int、double等直接替换，String要外加''再替换.
-            2. ${xxx}：getXxx的纯字符串替换，直接纯字符串宏替换，容易导致SQL注入攻击.
-               - 常用于schema也是变量的情景，例如：insert into ${schemaName}.tb_user values(xxx, xxx, xxx);
-               - 这里不能用#{schemaName}，因为#{}用于?的SQL占位符，SQL语法规定只有values部分才能?占位符.
-      - 最多只支持一个parameterType属性，不持之多于1个的parameterType属性：
-         - 超过1个参数MyBatis就强制要求你将它们包装成POJO传入.
-         - session的select、insert、update、delete系列方法都最多支持持一个Object类型的参数.
-            - 实为POJO类.
 
-OGNL表达式：@Param("schema") String schema, @Param("user") User user -> ${user.name} #{user.age} ${schema}
 
 - update、delete没有额外的属性
 
@@ -99,14 +81,7 @@ OGNL表达式：@Param("schema") String schema, @Param("user") User user -> ${us
 </insert>
 ```
 
-- select
-
-| useCache | select中默认为true，其余默认为false，true表示该SQL语句的结果将会被二级缓存 |
 
 
-
-
-
-- parameterType
 - 动态SQL
 - 注解
