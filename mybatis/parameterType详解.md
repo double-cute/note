@@ -1,8 +1,4 @@
-> parameterType不写则可以有TypeHandler自动根据接口层的参数类型进行推断.
-> 如果parameterType写了，则parameterType必须和接口层的参数类型一致，不一致就会报错
-   1. 完全一致，固然没问题
-   2. 所有非内置别名的Java类都将看做 POJO，而POJO和map兼容，POJO.getterName == map.key
-      - 两者双向兼容，接口map -> paraTy=POJO，接口POJO -> paraTy="map"
+
 
 
 
@@ -46,68 +42,7 @@
    1. 值必须为以下两者中的一种：
       1. 原生类型别名的内核注册：
 
-```Java
-public TypeAliasRegistry() {
-    registerAlias("string", String.class);
 
-    registerAlias("byte", Byte.class);
-    registerAlias("long", Long.class);
-    registerAlias("short", Short.class);
-    registerAlias("int", Integer.class);
-    registerAlias("integer", Integer.class);
-    registerAlias("double", Double.class);
-    registerAlias("float", Float.class);
-    registerAlias("boolean", Boolean.class);
-
-    registerAlias("byte[]", Byte[].class);
-    registerAlias("long[]", Long[].class);
-    registerAlias("short[]", Short[].class);
-    registerAlias("int[]", Integer[].class);
-    registerAlias("integer[]", Integer[].class);
-    registerAlias("double[]", Double[].class);
-    registerAlias("float[]", Float[].class);
-    registerAlias("boolean[]", Boolean[].class);
-
-    registerAlias("_byte", byte.class);
-    registerAlias("_long", long.class);
-    registerAlias("_short", short.class);
-    registerAlias("_int", int.class);
-    registerAlias("_integer", int.class);
-    registerAlias("_double", double.class);
-    registerAlias("_float", float.class);
-    registerAlias("_boolean", boolean.class);
-
-    registerAlias("_byte[]", byte[].class);
-    registerAlias("_long[]", long[].class);
-    registerAlias("_short[]", short[].class);
-    registerAlias("_int[]", int[].class);
-    registerAlias("_integer[]", int[].class);
-    registerAlias("_double[]", double[].class);
-    registerAlias("_float[]", float[].class);
-    registerAlias("_boolean[]", boolean[].class);
-
-    registerAlias("date", Date.class);
-    registerAlias("decimal", BigDecimal.class);
-    registerAlias("bigdecimal", BigDecimal.class);
-    registerAlias("biginteger", BigInteger.class);
-    registerAlias("object", Object.class);
-
-    registerAlias("date[]", Date[].class);
-    registerAlias("decimal[]", BigDecimal[].class);
-    registerAlias("bigdecimal[]", BigDecimal[].class);
-    registerAlias("biginteger[]", BigInteger[].class);
-    registerAlias("object[]", Object[].class);
-
-    registerAlias("map", Map.class);
-    registerAlias("hashmap", HashMap.class);
-    registerAlias("list", List.class);
-    registerAlias("arraylist", ArrayList.class);
-    registerAlias("collection", Collection.class);
-    registerAlias("iterator", Iterator.class);
-
-    registerAlias("ResultSet", ResultSet.class);
-  }
-```
 
 1. parameterType="map":
    1. @Param("id") Integer id, @Param("name") String name -> #{id} #{name}
@@ -125,6 +60,6 @@ public TypeAliasRegistry() {
 
 @Param可以重载：
 
-// 两者构成重载.
+// 两者构成重载. 错错错！！！
 func(@Param("a") String s);
 func(@Param("b") String s);
