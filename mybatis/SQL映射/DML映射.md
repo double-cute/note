@@ -1,12 +1,17 @@
 # DML映射
 > 即insert、update、delete语句的映射.
+>
+>> - 提示：
+>>    1. 使用注解映射需要直接将SQL语句写在Java代码里.
+>>    2. 由于Java代码里不允许字符串常量分行编写，因此SQL语句不宜写得过长.
+>>    3. 由于受到此限制，还是建议简单语句使用注解映射，复杂语句还是写在mapper-xml为好.
 
 <br><br>
 
 ## 目录
 
-1. [`<update>`、`<delete>`没有任何额外的属性]()
-2. [`<insert>`]()
+1. [`<update>`、`<delete>`没有任何额外的属性](#一updatedelete没有任何额外的属性)
+2. [`<insert>`](#二insert)
 
 <br><br>
 
@@ -17,14 +22,14 @@
 **1.&nbsp; mapper-xml：**
 
 ```Java
-int updateOneUserById(User user);
+int updateOneUser(User user);
 int deleteOneUserById(Integer id);
 ```
 
 ```XML
 <!-- update -->
     <!-- 返回的是int，表示真正修改的记录数量 -->
-<update id="updateOneUserById">
+<update id="updateOneUser">
     UPDATE
         tb_user
     set
@@ -46,9 +51,25 @@ int deleteOneUserById(Integer id);
 </delete>
 ```
 
+<br>
+
+**2.&nbsp; 注解映射：`@Update`、`@Delete`**
+
+```Java
+@Update("UPDATE tb_user SET name=#{name}, sex=#{sex}, age=#{age} WHERE id=#{id}")
+int updateOneUser(User user);
+
+@Delete("DELETE FROM tb_user WHERE id=#{id}")
+int deleteOneUserById(Integer id);
+```
+
 <br><br>
 
 ### 二、`<insert>`：[·](#目录)
+
+<br>
+
+**1.&nbsp; mapper-xml：**
 
 <br>
 
@@ -73,7 +94,12 @@ int deleteOneUserById(Integer id);
 
 - 示例：
 
+```Java
+int insertUsers(List<User>|User[] col);
+```
+
 ```xml
+<!-- 返回int，表示实际插入的记录数量 -->
 <insert id="insertUsers" useGeneratedKeys="true" keyProperty="id">
     INSERT
     into
@@ -84,4 +110,16 @@ int deleteOneUserById(Integer id);
             (#{item.name}, #{item.sex}, #{item.age})
         </foreach>
 </insert>
+```
+
+<br>
+
+**2.&nbsp; 注解映射：`@Insert`、`@Options`（传入额外参数）**
+
+- 像`id`、`parameterType`以外的属性可以通过`@Options`注解来指定.
+
+```Java
+@Insert("INSERT INTO tb_user(name, sex, age) VALUES(#{name}, #{sex}, #{age})")
+@Options(useGeneratedKeys=true, keyProperty="id") // xml中为"true"，注解为true，要注意了！！
+int insertOneUserWithoutId(User user);  // insert时user.id将被忽略，交由数据库自增长
 ```
