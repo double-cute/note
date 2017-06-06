@@ -5,8 +5,8 @@
 
 ## 目录
 
-1. [SQL语句传入参数：使用OGNL栈中转]()
-2. [SQL标签的parameterType属性详解]()
+1. [SQL语句传入参数：使用OGNL栈中转](#一sql语句传入参数使用ognl栈中转--)
+2. [SQL标签的parameterType属性详解](#二sql标签的parametertype属性详解)
 
 <br><br>
 
