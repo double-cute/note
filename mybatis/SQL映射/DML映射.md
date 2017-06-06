@@ -117,6 +117,7 @@ int insertUsers(List<User>|User[] col);
 **2.&nbsp; 注解映射：`@Insert`、`@Options`（传入额外参数）**
 
 - 像`id`、`parameterType`以外的属性可以通过`@Options`注解来指定.
+   - **注解映射一次映射多条记录需要通过动态SQL才行.**
 
 ```Java
 @Insert("INSERT INTO tb_user(name, sex, age) VALUES(#{name}, #{sex}, #{age})")
