@@ -149,7 +149,7 @@ List<User> selectResultMapTest();
     <result property="age" column="res_age" />
 
     <!-- 2. 特殊的，专用于主键列的映射以提高效率 -->
-    <id property="getter名" column="对应的列名" />
+    <id property="id" column="res_id" />
 </resultMap>
 ```
 
