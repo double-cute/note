@@ -12,10 +12,10 @@
 
 ## 目录
 
-1. [`<select>`的额外属性]()
-2. [`resultType`和`resultMap`之间的关系]()
-3. [`resultType`的具体用法]()
-4. [使用`<select-resultMap>`和`<resultMap>`完成简单的`列-setter`手动映射]()
+1. [`<select>`的额外属性](#一select的额外属性)
+2. [`resultType`和`resultMap`之间的关系](#二resulttype和resultmap之间的关系)
+3. [`resultType`的具体用法](#三resulttype的具体用法)
+4. [使用`<select-resultMap>`和`<resultMap>`完成简单的`列-setter`手动映射](#四使用select-resultmap和resultmap完成简单的列-setter手动映射)
 
 <br><br>
 
