@@ -12,12 +12,14 @@
 
 ## 目录
 
-1. []()
-2. []()
+1. [`<select>`的额外属性]()
+2. [`resultType`和`resultMap`之间的关系]()
+3. [`resultType`的具体用法]()
+4. [使用`<select-resultMap>`和`<resultMap>`完成简单的`列-setter`手动映射]()
 
 <br><br>
 
-### 一、`<select>`的额外属性：
+### 一、`<select>`的额外属性：[·](#目录)
 
 <br>
 
@@ -25,20 +27,9 @@
 | --- | --- | --- |
 | `useCache` | 默认为`true` | `1. 开启后直接结果被二级缓存.`<br>`2. 一般不需要修改.` |
 
-
-###、
-
-
-- select
-
-| useCache | select中默认为true，其余默认为false，true表示该SQL语句的结果将会被二级缓存 |
-
-
-- resultType 和 resultMap不能同时使用：
-
 <br><br>
 
-### 二、`resultType`和`resultMap`之间的关系：
+### 二、`resultType`和`resultMap`之间的关系：[·](#目录)
 > 两者都是 `<select>` 标签的属性，完成的任务有2个：
 >
 > 1. 声明select语句返回结果的Java类型.
@@ -88,7 +79,7 @@
 
 <br><br>
 
-### 三、`resultType`的具体用法：
+### 三、`resultType`的具体用法：[·](#目录)
 
 <br>
 
@@ -125,7 +116,7 @@ List<User>|List<Map<String, Object>> selectAllUsers();
 
 <br><br>
 
-### 四、使用`<select-resultMap>`和`<resultMap>`完成简单的`列-setter`手动映射：
+### 四、使用`<select-resultMap>`和`<resultMap>`完成简单的`列-setter`手动映射：[·](#目录)
 > 复杂的关联映射在后续章节中详解.
 
 <br>
@@ -167,7 +158,7 @@ List<User> selectResultMapTest();
 **2.&nbsp; 注解映射：`@Results-@Result`**
 
 ```Java
-@Select("SELECT * FROM tb_user")
+@Select("SELECT id AS res_id, name AS res_name, sex AS res_sex, age AS res_age FROM tb_user")
 @Results(
     id = "myResultMap",  // 即 <resultMap-id>
     value = { // value指定column和setter之间的映射（可以是关联映射）
