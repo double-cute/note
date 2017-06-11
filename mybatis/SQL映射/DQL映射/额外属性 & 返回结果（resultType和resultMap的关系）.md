@@ -1,12 +1,20 @@
 # 额外属性 & 返回结果（resultType和resultMap的关系）
 > select语句返回的结果可能为单个记录也可能或多个记录（记录集合）.
 >
-> - `<select>`标签的`resultTyp`和`resultMap`就用来声明返回结果的数据类型.
+> - `<select>`标签的`resultType`和`resultMap`就用来声明返回结果的数据类型.
 >    - 但要注意：
 >       1. 如果返回的是记录集合，那它们只是的集合中元素的Java类型.
 >       2. 如果是单值，那就不用说了，就是那个唯一的元素的Java类型.
 >
 >> - MyBatis规定，如果select返回的是多个记录的集合，则一定使用 `java.util.List` 保存.
+>>
+>> <br>
+>>
+> `<resultType>`和`<resultMap>`都使用了`构造注入`和`设值注入`的方式生成`结果对象`.
+>
+> - 但不过一定是 **先** 使用`构造注入`，**再** 使用`设值注入`的.
+>    1. `构造注入`：将返回记录的列值作为构造器的参数初步构造出一个对象.
+>    2. `设值注入`：在构造完毕后，进一步调用`setter`将记录的列值注入对象中.
 
 <br><br>
 
@@ -16,6 +24,8 @@
 2. [`resultType`和`resultMap`之间的关系](#二resulttype和resultmap之间的关系)
 3. [`resultType`的具体用法](#三resulttype的具体用法)
 4. [使用`<select-resultMap>`和`<resultMap>`完成简单的`列-setter`手动映射](#四使用select-resultmap和resultmap完成简单的列-setter手动映射)
+5. [返回结果的第一步永远是构造注入：默认的构造注入方式]()
+6. [自己决定构造注入使用的构造器版本：<constructor>]()
 
 <br><br>
 
@@ -181,3 +191,114 @@ List<User> selectResultMapTest();
 )
 List<User> selectResultMapTest();
 ```
+
+<br><br>
+
+### 五、返回结果的第一步永远是`构造注入`：默认的构造注入方式  [·](#目录)
+> 不管是使用`resultType`还是`resultMap`返回结果，第一步都是调用结果类型的构造器先构造出对象，再根据`<id>、<result>`等调用相应的`setter`进行 **设值注入**.
+
+<br>
+
+- 默认的构造注入方式：
+   1. 自动的应用场景：
+      1. 使用`resultType`返回结果.
+      2. 使用`resultMap`返回结果，但又没有使用`<constructor>`标签指定构造器.
+   2. 默认使用的构造器版本：
+      - 根据`select语句`的筛选列决定，如果没有对应的版本就调用`无参构造器`构造（再调用`setter`设值）.
+      - 例如：
+         - `SELECT * FROM tb_user`返回的列有`id, name, sex, age`.
+         - 那么MyBatis就会自动寻找`Integer, String, String, Integer`版本的构造器来构造结果对象.
+            - 如果找不到就再尝试调用`无参构造器`构造，再找不到就直接报错了！！（**反射失败**）
+   3. 因此使用MyBatis框架时最好给各个`domain`框架提供足够完备的构造器，并至少应该提供一个`无参构造器`.
+
+<br>
+
+- 示例：
+
+> 对于下面用到关联映射的情景，由于`列：card_id(int) 外联 tb_card`.
+>
+>> - 而`SELECT *`的结果是`int str str int int(card_id)`.
+>>    - 并非关联映射后的`int str str int Card`.
+>>       - 只看select语句的`SELECT`和`FROM`之间的内容.
+>>
+>>> - 因此就会先找`int str str int int`版本的构造器，找不到就再找`无参构造器`.
+>>>    - 再找不到就报错，提示需要一个`int str str int int`版本的构造器.
+>>> - 因此这里至少要提供一个`无参构造器`，再根据情况决定是否需要提供`int str str int int`版本的构造器.
+
+```XML
+<select id="selectPersonById" resultMap="personResultMap">
+    SELECT * FROM tb_person WHERE id = #{id}
+</select>
+
+<resultMap id="personResultMap" type="person">
+    <id property="id" column="id" />
+    <result property="name" column="name" />
+    <result property="sex" column="sex" />
+    <result property="age" column="age" />
+    <association
+        property="card" column="card_id"
+        select="org.my.bat.batfirst.dao.CardDao.selectCardById"
+    />
+</resultMap>
+```
+
+<br><br>
+
+### 六、自己决定构造注入使用的构造器版本：`<constructor>`  [·](#目录)
+> 只能在`<resultMap>`、`<association>`、`<collection>`中使用.
+>
+>> - 一般 `构造注入`和`设值注入` 两者不要有重叠，重叠部分没什么意义.
+
+<br>
+
+**1.&nbsp; mapper-xml：**
+
+<br>
+
+- 使用`<constructor>`标签调用指定版本的构造器注入结果对象：
+   - 该标签要放在`<resultMap>`、`<association>`、`<collection>`的最前面使用.
+
+```XML
+<resultMap id="MyResultMap" type="user">
+    <!-- 1. 构造注入部分 -->
+    <constructor>
+        <!-- 根据 javaType 的顺序决定调用哪个版本的构造器 -->
+            <!-- column只是指定映射记录的哪列  -->
+            <idArg column="id" javaType="int" />        <!-- idArg表示主键列的映射，提高效率 -->
+            <arg column="name" javaType="string" />     <!-- arg表示普通列的映射 -->
+    </constructor>
+
+    <!-- 2. 设值注入部分 -->
+    <result property="sex" column="sex" />  <!-- 构造注入和设值注入不重叠 -->
+    <result property="age" column="age" />
+</resultMap>
+```
+
+<br>
+
+**2.&nbsp; 注解映射：**
+
+1. `@ConstructorArgs`等同于`<constructor>`.
+2. `@Arg`子注解等同于`<idArg>`和`<arg>`.
+   - 并且用法完全一样.
+
+```Java
+@Select("SELECT * FROM tb_user WHERE id = #{id}")
+@ConstructorArgs({ // 1. 构造注入
+    @Arg(column = "id", javaType = Integer.class, id = true), // id=true 等同于 <idArg>
+    @Arg(column = "sex", javaType = String.class)
+})
+@Results({ // 2. 设值注入
+    @Result(property = "name", column = "name"),
+    @Result(property = "age", column = "age")
+})
+User selectByIdCons(Integer id);
+```
+
+<br>
+
+**3.&nbsp; 构造注入和设值注入的抉择：**
+
+1. **设值注入为主，构造注入为辅.**
+2. 使用设值注入就是为了避免设计繁杂而数量庞大的重载构造器.
+3. 因此推荐：只提供一个`无参构造器`，结果返回全部依赖`设值注入`.
