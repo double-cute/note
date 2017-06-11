@@ -24,8 +24,8 @@
 2. [`resultType`和`resultMap`之间的关系](#二resulttype和resultmap之间的关系)
 3. [`resultType`的具体用法](#三resulttype的具体用法)
 4. [使用`<select-resultMap>`和`<resultMap>`完成简单的`列-setter`手动映射](#四使用select-resultmap和resultmap完成简单的列-setter手动映射)
-5. [返回结果的第一步永远是构造注入：默认的构造注入方式]()
-6. [自己决定构造注入使用的构造器版本：<constructor>]()
+5. [返回结果的第一步永远是构造注入：默认的构造注入方式](#五返回结果的第一步永远是构造注入默认的构造注入方式--)
+6. [自己决定构造注入使用的构造器版本：<constructor>](#六自己决定构造注入使用的构造器版本constructor--)
 
 <br><br>
 
