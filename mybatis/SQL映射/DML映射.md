@@ -4,6 +4,7 @@
 >> - 提示：
 >>    1. 使用注解映射需要直接将SQL语句写在Java代码里.
 >>    2. 由于Java代码里不允许字符串常量分行编写，因此SQL语句不宜写得过长.
+>>       - 除非使用 `{ , , }` 的方式拼接SQL语句可以达到换行的目的，但是非常不美观.
 >>    3. 由于受到此限制，还是建议简单语句使用注解映射，复杂语句还是写在mapper-xml为好.
 
 <br><br>
@@ -123,4 +124,22 @@ int insertUsers(List<User>|User[] col);
 @Insert("INSERT INTO tb_user(name, sex, age) VALUES(#{name}, #{sex}, #{age})")
 @Options(useGeneratedKeys=true, keyProperty="id") // xml中为"true"，注解为true，要注意了！！
 int insertOneUserWithoutId(User user);  // insert时user.id将被忽略，交由数据库自增长
+```
+
+- `{ , , }` 拼接：
+   - 但很不美观，太多的 `" "` 包裹以及 `,` 分隔符.
+   - 所以还是建议简短的SQL语句直接一行写在注解映射中.
+      - 一旦复杂了还是写在mapper-xml中.
+
+```Java
+@Insert({
+    "INSERT",
+    "INTO",
+        "tb_user",
+            "(name, sex, age)",
+    "VALUES",
+            "(#{name}, #{sex}, #{age})"
+})
+@Options(useGeneratedKeys = true, keyProperty = "id")
+int insertOneUserWithoutId(User user);
 ```
