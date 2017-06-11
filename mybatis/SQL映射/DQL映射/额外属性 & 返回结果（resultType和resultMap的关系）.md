@@ -158,11 +158,18 @@ List<User> selectResultMapTest();
 **2.&nbsp; 注解映射：`@Results-@Result`**
 
 ```Java
-@Select("SELECT id AS res_id, name AS res_name, sex AS res_sex, age AS res_age FROM tb_user")
+@Select({
+"   SELECT                      ",
+"       id     AS  res_id,      ",
+"       name   AS  res_name,    ",
+"       sex    AS  res_sex,     ",
+"       age    AS  res_age      ",
+"   FROM                        ",
+"       tb_user                 "})
 @Results(
     id = "myResultMap",  // 即 <resultMap-id>，在注解映射中可以省略.
         // 省略后，'value = '也可以省略，直接 {...} 就代表value
-        
+
     value = { // value指定column和setter之间的映射（可以是关联映射）
         // 1. 使用id选项指定主键映射
         @Result(property = "id", column = "res_id", id = true),

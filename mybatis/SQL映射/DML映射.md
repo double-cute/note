@@ -133,13 +133,12 @@ int insertOneUserWithoutId(User user);  // insert时user.id将被忽略，交由
 
 ```Java
 @Insert({
-    "INSERT",
-    "INTO",
-        "tb_user",
-            "(name, sex, age)",
-    "VALUES",
-            "(#{name}, #{sex}, #{age})"
-})
+"   INSERT                          ",
+"   INTO                            ",
+"       tb_user                     ",
+"           (name, sex, age)        ",
+"   VALUES                          ",
+"       (#{name}, #{sex}, #{age})   "})
 @Options(useGeneratedKeys = true, keyProperty = "id")
 int insertOneUserWithoutId(User user);
 ```
