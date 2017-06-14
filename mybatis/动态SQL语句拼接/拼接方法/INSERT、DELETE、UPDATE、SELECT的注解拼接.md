@@ -105,7 +105,7 @@ T UPDATE(String table);
 
 <br>
 
-**2.&nbsp; 设置：可连续拼接**
+**2.&nbsp; 设值：可连续拼接**
 
 ```Java
 // 可连续拼接
@@ -127,6 +127,23 @@ SET("d = #{d}");
 
 ```SQL
 UPDATE tb_user SET a = ?, b = ?, c = ?, d = ?
+```
+
+- 对于标签拼接则专门提供了`<set>`：
+   - 主要功能是可以智能掐头去尾（多余的','）、防空条件（没有一个符合条件就忽略`SET`关键字）.
+
+```XML
+<update id="updateAuthorIfNecessary">
+    UPDATE author
+    <set>
+        <if test="username != null">username = #{username},</if>
+        <if test="password != null">password = #{password},</if>
+        <if test="email != null">email = #{email},</if>
+        <if test="bio != null">bio = #{bio}</if>
+    </set>
+    WHERE
+        id = #{id}
+</update>
 ```
 
 <br><br>
