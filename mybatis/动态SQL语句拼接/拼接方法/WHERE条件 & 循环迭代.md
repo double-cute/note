@@ -42,6 +42,17 @@ SELECT * FROM blog
 
 **2.&nbsp; 注解拼接：WHERE+AND+OR**
 
+- 原型：
+
+```Java
+// 均可连续拼接
+T WHERE(String... conditions);
+T OR();
+T AND();
+```
+
+- 示例：
+
 ```Java
 SELECT("*");
 FROM("tb");
