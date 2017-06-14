@@ -1,14 +1,6 @@
 <br><br>
 
 
-### 二、WHERE拼接：
-
-<where> VS WHERE()+OR()+AND()
-
-<br><br>
-
-### 三、for：
-
 ### 三、INSERT：
 
 <br><br>
