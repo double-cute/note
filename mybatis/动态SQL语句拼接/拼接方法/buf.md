@@ -1,10 +1,5 @@
 <br><br>
 
-### 一、条件拼接：
-
-<if> <choose>  VS  Java的正常条件判断
-
-<br><br>
 
 ### 二、WHERE拼接：
 
@@ -29,5 +24,3 @@
 ### 六、SELECT：
 
 <br><br>
-
-### 七、变量：bind

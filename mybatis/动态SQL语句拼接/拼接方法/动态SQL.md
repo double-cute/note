@@ -5,29 +5,6 @@
 <br><br>
 
 
-### 二、choose-when-otherwise：类似Java的switch
-> otherwise代替else
-
-1. 每个when没有break，其实when就是一个个顺序执行下来的if
-2. 由于没有else标签，所以otherwise刚好完成了else的功能.
-
-```xml
-<select id="findActiveBlogLike"
-     resultType="Blog">
-  SELECT * FROM BLOG WHERE state = ‘ACTIVE’
-  <choose>
-    <when test="title != null">
-      AND title like #{title}
-    </when>
-    <when test="author != null and author.name != null">
-      AND author_name like #{author.name}
-    </when>
-    <otherwise>
-      AND featured = 1
-    </otherwise>
-  </choose>
-</select>
-```
 
 <br><br>
 
@@ -124,7 +101,6 @@
       return object;
     }
   ```
-
 
 <br><br>
 
