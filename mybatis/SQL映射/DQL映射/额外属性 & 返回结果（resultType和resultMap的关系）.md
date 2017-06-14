@@ -36,6 +36,11 @@
 | 属性 | 值 | 说明 |
 | --- | --- | --- |
 | `useCache` | 默认为`true` | `1. 开启后直接结果被二级缓存.`<br>`2. 一般不需要修改.` |
+| `fetchSize` | 默认为依赖底层驱动 | `批量返回的记录行数.` |
+| `resultSets` | - | - |
+| `resultSetType` | `FORWARD_ONLY`<br>`SCROLL_SENSITIVE`<br>`SCROLL_INSENSITIVE`<br>默认依赖驱动 | - |
+| `resultOrdered` | - | - |
+| `databaseId` | - | - |
 
 <br><br>
 
