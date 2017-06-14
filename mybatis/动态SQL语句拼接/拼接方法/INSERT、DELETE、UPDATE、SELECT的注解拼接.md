@@ -5,10 +5,10 @@
 
 ## 目录
 
-1. [INSERT]()
-2. [DELETE]()
-3. [UPDATE]()
-4. [SELECT]()
+1. [INSERT](#一insert)
+2. [DELETE](#二delete)
+3. [UPDATE](#三update)
+4. [SELECT](#四select)
 
 <br><br>
 
