@@ -4,19 +4,6 @@
 
 <br><br>
 
-### 一、if
-
-```XML
-where state='ACTIVE'
-  <if test="OGNL != null">
-    and title = #{OGNL}
-  </if>
-  <if test="ONGL != null and OGNL.id > 1000">
-    and name like #{OGNL.name}
-  </if>
-```
-
-<br><br>
 
 ### 二、choose-when-otherwise：类似Java的switch
 > otherwise代替else
