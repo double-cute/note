@@ -1,5 +1,7 @@
 # 操纵stage
-> 其实就是操纵stage中的文件：添加、移动、删除
+> - 其实就是操纵stage中的文件：添加、移动、删除
+> - `git rm`、`git mv`均会影响工作区.
+
 
 <br><br>
 
@@ -42,11 +44,12 @@
    2. 将工作区中和stage同名的文件全部覆盖到stage，即刷新stage.
    3. 换句话说就是刷新一遍“被跟踪的文件”.
 - 命令：git add **-A**
-  - 将工作区中所有
-  - 
+  - 将工作区中所有没被gitignore忽略的内容全部刷到stage中.
+     1. 被跟踪的刷新到stage中.
+     2. 没被跟踪的（同时没被gitignore忽略的）添加stage中.
 - 命令：git add **-f** 文件列表
-  - 强制将指定的工作区文件加入到stage中，即使是.gitignore中记录的文件.
-  - 一旦被加入stage，.gitignore就无效了.
+   - 强制将指定的工作区文件加入到stage中，即使是.gitignore中记录的文件.
+   - 一旦被加入stage，gitignore就无效了.
 
 <br><br>
 
@@ -54,12 +57,12 @@
 
 - 命令：git rm 文件列表
 
-1. 直接删除**stage**中的指定文件.
-  - 也就是说**只能删除被跟踪**的文件.
-  - 如果stage中不存在，则命令执行失败！
+1. 直接删除 **stage** 中的指定文件.
+   - 也就是说**只能删除被跟踪**的文件.
+   - 如果stage中不存在，则命令执行失败！
 2. 命令分两步执行：从stage延展到工作区
-  1. 删除stage中的指定文件.
-  2. 删除工作区中的同名文件.
+   1. 删除stage中的指定文件.
+   2. 删除工作区中的同名文件.
 
 <br><br>
 
@@ -69,24 +72,24 @@
   - 移动，其实也是重命名.
   - 简单地说成重命名好了.
 
-1. 直接将**stage**中的src文件重命名成dest.
-  - 只能重命名**被跟踪的文件**.
-  - 如果src不存在于stage则命令执行失败！
+1. 直接将 **stage** 中的src文件重命名成dest.
+   - 只能重命名 **被跟踪的文件**.
+   - 如果src不存在于stage则命令执行失败！
 2. 该命令也是分两步执行的：从stage延展到工作区
-  1. 在stage中将src重命名成dest（dest必然保存在stage中，因此dest直接被跟踪了）.
-  2. 将工作区中的同名src也重命名成dest.
+   1. 在stage中将src重命名成dest（dest必然保存在stage中，因此dest直接被跟踪了）.
+   2. 将工作区中的同名src也重命名成dest.
 
 <br><br>
 
 ### 四、操纵stage的规范：[·](#目录)
 
-1. 尽量少用git rm和git mv，因为包含两步动作，从stage联动到工作区.
-  - 这在一定层面上破坏了工作区和stage的操作隔离原则，容易混淆这两个区域.
+1. 尽量少用 `git rm` 和 `git mv`，因为包含两步动作，从stage联动到工作区.
+   - 这在一定层面上破坏了工作区和stage的操作隔离原则，容易混淆这两个区域.
 2. 最最合理的做法还是先操作工作区，然后再将变化传递到stage.
-  - 毕竟git rm和git mv是反向的，有点儿破坏开发逻辑.
-  - git rm对应的合理操作：rm a b c; git add a b c
-  - git mv对应的合理操作：mv a b; git add a b
-    - mv的操作其实是先删除a再添加b，因此git add也必须添加两个对象.
-  - 简化版应该是：
-    1. git rm：rm a b c; git add -u    ## 删除一般意味着之前添加到stage过了
-    2. git mv：mv a b; git add -A   ## 新产生的b肯定没有添加到stage过
+   - 毕竟 `git rm` 和 `git mv` 是反向的（从stage传递到工作区），有点儿破坏开发逻辑.
+   - `git rm` 对应的合理操作：`rm a b c; git add a b c`
+   - `git mv` 对应的合理操作：`mv a b; git add a b`
+      - `mv` 的操作其实是先删除a再添加b，因此 `git add` 也必须添加两个对象.
+   - 简化版应该是：
+      1. `git rm`：`rm a b c; git add -u`    ## 删除一般意味着之前添加到stage过了
+      2. `git mv`：`mv a b; git add -A`   ## 新产生的b肯定没有添加到stage过
